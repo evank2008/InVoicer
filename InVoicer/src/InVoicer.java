@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class InVoicer {
 	//TODO: figure out how to use a jtable
@@ -31,13 +33,21 @@ public class InVoicer {
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		jt.setRowHeight(32);
+		jt.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		frame.setLayout(new BorderLayout());
 		
 		JPanel jn = new JPanel();
-		jn.add(new JButton("p"));
+		JButton jb = new JButton("p");
+		jb.addActionListener(e->{
+			DefaultTableModel tm = (DefaultTableModel) jt.getModel();
+			tm.addRow(new String[]{"goosh","boo"});
+		});
+		jn.add(jb);
+		
 		frame.add(jn, BorderLayout.NORTH);
 		
 		JScrollPane sp = new JScrollPane(jt);
+		jt.setFillsViewportHeight(true);
 		tPanel = new JPanel();
 		tPanel.add(sp);
 		frame.add(tPanel,BorderLayout.AFTER_LAST_LINE);
@@ -63,7 +73,8 @@ public class InVoicer {
 			//array is now 2d array of unboxed data of every invoice
 			//initial date, service, client, amount, payment status, and last time updated
 			String[] titles = {"Date Created","Service","Client","Amount","Payment Status","Updated"};
-			jt = new JTable(array,titles);
+			jt = new JTable(new DefaultTableModel(array,titles));
+			
 	 }
 
 }
