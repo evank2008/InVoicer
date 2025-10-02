@@ -12,8 +12,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 public class InVoicer {
-	//TODO: figure out how to use a jtable
-	
+
+	//TODO: be able to add new invoices(with a button?)
+			//save data to invoiceData.csv
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid
 	//button to filter by properties
