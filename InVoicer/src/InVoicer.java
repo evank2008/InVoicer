@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -17,41 +18,52 @@ public class InVoicer {
 	//when making a new invoice give a lil dropdown menu of all past clients or 
 	//an entry text box
 	static ArrayList<Invoice> invoiceList = new ArrayList<Invoice>();
-	static int width=600;
-	static int height=640;
-	static JFrame frame = new JFrame();
-
+	static JFrame frame;
+	JTable jt;
+	JPanel tPanel;
 	public static void main(String[] args) {
-		loadList();
+		
+		new InVoicer();
+	}
+	public InVoicer() {
+		loadListFromFile();
+		frame = new JFrame("InVoicer");
 		frame.setVisible(true);
-		frame.setLayout(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//one panel for controls, one for display
-		JPanel controlPanel = new JPanel();
-		JButton addB = new JButton("Create");
-		controlPanel.add(addB);
-		JButton editB = new JButton("Edit");
-		controlPanel.add(editB);
-			controlPanel.setSize(width, height/8);
-			controlPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-			frame.add(controlPanel);
-			
-		JPanel displayPanel = new DisplayPanel();
-		displayPanel.setSize(600, 520);
-		displayPanel.setBorder(BorderFactory.createLineBorder(Color.red));
-		frame.add(displayPanel);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		jt.setRowHeight(32);
+		frame.setLayout(new BorderLayout());
 		
-//new JTable(new String[][] {{"pizza","pozza"},{"hod dog","had dog"}},new String[] {"big","if"});
+		JPanel jn = new JPanel();
+		jn.add(new JButton("p"));
+		frame.add(jn, BorderLayout.NORTH);
 		
-		frame.setSize(width,height);
+		JScrollPane sp = new JScrollPane(jt);
+		tPanel = new JPanel();
+		tPanel.add(sp);
+		frame.add(tPanel,BorderLayout.AFTER_LAST_LINE);
 		
+		frame.pack();
+//new JTable(new String[][] {{"pizza","pozza"},{"hod dog","had dog"}},new String[] {"big","if"})
 	}
 	
-	static void loadList() {
+	 void loadListFromFile() {
 		//temporary test invoice
-		Invoice i = new Invoice(600,"John Cliente");
+		//TODO: make this method read out of a file
+		Invoice in = new Invoice(600,"John Cliente");
 		Invoice j = new Invoice(4567.88,"Sammy Rich");
-		invoiceList.add(i);
+		invoiceList.add(in);
 		invoiceList.add(j);
+		updateTable();
 	}
+	 void updateTable() {
+		 String[][] array = new String[InVoicer.invoiceList.size()][6];
+			for(int i = 0; i<InVoicer.invoiceList.size();i++) {
+				array[i]=InVoicer.invoiceList.get(i).toArray();
+			}
+			//array is now 2d array of unboxed data of every invoice
+			//initial date, service, client, amount, payment status, and last time updated
+			String[] titles = {"Date Created","Service","Client","Amount","Payment Status","Updated"};
+			jt = new JTable(array,titles);
+	 }
+
 }
