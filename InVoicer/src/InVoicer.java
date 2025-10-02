@@ -13,8 +13,12 @@ import javax.swing.table.TableModel;
 
 public class InVoicer {
 
-	//TODO: be able to add new invoices(with a button?)
-			//save data to invoiceData.csv
+	/*TODO: 
+	 * be able to add new invoices(with a button?)
+	 * option to select preexisting clients
+	 * save data to invoiceData.csv
+	 * button to sort the table based on amount, date, client
+	 */
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid
 	//button to filter by properties
