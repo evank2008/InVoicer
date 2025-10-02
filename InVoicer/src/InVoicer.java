@@ -1,8 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -59,6 +64,20 @@ public class InVoicer {
 	 void loadListFromFile() {
 		//temporary test invoice
 		//TODO: make this method read out of a file
+		 try {
+		 String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+		 BufferedReader br = new BufferedReader(new FileReader(new File(path+"/invoiceData.csv")));
+		 String line;
+		 
+		 while((line = br.readLine())!=null) {
+			invoiceList.add(new Invoice(line));
+		 }
+		 } catch(FileNotFoundException e) {
+			 //oh well haha i guess theres no data
+		 }
+		 catch(Exception e) {
+			 e.printStackTrace();
+		 }
 		Invoice in = new Invoice(600,"John Cliente");
 		Invoice j = new Invoice(4567.88,"Sammy Rich");
 		invoiceList.add(in);
