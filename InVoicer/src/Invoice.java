@@ -27,17 +27,17 @@ public class Invoice {
 	public Invoice(String str) {
 		String[] strs = str.split(",");
 		//data in order that the vars are declared at the top
-		//made, paid, client, service, amount
+		//made, service, client, amount, status
 		//uuuu-mm-dd
 		dateCreated=dateFromStr(strs[0]);
-		if(strs[1].equals("Unpaid")) paidStatus=false;
+		serviceRendered = strs[1].equals("null")?"":strs[1];
+		client = strs[2];
+		amount=Double.parseDouble(strs[3]);
+		if(strs[4].equals("Unpaid")) paidStatus=false;
 		else {
-			datePaid=dateFromStr(strs[1]);
+			datePaid=dateFromStr(strs[4]);
 			paidStatus=true;
 		}
-		client = strs[2];
-		serviceRendered = strs[3];
-		amount=Double.parseDouble(strs[4]);
 	}
 	static LocalDate dateFromStr(String str) {
 		String[] spl = str.split("-");
