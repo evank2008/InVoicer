@@ -23,7 +23,6 @@ public class InVoicer {
 	 * option to select preexisting clients
 	 * button to sort the table based on amount, date, client
 	 * button to pay
-	 * check for saved before closing
 	 */
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid
@@ -97,11 +96,6 @@ public class InVoicer {
 		tPanel = new JPanel();
 		tPanel.add(sp);
 		frame.add(tPanel,BorderLayout.AFTER_LAST_LINE);
-		frame.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				
-			}
-		});
 		frame.pack();
 //new JTable(new String[][] {{"pizza","pozza"},{"hod dog","had dog"}},new String[] {"big","if"})
 	}
@@ -143,8 +137,6 @@ public class InVoicer {
 	                return true;               
 	        };
 			};
-			//TODO: make cells at 0 or 4 not editable
-			jt.isCellEditable(0, 0);
 	 }
 	 void saveTable() {
 		 if(saveStatus) {
