@@ -48,12 +48,30 @@ public class InVoicer {
 		loadListFromFile();
 		frame = new JFrame("InVoicer");
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);	
 		jt.setRowHeight(32);
 		jt.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jt.getTableHeader().setReorderingAllowed(false);
 		frame.setLayout(new BorderLayout());
-		
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if(saveStatus) System.exit(0);
+		        else {
+		        	switch(JOptionPane.showConfirmDialog(null, "Some changes may not have been saved. Save before closing?")) {
+		        	case 0:
+		        		saveTable();
+		        		System.exit(0);
+		        		break;
+		        	case 1:
+		        		System.exit(0);
+		        		break;
+		        	case 2:
+		        		break;
+		        	}
+		        }
+		    }
+		});
 		JPanel jn = new JPanel();
 		JButton jb = new JButton("New");
 		jb.addActionListener(e->{
