@@ -1,5 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -38,6 +40,8 @@ public class InVoicer {
 	static JFrame frame;
 	JTable jt;
 	JPanel tPanel;
+	JPanel payPanel;
+	JPanel jn;
 	boolean saveStatus = true;
 	public static void main(String[] args) {
 		
@@ -71,12 +75,11 @@ public class InVoicer {
 		        }
 		    }
 		});
-		JPanel jn = new JPanel();
+		jn = new JPanel();
 		JButton jb = new JButton("New");
 		jb.addActionListener(e->{
 			DefaultTableModel tm = (DefaultTableModel) jt.getModel();
 			tm.addRow(new Invoice().toArray());
-			System.out.println(jt.getValueAt(0, 0));
 		});
 		jt.getModel().addTableModelListener((e)->{
 			saveStatus=false;
@@ -94,15 +97,25 @@ public class InVoicer {
 		JScrollPane sp = new JScrollPane(jt);
 		jt.setFillsViewportHeight(true);
 		tPanel = new JPanel();
+		tPanel.setLayout(new BorderLayout());
 		tPanel.add(sp);
 		frame.add(tPanel,BorderLayout.AFTER_LAST_LINE);
+		
+		payPanel = new JPanel();
+		payPanel.setLayout(new BoxLayout(payPanel, BoxLayout.Y_AXIS));
+		int headerHeight = jt.getTableHeader().getPreferredSize().height+5;
+		payPanel.add(Box.createRigidArea(new Dimension(0, headerHeight)));
+		for(int i = 0; i<jt.getRowCount();i++) {
+			JButton j = new JButton("Pay "+i);
+			payPanel.add(j);
+			payPanel.add(Box.createRigidArea(new Dimension(0, 32-j.getPreferredSize().height)));
+		}
+		tPanel.add(payPanel,BorderLayout.EAST);	
+		//payPanel.setBackground(Color.red);
 		frame.pack();
-//new JTable(new String[][] {{"pizza","pozza"},{"hod dog","had dog"}},new String[] {"big","if"})
 	}
 	
 	 void loadListFromFile() {
-		//temporary test invoice
-		//TODO: make this method read out of a file
 		 try {
 		 String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 		 BufferedReader br = new BufferedReader(new FileReader(new File(path+"/invoiceData.csv")));
@@ -112,10 +125,14 @@ public class InVoicer {
 		 }
 		 } catch(FileNotFoundException e) {
 			 //oh well haha i guess theres no data
+			 //TODO: handle lack of data better, maybe show a funny image or smthn
+			 //or just leave it blank that works too
+			 /*
 			 Invoice in = new Invoice(600,"John Cliente");
 				Invoice j = new Invoice(4567.88,"Sammy Rich");
 				invoiceList.add(in);
 				invoiceList.add(j);
+				*/
 		 }
 		 catch(Exception e) {
 			 e.printStackTrace();
@@ -161,7 +178,7 @@ public class InVoicer {
 		 saveStatus=true;
 		 frame.setTitle("InVoicer");
 		 } catch (IOException e) {
-				// TODO Auto-generated catch block
+			 	JOptionPane.showMessageDialog(null, "Error occurred while saving.");
 				e.printStackTrace();
 			}
 	 }
