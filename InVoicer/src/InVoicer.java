@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -86,6 +87,7 @@ public class InVoicer {
 			frame.setTitle("*InVoicer");
 		});
 		jn.add(jb);
+		
 		JButton sb = new JButton("Save");
 		sb.addActionListener(e->{
 			saveTable();
@@ -106,7 +108,13 @@ public class InVoicer {
 		int headerHeight = jt.getTableHeader().getPreferredSize().height+5;
 		payPanel.add(Box.createRigidArea(new Dimension(0, headerHeight)));
 		for(int i = 0; i<jt.getRowCount();i++) {
-			JButton j = new JButton("Pay "+i);
+			JButton j = new JButton("Pay "+(i+1));
+			j.addActionListener(e->{
+				int place = Integer.parseInt(j.getText().substring(4))-1;
+				invoiceList.get(place).pay();
+				jt.setValueAt(invoiceList.get(place).datePaid.format(DateTimeFormatter.ISO_DATE),
+						place,4);
+			});
 			payPanel.add(j);
 			payPanel.add(Box.createRigidArea(new Dimension(0, 32-j.getPreferredSize().height)));
 		}
