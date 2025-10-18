@@ -26,7 +26,7 @@ public class InVoicer {
 	/*TODO: 
 	 * option to select preexisting clients
 	 * button to sort the table based on amount, date, client
-	 * lock a table if it's been paid?
+	 * change the background color of cells to gray if they are paid
 	 */
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid

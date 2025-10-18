@@ -1,4 +1,8 @@
+import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class DynamicTable extends JTable{
@@ -10,6 +14,40 @@ public class DynamicTable extends JTable{
 	public boolean isCellEditable(int row, int column) {  
 		if(column==0||column==4) return false;
 		if(!getValueAt(row, 4).equals("Unpaid")) return false;
-        return true;               
+        return true;   
+        
 }
+	{
+		
+		setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
+		{
+		    @Override
+		    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+		    {
+		        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		        Color col;
+		        /*set color to:
+		        white if unselected and unpaid
+		        light gray if unselected and paid
+		        light blue sort if selected and unpaid
+		        ??? evil mystery color(gray) if selected and paid
+		        */
+		        if(isSelected) {
+		        	if(getValueAt(row, 4).equals("Unpaid")) {
+		        		col=new Color(115,166,220); //light blue thing
+		        		
+		        	} else {
+		        		col=Color.gray;
+		        	}
+		        } else {
+		        	if(getValueAt(row, 4).equals("Unpaid")) {
+		        		col=Color.white;
+		        	} else {
+		        		col=Color.LIGHT_GRAY;
+		        	}
+		        }
+		        c.setBackground(col);
+		        return c;
+		    }
+		});    }
 }
