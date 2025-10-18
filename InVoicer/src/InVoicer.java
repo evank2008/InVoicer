@@ -26,7 +26,7 @@ public class InVoicer {
 	/*TODO: 
 	 * option to select preexisting clients
 	 * button to sort the table based on amount, date, client
-	 * button to pay
+	 * lock a table if it's been paid?
 	 */
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid
@@ -164,6 +164,7 @@ public class InVoicer {
 			jt = new JTable(new DefaultTableModel(array,titles)) {
 				public boolean isCellEditable(int row, int column) {  
 					if(column==0||column==4) return false;
+					if(!array[row][4].equals("Unpaid")) return false;
 	                return true;               
 	        };
 			};
