@@ -40,7 +40,7 @@ public class InVoicer {
 	//an entry text box
 	static ArrayList<Invoice> invoiceList = new ArrayList<Invoice>();
 	static JFrame frame;
-	JTable jt;
+	DynamicTable jt;
 	JPanel tPanel;
 	//tpanel holds the table
 	JPanel jn;
@@ -105,7 +105,7 @@ public class InVoicer {
 		JButton unpayB = new JButton("Unpay");
 		unpayB.addActionListener(e->{
 			int row = jt.getSelectedRow();
-			jt.setValueAt("Unpaid",row,4);
+			jt.setValueAt("Unpaid",row,4);	
 		});
 		jn.add(unpayB);
 		
@@ -154,6 +154,7 @@ public class InVoicer {
 		updateTable();
 	}
 	 void updateTable() {
+		 //this method fills in the table with all the data from invoiceList
 		 String[][] array = new String[InVoicer.invoiceList.size()][6];
 			for(int i = 0; i<InVoicer.invoiceList.size();i++) {
 				array[i]=InVoicer.invoiceList.get(i).toArray();
@@ -161,13 +162,7 @@ public class InVoicer {
 			//array is now 2d array of unboxed data of every invoice
 			//initial date, service, client, amount, payment status, and last time updated
 			String[] titles = {"Date Created","Service","Client","Amount","Payment Status"};
-			jt = new JTable(new DefaultTableModel(array,titles)) {
-				public boolean isCellEditable(int row, int column) {  
-					if(column==0||column==4) return false;
-					if(!array[row][4].equals("Unpaid")) return false;
-	                return true;               
-	        };
-			};
+			jt = new DynamicTable(new DefaultTableModel(array,titles));
 	 }
 	 void saveTable() {
 		 if(saveStatus) {
