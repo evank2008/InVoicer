@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -41,8 +42,11 @@ public class InVoicer {
 	static JFrame frame;
 	JTable jt;
 	JPanel tPanel;
+	//tpanel holds the table and also paypanel
 	JPanel payPanel;
+	//i should remove paypanel and add a separate button at the top to pay for any of them
 	JPanel jn;
+	//jn holds the top buttons
 	boolean saveStatus = true;
 	public static void main(String[] args) {
 		
@@ -77,6 +81,7 @@ public class InVoicer {
 		    }
 		});
 		jn = new JPanel();
+		
 		JButton jb = new JButton("New");
 		jb.addActionListener(e->{
 			DefaultTableModel tm = (DefaultTableModel) jt.getModel();
@@ -87,6 +92,24 @@ public class InVoicer {
 			frame.setTitle("*InVoicer");
 		});
 		jn.add(jb);
+		
+		JButton payB = new JButton("Pay");
+		payB.addActionListener(e->{
+			int row = jt.getSelectedRow();
+			
+			String date=LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+			jt.setValueAt(date,row,4);
+			//invoiceList.get(row).pay();
+			//updateTable();
+		});
+		jn.add(payB);
+		
+		JButton unpayB = new JButton("Unpay");
+		unpayB.addActionListener(e->{
+			int row = jt.getSelectedRow();
+			jt.setValueAt("Unpaid",row,4);
+		});
+		jn.add(unpayB);
 		
 		JButton sb = new JButton("Save");
 		sb.addActionListener(e->{
