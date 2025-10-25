@@ -25,8 +25,7 @@ public class InVoicer {
 
 	/*TODO: 
 	 * option to select preexisting clients
-	 * button to sort the table based on amount, date, client
-	 * change the background color of cells to gray if they are paid
+	 * optional: notes section? just add another column or smthn
 	 */
 	//this program will create a window where you can input and view
 	//transaction histories that are paid or unpaid
@@ -58,6 +57,7 @@ public class InVoicer {
 		jt.setRowHeight(32);
 		jt.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		jt.getTableHeader().setReorderingAllowed(false);
+		jt.setAutoCreateRowSorter(true);
 		frame.setLayout(new BorderLayout());
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -167,6 +167,9 @@ public class InVoicer {
 			//initial date, service, client, amount, payment status, and last time updated
 			String[] titles = {"Date Created","Service","Client","Amount","Payment Status"};
 			jt = new DynamicTable(new DefaultTableModel(array,titles));
+			//double the header height
+			//here please
+			
 	 }
 	 void saveTable() {
 		 if(saveStatus) {

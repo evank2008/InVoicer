@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -49,5 +51,7 @@ public class DynamicTable extends JTable{
 		        c.setBackground(col);
 		        return c;
 		    }
-		});    }
+		});    	    
+	}
+
 }
