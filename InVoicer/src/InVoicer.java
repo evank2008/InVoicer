@@ -198,5 +198,18 @@ public class InVoicer {
 				e.printStackTrace();
 			}
 	 }
+	 void updateList() {
+		 //updates invoiceList with the current table data
+		 invoiceList.clear();
+		 for(int i = 0; i<jt.getRowCount();i++) {
+			 String s = "";
+			 for(int j = 0; j<5;j++) {
+				 s+=jt.getValueAt(i, j);
+				 if(j!=4) s+=",";
+			 }
+			 invoiceList.add(new Invoice(s));
+		 }
+		 System.out.println(invoiceList.toString());
+	 }
 
 }
