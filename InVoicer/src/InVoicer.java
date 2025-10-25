@@ -25,6 +25,13 @@ public class InVoicer {
 
 	/*TODO: 
 	 * option to select preexisting clients
+	 * idea: add a little arrow on the right side of each cell that when clicked creates a jcombobox thing
+	 * -------------
+	 * |            |
+	 * |        --  |
+	 * |       |V | |
+	 * |        --  |
+	 * -------------
 	 * optional: notes section? just add another column or smthn
 	 */
 	//this program will create a window where you can input and view
