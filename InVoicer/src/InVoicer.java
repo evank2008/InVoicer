@@ -97,6 +97,9 @@ public class InVoicer {
 			
 			String date=LocalDate.now().format(DateTimeFormatter.ISO_DATE);
 			jt.setValueAt(date,row,4);
+			
+			jt.repaint();
+			
 			//invoiceList.get(row).pay();
 			//updateTable();
 		});
@@ -106,6 +109,7 @@ public class InVoicer {
 		unpayB.addActionListener(e->{
 			int row = jt.getSelectedRow();
 			jt.setValueAt("Unpaid",row,4);	
+			jt.repaint();
 		});
 		jn.add(unpayB);
 		
