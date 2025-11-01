@@ -46,7 +46,7 @@ public class InVoicer {
 	//an entry text box
 	static ArrayList<Invoice> invoiceList = new ArrayList<Invoice>();
 	static JFrame frame;
-	DynamicTable jt;
+	static DynamicTable jt;
 	JPanel tPanel;
 	//tpanel holds the table
 	JPanel jn;
@@ -90,6 +90,7 @@ public class InVoicer {
 		JButton dump = new JButton("dump");
 		dump.addActionListener(e->{
 			System.out.println(Invoice.clientList);
+			System.out.println(dump.getHeight());
 		});
 		jn.add(dump);
 		

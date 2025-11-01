@@ -1,8 +1,12 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -23,6 +27,7 @@ public class DynamicTable extends JTable{
 		
 		setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
 		{
+			
 		    @Override
 		    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
 		    {
@@ -43,7 +48,7 @@ public class DynamicTable extends JTable{
 		        	}
 		        } else {
 		        	if(getValueAt(row, 4).equals("Unpaid")) {
-		        		col=new Color(255,253,208);
+		        		col=new Color(255,253,208); //creamy
 		        	} else {
 		        		col=Color.LIGHT_GRAY;
 		        	}
@@ -51,7 +56,11 @@ public class DynamicTable extends JTable{
 		        c.setBackground(col);
 		        return c;
 		    }
-		});    	    
+		});  
+		
+		//set custom renderer for client column to add the button
+		getColumnModel().getColumn(2).setCellRenderer(new ArrowCellRenderer());
+
 	}
 
 }
