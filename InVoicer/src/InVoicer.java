@@ -32,6 +32,8 @@ public class InVoicer {
 	 * |       |V | |
 	 * |        --  |
 	 * -------------
+	 * 	CURRENT ISSUE IN ARROWCELLRENDERER: NOT PROPERLY REGISTERING CLICK
+	 * 	FIX THIS
 	 * optional: notes section? just add another column or smthn
 	 */
 	//this program will create a window where you can input and view

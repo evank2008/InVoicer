@@ -12,8 +12,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class DynamicTable extends JTable{
+	ArrowCellRenderer acr = new ArrowCellRenderer();
+
 	public DynamicTable(DefaultTableModel defaultTableModel) {
 		super(defaultTableModel);
+		this.addMouseListener(acr);
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class DynamicTable extends JTable{
 		});  
 		
 		//set custom renderer for client column to add the button
-		getColumnModel().getColumn(2).setCellRenderer(new ArrowCellRenderer());
+		getColumnModel().getColumn(2).setCellRenderer(acr);
 
 	}
 
