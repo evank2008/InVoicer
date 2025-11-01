@@ -87,6 +87,12 @@ public class InVoicer {
 		});
 		jn = new JPanel();
 		
+		JButton dump = new JButton("dump");
+		dump.addActionListener(e->{
+			System.out.println(Invoice.clientList);
+		});
+		jn.add(dump);
+		
 		JButton jb = new JButton("New");
 		jb.addActionListener(e->{
 			DefaultTableModel tm = (DefaultTableModel) jt.getModel();
@@ -95,6 +101,10 @@ public class InVoicer {
 		jt.getModel().addTableModelListener((e)->{
 			saveStatus=false;
 			frame.setTitle("*InVoicer");
+			
+			updateClientList();
+			
+			
 		});
 		jn.add(jb);
 		
@@ -138,7 +148,15 @@ public class InVoicer {
 		
 		frame.pack();
 	}
-	
+	void updateClientList() {
+		Invoice.clientList.clear();
+		for(int i = 0;i<jt.getRowCount();i++) {
+			String client = (String)jt.getValueAt(i, 2);
+			if(!Invoice.clientList.contains(client)&&client!=null) {
+				Invoice.clientList.add(client);
+			}
+		}
+	}
 	 void loadListFromFile() {
 		 try {
 		 String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
@@ -174,9 +192,9 @@ public class InVoicer {
 			//initial date, service, client, amount, payment status, and last time updated
 			String[] titles = {"Date Created","Service","Client","Amount","Payment Status"};
 			jt = new DynamicTable(new DefaultTableModel(array,titles));
-			//double the header height
-			//here please
 			
+			//now update clientList
+			updateClientList();
 	 }
 	 void saveTable() {
 		 if(saveStatus) {

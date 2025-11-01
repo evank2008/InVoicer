@@ -1,10 +1,12 @@
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class Invoice {
 //This class controls the object of each individual invoice created
 //store data about date history, price, client, paid/unpaid, etc
+	static ArrayList<String> clientList=new ArrayList<String>();
 	LocalDate dateCreated;
 	LocalDate datePaid;
 	String client;

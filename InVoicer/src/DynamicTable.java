@@ -43,7 +43,7 @@ public class DynamicTable extends JTable{
 		        	}
 		        } else {
 		        	if(getValueAt(row, 4).equals("Unpaid")) {
-		        		col=Color.white;
+		        		col=new Color(255,253,208);
 		        	} else {
 		        		col=Color.LIGHT_GRAY;
 		        	}
