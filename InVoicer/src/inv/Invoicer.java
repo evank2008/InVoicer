@@ -6,6 +6,7 @@ import java.awt.Insets;
 import javax.swing.*;
 //main class for running and holding the central frame
 //TODO: line 25 add icons to the tabs
+//		add file saving/reading system
 public class Invoicer {
 	static JFrame frame;
 	static ClientPanel clp = new ClientPanel();

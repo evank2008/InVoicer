@@ -7,6 +7,7 @@ import javax.swing.*;
 //this class should display the clients, let you add/remove clients, input data about clients
 //have a row of clientboxes on the left side
 //buttons on the right side?
+//TODO: add buttons to create and edit
 public class ClientPanel extends MenuPanel {
 	public ClientPanel() {
 		super();
@@ -36,6 +37,7 @@ class Contact {
 	}
 }
 class ClientBox extends JPanel{
+	//this displays a client's data in a box
 	Client client;
 	public ClientBox(Client client) {
 		super();
