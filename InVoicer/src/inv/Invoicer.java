@@ -2,9 +2,13 @@ package inv;
 
 import javax.swing.*;
 //main class for running and holding the central frame
-
+//TODO: line 25 add icons to the tabs
 public class Invoicer {
-	JFrame frame;
+	static JFrame frame;
+	static ClientPanel clp = new ClientPanel();
+	static CreatorPanel crp = new CreatorPanel();
+	static RecordsPanel rp = new RecordsPanel();
+	static SelectionScreen ss = new SelectionScreen();
 	public static final int WIDTH = 600, HEIGHT = 600;
 
 	public static void main(String[] args) {
@@ -17,7 +21,14 @@ public class Invoicer {
 		frame = new JFrame("Invoicer");
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setVisible(true);
-
+		
+		ss.addTab("Clients", clp);
+		ss.addTab("Invoice", crp);
+		ss.addTab("Records", rp);
+		
+		ss.setSize(WIDTH,HEIGHT);
+		frame.add(ss);
+		
 	}
 
 }

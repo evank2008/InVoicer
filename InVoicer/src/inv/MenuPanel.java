@@ -7,5 +7,9 @@ public abstract class MenuPanel extends JPanel {
 
 	// want a back button in the top right corner
 	// takes you back to main screen
+	public MenuPanel() {
+		super();
+		add(new JLabel("Menu Panel"));
+	}
 
 }
