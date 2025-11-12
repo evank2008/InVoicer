@@ -1,5 +1,8 @@
 package inv;
 
+import java.awt.Dimension;
+import java.awt.Insets;
+
 import javax.swing.*;
 //main class for running and holding the central frame
 //TODO: line 25 add icons to the tabs
@@ -26,7 +29,7 @@ public class Invoicer {
 		ss.addTab("Invoice", crp);
 		ss.addTab("Records", rp);
 		
-		ss.setSize(WIDTH,HEIGHT);
+		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
 		
 	}
