@@ -9,7 +9,7 @@ public class SelectionScreen extends JTabbedPane {
 	
 	public SelectionScreen() {
 		super();
-		add(label);
+		//add(label);
 		
 	}
 }
