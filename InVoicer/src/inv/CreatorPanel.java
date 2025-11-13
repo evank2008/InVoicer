@@ -1,5 +1,7 @@
 package inv;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 
 //this class should allow you to create an invoice
@@ -9,5 +11,7 @@ public class CreatorPanel extends MenuPanel {
 	public CreatorPanel() {
 		super();
 		add(new JLabel("Creator Panel"));
+		this.getComponent(0).setForeground(Color.white);
+
 	}
 }

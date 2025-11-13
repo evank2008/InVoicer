@@ -1,5 +1,7 @@
 package inv;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 
 //this class should show a table of the past invoices
@@ -9,5 +11,6 @@ public class RecordsPanel extends MenuPanel {
 	public RecordsPanel() {
 		super();
 		add(new JLabel("Records Panel"));
+		this.getComponent(0).setForeground(Color.white);
 	}
 }

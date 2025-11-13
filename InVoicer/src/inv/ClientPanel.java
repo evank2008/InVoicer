@@ -16,6 +16,7 @@ public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
 	//maybe put these in a jscrollpane?
+	//make a jscrollpane and a second jpanel
 	JPanel buttonPanel = new JPanel();
 	JPanel bufferPanel = new JPanel();
 public ClientPanel() {
