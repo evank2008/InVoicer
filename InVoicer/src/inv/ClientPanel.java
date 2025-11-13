@@ -1,8 +1,11 @@
 package inv;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -15,6 +18,7 @@ import javax.swing.border.LineBorder;
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
+	JScrollPane scrollPane = new JScrollPane(boxPanel);
 	//maybe put these in a jscrollpane?
 	//make a jscrollpane and a second jpanel
 	JPanel buttonPanel = new JPanel();
@@ -23,6 +27,7 @@ public ClientPanel() {
 		super();
 		//add(new JLabel("Client Panel"));
 		//two panels - one with the clientboxes one with the control buttons
+
 		boxPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT*9/10));
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
 		
@@ -42,7 +47,8 @@ public ClientPanel() {
 		buttonPanel.add(addButton);
 		
 		add(buttonPanel);
-		add(boxPanel);
+		//add(boxPanel);
+		add(scrollPane);
 	}
 void addClient() {
 	ClientBox cbox = new ClientBox(new Client());
@@ -58,9 +64,8 @@ void addClient() {
 
 class Client {
 	String name="New Client";
-	static ArrayList<String> doctorList = new ArrayList<String>();
-	int doctor; //position in list
-	double expectedAmt=0; //expected monthly billing amount in dollars
+	String doctor="Workerguy";
+	double expectedAmt=0.00; //expected monthly billing amount in dollars
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
 
 }
@@ -80,13 +85,75 @@ class Contact {
 class ClientBox extends JPanel{
 	//this displays a client's data in a box
 	Client client;
+	JLabel nameLabel;
+	JLabel amountLabel;
+	JLabel doctorLabel;
+	JButton contactsButton;
 	public ClientBox(Client client) {
 		super();
 		this.client=client;
-		this.setPreferredSize(new Dimension(ClientPanel.boxPanel.getPreferredSize().width*39/40,ClientPanel.boxPanel.getPreferredSize().height/5));
+		this.setPreferredSize(new Dimension(ClientPanel.boxPanel.getPreferredSize().width*39/40,(int)(ClientPanel.boxPanel.getPreferredSize().height/7.6)));
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
 		this.setBackground(new Color(36,36,36));
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		//what is displayed?
+		/*
+		 * maybe just all the data i guess
+		 * name, amount, doctor, contacts
+		 */
+		nameLabel=new JLabel("  "+client.name);
+		nameLabel.setForeground(Color.white);
+		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/3)));
 		
+		amountLabel=new JLabel("       Expected Monthly Amount: "+client.expectedAmt);
+		amountLabel.setForeground(Color.white);
+		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
+		
+		doctorLabel=new JLabel(client.doctor);
+		doctorLabel.setForeground(Color.white);
+		doctorLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
+		
+		JButton contactsButton = new JButton("Contacts");
+		//40 160 230
+		contactsButton.setForeground(Color.white);
+		contactsButton.setBackground(new Color(40,160,230));
+		contactsButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,this.getPreferredSize().height/5));
+		contactsButton.addActionListener(e->{});//TODO: made button show contacts or something idk
+		contactsButton.setPreferredSize(new Dimension(this.getPreferredSize().width/6,this.getPreferredSize().height/3));
+
+		gbc.anchor = GridBagConstraints.WEST;
+		 gbc.gridx = 0;
+         gbc.gridy = 0;
+         gbc.weightx = 0.8; // relative width
+         gbc.weighty = 0.5;
+         add(nameLabel, gbc);
+
+         // Row 0, Col 1 (Top Right)
+         gbc.anchor = GridBagConstraints.CENTER;
+         gbc.gridx = 1;
+         gbc.gridy = 0;
+         gbc.weightx = 0.2;
+         add(doctorLabel, gbc);
+
+         // Row 1, Col 0 (Bottom Left)
+         gbc.anchor = GridBagConstraints.WEST;
+         gbc.gridx = 0;
+         gbc.gridy = 1;
+         gbc.weightx = 0.8;
+         gbc.weighty = 0.5;
+         add(amountLabel, gbc);
+
+         // Row 1, Col 1 (Bottom Right)
+         gbc.anchor = GridBagConstraints.PAGE_START;
+         gbc.gridx = 1;
+         gbc.gridy = 1;
+         gbc.weightx = 0.2;
+         add(contactsButton, gbc);
+         //TODO: make contnactsbutton
+         
+		//add(nameLabel,BorderLayout.NORTH);
+		//add(amountLabel,BorderLayout.WEST);
 		//at the end
 		ClientPanel.clientList.add(this);
 	}

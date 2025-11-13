@@ -14,7 +14,7 @@ public class Invoicer {
 	static CreatorPanel crp = new CreatorPanel();
 	static RecordsPanel rp = new RecordsPanel();
 	static SelectionScreen ss = new SelectionScreen();
-	public static final int WIDTH = 600, HEIGHT = 600;
+	public static final int WIDTH = 800, HEIGHT = 700;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
