@@ -1,5 +1,6 @@
 package inv;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 
@@ -29,6 +30,10 @@ public class Invoicer {
 		ss.addTab("Clients", clp);
 		ss.addTab("Invoice", crp);
 		ss.addTab("Records", rp);
+		
+		clp.setBackground(new Color(36,36,36));
+		crp.setBackground(new Color(36,36,36));
+		rp.setBackground(new Color(36,36,36));
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
