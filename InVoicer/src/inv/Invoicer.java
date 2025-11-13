@@ -32,6 +32,7 @@ public class Invoicer {
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
 
