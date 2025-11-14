@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -14,7 +16,7 @@ import javax.swing.border.LineBorder;
 //this class should display the clients, let you add/remove clients, input data about clients
 //have a row of clientboxes on the left side
 //buttons on the right side?
-//TODO: add buttons to create and edit
+//TODO:line 91, replace the jlabels with jpanels that hold a label and a textfield to allow editing
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
@@ -64,7 +66,7 @@ void addClient() {
 
 class Client {
 	String name="New Client";
-	String doctor="Workerguy";
+	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
 
@@ -88,6 +90,8 @@ class ClientBox extends JPanel{
 	JLabel nameLabel;
 	JLabel amountLabel;
 	JLabel doctorLabel;
+	JTextField nameField, amountField, doctorField;
+	JPanel namePanel, amountPanel, doctorPanel;
 	JButton contactsButton;
 	public ClientBox(Client client) {
 		super();
@@ -96,17 +100,34 @@ class ClientBox extends JPanel{
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
+		this.setFocusable(true);
 		GridBagConstraints gbc = new GridBagConstraints();
 		//what is displayed?
 		/*
 		 * maybe just all the data i guess
 		 * name, amount, doctor, contacts
 		 */
-		nameLabel=new JLabel("  "+client.name);
+		nameLabel=new JLabel("  ");
 		nameLabel.setForeground(Color.white);
-		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/3)));
+		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height*7/24)));
 		
-		amountLabel=new JLabel("       Expected Monthly Amount: "+client.expectedAmt);
+		nameField=new JTextField(client.name);
+		nameField.setFont(nameLabel.getFont());
+		nameField.setForeground(Color.white);
+		nameField.setBackground(new Color(34,34,34));
+		nameField.setCaretColor(Color.white);
+		nameField.setPreferredSize(new Dimension(nameField.getPreferredSize().width*5/2,nameField.getPreferredSize().height));
+		nameField.addActionListener(e->{
+			this.requestFocusInWindow();
+			client.name=nameField.getText();
+		});
+		
+		namePanel=new JPanel();
+		namePanel.add(nameLabel);
+		namePanel.add(nameField);
+		namePanel.setOpaque(false);
+		
+		amountLabel=new JLabel("       Expected Monthly Amount: $"+client.expectedAmt);
 		amountLabel.setForeground(Color.white);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
 		
@@ -127,7 +148,7 @@ class ClientBox extends JPanel{
          gbc.gridy = 0;
          gbc.weightx = 0.8; // relative width
          gbc.weighty = 0.5;
-         add(nameLabel, gbc);
+         add(namePanel, gbc);
 
          // Row 0, Col 1 (Top Right)
          gbc.anchor = GridBagConstraints.CENTER;
