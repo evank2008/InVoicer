@@ -40,7 +40,6 @@ public ClientPanel() {
 		
 		JButton addButton = new JButton("Add Client");
 		//40 160 230
-		System.out.println(Invoicer.onMac);
 		if(Invoicer.onMac) {
 			addButton.setForeground(Color.black);
 		} else {
@@ -97,7 +96,7 @@ class ClientBox extends JPanel{
 	JLabel amountLabel;
 	JLabel doctorLabel;
 	JTextField nameField, amountField, doctorField;
-	JPanel namePanel, amountPanel, doctorPanel;
+	JPanel namePanel, amountPanel;
 	JButton contactsButton;
 	public ClientBox(Client client) {
 		super();
@@ -126,7 +125,6 @@ class ClientBox extends JPanel{
 		nameField.setPreferredSize(new Dimension(nameField.getPreferredSize().width*5/2,nameField.getPreferredSize().height));
 		nameField.addActionListener(e->{
 			this.requestFocusInWindow();
-			client.name=nameField.getText();
 		});
 		
 		namePanel=new JPanel();
@@ -134,16 +132,36 @@ class ClientBox extends JPanel{
 		namePanel.add(nameField);
 		namePanel.setOpaque(false);
 		
-		amountLabel=new JLabel("       Expected Monthly Amount: $"+client.expectedAmt);
+		amountLabel=new JLabel("       Expected Monthly Amount: $");
 		amountLabel.setForeground(Color.white);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
+		
+		amountField=new JTextField(""+client.expectedAmt);
+		amountField.setFont(amountLabel.getFont());
+		amountField.setForeground(Color.white);
+		amountField.setBackground(new Color(34,34,34));
+		amountField.setCaretColor(Color.white);
+		amountField.setPreferredSize(new Dimension(amountField.getPreferredSize().width*5/2,amountLabel.getPreferredSize().height/2));
+		amountField.addActionListener(e->{
+			this.requestFocusInWindow();
+		});
+		//amountPanel is tricky to work with
+		//adding anything but the label breaks all the gui
+		//even just a regular panel with only the label in it
+		amountPanel=new JPanel();
+		amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
+		amountPanel.add(amountLabel);
+		amountPanel.add(amountField);
+		amountPanel.setOpaque(false);
 		
 		doctorField=new JTextField(client.doctor);
 		doctorField.setForeground(Color.white);
 		doctorField.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
 		doctorField.setBackground(new Color(34,34,34));
 		doctorField.setCaretColor(Color.white);
-		nameField.setPreferredSize(new Dimension(doctorField.getPreferredSize().width*5/2,doctorField.getPreferredSize().height));
+		doctorField.addActionListener(e->{
+			this.requestFocusInWindow();
+		});
 
 		
 		contactsButton = new JButton("Contacts");
@@ -174,7 +192,8 @@ class ClientBox extends JPanel{
          gbc.gridy = 1;
          gbc.weightx = 0.8;
          gbc.weighty = 0.5;
-         add(amountLabel, gbc);
+         add(amountPanel, gbc);
+         //:(
 
          // Row 1, Col 1 (Bottom Right)
          gbc.anchor = GridBagConstraints.PAGE_START;
