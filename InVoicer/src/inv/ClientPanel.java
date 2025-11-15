@@ -16,7 +16,7 @@ import javax.swing.border.LineBorder;
 //this class should display the clients, let you add/remove clients, input data about clients
 //have a row of clientboxes on the left side
 //buttons on the right side?
-//TODO:line 91, replace the jlabels with jpanels that hold a label and a textfield to allow editing
+//TODO: figure out when to call ClientPanel.updateClientData() to save the data in the textfields
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
@@ -66,6 +66,20 @@ void addClient() {
 	//after adding clientbox to clientlist, should actually draw the new boxpanel? or make that its own function that reads through the entire list and sets it up
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
+}
+static void updateClientData() {
+	//parse each clientbox's textfields and store their data in their client's variables
+	for(ClientBox cb:clientList) {
+		cb.client.doctor=cb.doctorField.getText();
+		cb.client.name=cb.nameField.getText();
+		try {
+		cb.client.expectedAmt=Double.parseDouble((cb.amountField.getText()));
+		} catch(Exception e) {
+			cb.client.expectedAmt=0.0;
+			cb.amountField.setText("Error!");
+		}
+		
+	}
 }
 }
 
