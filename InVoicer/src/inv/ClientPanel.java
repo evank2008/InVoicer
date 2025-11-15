@@ -40,7 +40,13 @@ public ClientPanel() {
 		
 		JButton addButton = new JButton("Add Client");
 		//40 160 230
-		addButton.setForeground(Color.white);
+		System.out.println(Invoicer.onMac);
+		if(Invoicer.onMac) {
+			addButton.setForeground(Color.black);
+		} else {
+			addButton.setForeground(Color.white);
+		}
+		
 		addButton.setBackground(new Color(40,160,230));
 		addButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
 		addButton.addActionListener(e->addClient());
@@ -95,6 +101,7 @@ class ClientBox extends JPanel{
 	JButton contactsButton;
 	public ClientBox(Client client) {
 		super();
+
 		this.client=client;
 		this.setPreferredSize(new Dimension(ClientPanel.boxPanel.getPreferredSize().width*39/40,(int)(ClientPanel.boxPanel.getPreferredSize().height/7.6)));
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
@@ -131,13 +138,17 @@ class ClientBox extends JPanel{
 		amountLabel.setForeground(Color.white);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
 		
-		doctorLabel=new JLabel(client.doctor);
-		doctorLabel.setForeground(Color.white);
-		doctorLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
+		doctorField=new JTextField(client.doctor);
+		doctorField.setForeground(Color.white);
+		doctorField.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
+		doctorField.setBackground(new Color(34,34,34));
+		doctorField.setCaretColor(Color.white);
+		nameField.setPreferredSize(new Dimension(doctorField.getPreferredSize().width*5/2,doctorField.getPreferredSize().height));
+
 		
-		JButton contactsButton = new JButton("Contacts");
+		contactsButton = new JButton("Contacts");
 		//40 160 230
-		contactsButton.setForeground(Color.white);
+		contactsButton.setForeground(Invoicer.onMac?Color.black:Color.white);
 		contactsButton.setBackground(new Color(40,160,230));
 		contactsButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,this.getPreferredSize().height/5));
 		contactsButton.addActionListener(e->{});//TODO: made button show contacts or something idk
@@ -155,7 +166,7 @@ class ClientBox extends JPanel{
          gbc.gridx = 1;
          gbc.gridy = 0;
          gbc.weightx = 0.2;
-         add(doctorLabel, gbc);
+         add(doctorField, gbc);
 
          // Row 1, Col 0 (Bottom Left)
          gbc.anchor = GridBagConstraints.WEST;

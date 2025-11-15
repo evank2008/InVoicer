@@ -10,14 +10,19 @@ import javax.swing.*;
 //		add file saving/reading system
 public class Invoicer {
 	static JFrame frame;
-	static ClientPanel clp = new ClientPanel();
-	static CreatorPanel crp = new CreatorPanel();
-	static RecordsPanel rp = new RecordsPanel();
-	static SelectionScreen ss = new SelectionScreen();
+	static ClientPanel clp;
+	static CreatorPanel crp;
+	static RecordsPanel rp;
+	static SelectionScreen ss;
+	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
 	public static final int WIDTH = 800, HEIGHT = 700;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		clp = new ClientPanel();
+		crp = new CreatorPanel();
+		rp = new RecordsPanel();
+		ss = new SelectionScreen();
 		new Invoicer();
 	}
 
