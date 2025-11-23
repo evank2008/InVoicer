@@ -14,8 +14,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 //this class should display the clients, let you add/remove clients, input data about clients
-//have a row of clientboxes on the left side
-//buttons on the right side?
+//TODO: option to delete clients?
 
 
 public class ClientPanel extends MenuPanel {
@@ -113,6 +112,7 @@ class ClientBox extends JPanel{
 	JTextField nameField, amountField, doctorField;
 	JPanel namePanel, amountPanel;
 	JButton contactsButton;
+	Color darkWhite = new Color(220,220,220);
 	public ClientBox(Client client) {
 		super();
 
@@ -129,17 +129,19 @@ class ClientBox extends JPanel{
 		 * name, amount, doctor, contacts
 		 */
 		nameLabel=new JLabel("  ");
-		nameLabel.setForeground(Color.white);
+		nameLabel.setForeground(darkWhite);
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height*7/24)));
 		
 		nameField=new JTextField(client.name);
 		nameField.setFont(nameLabel.getFont());
-		nameField.setForeground(Color.white);
+		nameField.setForeground(darkWhite);
 		nameField.setBackground(new Color(34,34,34));
 		nameField.setCaretColor(Color.white);
 		nameField.setPreferredSize(new Dimension(nameField.getPreferredSize().width*5/2,nameField.getPreferredSize().height));
 		nameField.addActionListener(e->{
 			this.requestFocusInWindow();
+			ClientPanel.updateClientData();
+
 		});
 		
 		namePanel=new JPanel();
@@ -148,17 +150,19 @@ class ClientBox extends JPanel{
 		namePanel.setOpaque(false);
 		
 		amountLabel=new JLabel("       Expected Monthly Amount: $");
-		amountLabel.setForeground(Color.white);
+		amountLabel.setForeground(darkWhite);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
 		
 		amountField=new JTextField(""+client.expectedAmt);
 		amountField.setFont(amountLabel.getFont());
-		amountField.setForeground(Color.white);
+		amountField.setForeground(darkWhite);
 		amountField.setBackground(new Color(34,34,34));
 		amountField.setCaretColor(Color.white);
 		amountField.setPreferredSize(new Dimension(amountField.getPreferredSize().width*5/2,amountLabel.getPreferredSize().height/2));
 		amountField.addActionListener(e->{
 			this.requestFocusInWindow();
+			ClientPanel.updateClientData();
+
 		});
 		//amountPanel is tricky to work with
 		//adding anything but the label breaks all the gui
@@ -170,21 +174,25 @@ class ClientBox extends JPanel{
 		amountPanel.setOpaque(false);
 		
 		doctorField=new JTextField(client.doctor);
-		doctorField.setForeground(Color.white);
+		doctorField.setForeground(darkWhite);
 		doctorField.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
 		doctorField.setBackground(new Color(34,34,34));
 		doctorField.setCaretColor(Color.white);
 		doctorField.addActionListener(e->{
 			this.requestFocusInWindow();
+			ClientPanel.updateClientData();
 		});
 
 		
 		contactsButton = new JButton("Contacts");
 		//40 160 230
-		contactsButton.setForeground(Invoicer.onMac?Color.black:Color.white);
+		contactsButton.setForeground(Invoicer.onMac?Color.black:darkWhite);
 		contactsButton.setBackground(new Color(40,160,230));
 		contactsButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,this.getPreferredSize().height/5));
-		contactsButton.addActionListener(e->{});//TODO: made button show contacts or something idk
+		contactsButton.addActionListener(e->{
+			ClientPanel.updateClientData();
+			ContactsFrame frame = new ContactsFrame(client);
+		});//TODO: made button show contacts or something idk
 		contactsButton.setPreferredSize(new Dimension(this.getPreferredSize().width/6,this.getPreferredSize().height/3));
 
 		gbc.anchor = GridBagConstraints.WEST;
@@ -222,5 +230,19 @@ class ClientBox extends JPanel{
 		//add(amountLabel,BorderLayout.WEST);
 		//at the end
 		ClientPanel.clientList.add(this);
+	}
+	class ContactsFrame extends JFrame {
+		//how should this look?
+		//its basically just a list of Contacts[name, email address, role]
+		//i think it should have a slightly different layout compared to clientpanel
+		//more of a bare-bones vibe?
+		ArrayList<Contact> contactList;
+		
+		public ContactsFrame(Client client) {
+			super(client.name+" Contacts");
+			contactList=client.contactList;
+			setSize(Invoicer.WIDTH*2/3,Invoicer.HEIGHT*2/3);
+			setVisible(true);
+		}
 	}
 }
