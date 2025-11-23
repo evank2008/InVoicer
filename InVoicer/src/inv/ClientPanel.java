@@ -16,7 +16,8 @@ import javax.swing.border.LineBorder;
 //this class should display the clients, let you add/remove clients, input data about clients
 //have a row of clientboxes on the left side
 //buttons on the right side?
-//TODO: figure out when to call ClientPanel.updateClientData() to save the data in the textfields
+
+
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();

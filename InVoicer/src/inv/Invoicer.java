@@ -8,6 +8,7 @@ import javax.swing.*;
 //main class for running and holding the central frame
 //TODO: line 25 add icons to the tabs
 //		add file saving/reading system
+//		maybe just make it save on close? with the jframe
 public class Invoicer {
 	static JFrame frame;
 	static ClientPanel clp;
@@ -42,8 +43,21 @@ public class Invoicer {
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				saveAllData();
+				System.exit(0);
+			}
+		});
 		
+	}
+	void saveAllData() {
+		ClientPanel.updateClientData();
+		//TODO: make this save to files etc
+		//also probably update the data for the other two panels when you get around to them
+		//cant really write the data aving code until all the data fields are set up anyway
 	}
 
 }
