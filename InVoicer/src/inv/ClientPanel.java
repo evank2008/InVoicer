@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import legacy.Invoice;
@@ -252,6 +253,9 @@ class ClientBox extends JPanel{
 		JTable table;
 		JButton addButton;
 		Client client;
+		TableModelListener listener = ((e)->{
+			updateClientContacts();
+		});
 		
 		public ContactsFrame(Client client) {
 			super(client.name+" Contacts");
@@ -278,7 +282,7 @@ class ClientBox extends JPanel{
 			addButton=new JButton("Add");
 			addButton.addActionListener(e->{
 				TableExtender.extend(table);
-				table.repaint();
+				table.getModel().addTableModelListener(listener);
 				});
 			buttonPanel.add(addButton);
 			
@@ -307,7 +311,7 @@ class ClientBox extends JPanel{
 
 			table.setRowHeight(t.height/8);
 			table.getTableHeader().setReorderingAllowed(false);
-			//table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			table.getModel().addTableModelListener(listener);
 			
 			tablePanel.add(new JScrollPane(table));
 		}
