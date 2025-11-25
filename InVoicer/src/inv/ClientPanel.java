@@ -12,6 +12,9 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+
+import legacy.Invoice;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
@@ -69,6 +72,7 @@ void addClient() {
 }
 static void updateClientData() {
 	//parse each clientbox's textfields and store their data in their client's variables
+	//notably, doesn't save data on contacts
 	for(ClientBox cb:clientList) {
 		cb.client.doctor=cb.doctorField.getText();
 		cb.client.name=cb.nameField.getText();
@@ -101,6 +105,9 @@ class Contact {
 	public Contact(String name, String address, String role) {
 		this(name, address);
 		this.role=role;
+	}
+	public String[] toArray() {
+		return new String[]{name,role,emailAddress};
 	}
 }
 class ClientBox extends JPanel{
@@ -231,18 +238,85 @@ class ClientBox extends JPanel{
 		//at the end
 		ClientPanel.clientList.add(this);
 	}
+}
 	class ContactsFrame extends JFrame {
 		//how should this look?
 		//its basically just a list of Contacts[name, email address, role]
 		//i think it should have a slightly different layout compared to clientpanel
 		//more of a bare-bones vibe?
+		//one button or two at top for add/delete then just a jtable
+		//TODO: make sure changes to contacts in here are actually saved to the client
 		ArrayList<Contact> contactList;
+		JPanel buttonPanel;
+		JPanel tablePanel;
+		JTable table;
+		JButton addButton;
+		Client client;
 		
 		public ContactsFrame(Client client) {
 			super(client.name+" Contacts");
+			this.client=client;
 			contactList=client.contactList;
-			setSize(Invoicer.WIDTH*2/3,Invoicer.HEIGHT*2/3);
+			setSize(Invoicer.WIDTH*2/3,Invoicer.HEIGHT*80/100);
 			setVisible(true);
+			setLayout(new BorderLayout());
+			
+			addWindowListener(new java.awt.event.WindowAdapter() {
+				@Override
+				public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					updateClientContacts();
+				}
+			});
+			
+			buttonPanel=new JPanel();
+			buttonPanel.setBackground(Color.red);
+			Dimension d = this.getSize();
+			d.height/=8;
+			buttonPanel.setPreferredSize(d);
+			add(buttonPanel, BorderLayout.NORTH);
+			
+			addButton=new JButton("Add");
+			addButton.addActionListener(e->{
+				TableExtender.extend(table);
+				table.repaint();
+				});
+			buttonPanel.add(addButton);
+			
+			tablePanel=new JPanel();
+			tablePanel.setBackground(Color.blue);
+			Dimension t = new Dimension(d);
+			t.height=this.getHeight()*7/8;
+			tablePanel.setPreferredSize(d);
+			add(tablePanel);
+			
+			
+			String[][] data = new String[client.contactList.size()][3];
+			for(int i = 0; i<client.contactList.size();i++) {
+				data[i]=client.contactList.get(i).toArray();
+				}
+			 
+			/*
+			String[][] data = new String[2][3];
+			for(int i = 0; i<2;i++) {
+				data[i]= new String[]{"Jeremy Willis","Reconnaisance Field Agent","awesomesauce@aol.com"};
+			}
+			*/
+			
+			String[] titles = { "Name","Title","E-Mail Address"};
+			table = new JTable(new DefaultTableModel(data,titles));
+
+			table.setRowHeight(t.height/8);
+			table.getTableHeader().setReorderingAllowed(false);
+			//table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			
+			tablePanel.add(new JScrollPane(table));
+		}
+		void updateClientContacts() {
+
+			// updates client's contactlist with the current table data
+			client.contactList.clear();
+			for (int i = 0; i < table.getRowCount(); i++) {
+				client.contactList.add(new Contact((String)table.getValueAt(i, 0),(String)table.getValueAt(i, 2),(String)table.getValueAt(i, 1)));
+			}		
 		}
 	}
-}
