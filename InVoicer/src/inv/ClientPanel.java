@@ -273,7 +273,7 @@ class ClientBox extends JPanel{
 			});
 			
 			buttonPanel=new JPanel();
-			buttonPanel.setBackground(Color.red);
+			buttonPanel.setBackground(new Color(36,36,36));
 			Dimension d = this.getSize();
 			d.height/=8;
 			buttonPanel.setPreferredSize(d);
@@ -284,10 +284,20 @@ class ClientBox extends JPanel{
 				TableExtender.extend(table);
 				table.getModel().addTableModelListener(listener);
 				});
+			addButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width-80,buttonPanel.getPreferredSize().height-10));
+			addButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,buttonPanel.getPreferredSize().height*5/12));
+			if(Invoicer.onMac) {
+				addButton.setForeground(Color.black);
+			} else {
+				addButton.setForeground(Color.white);
+			}
+			
+			addButton.setBackground(new Color(40,160,230));
+			
 			buttonPanel.add(addButton);
 			
 			tablePanel=new JPanel();
-			tablePanel.setBackground(Color.blue);
+			tablePanel.setBackground(new Color(36,36,36));
 			Dimension t = new Dimension(d);
 			t.height=this.getHeight()*7/8;
 			tablePanel.setPreferredSize(d);
@@ -312,8 +322,16 @@ class ClientBox extends JPanel{
 			table.setRowHeight(t.height/8);
 			table.getTableHeader().setReorderingAllowed(false);
 			table.getModel().addTableModelListener(listener);
+			table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*1.2)));
+			table.setBackground(new Color(31,31,31));
+			table.setForeground(Color.white);
+			table.setGridColor(Color.white);
+			table.setSelectionBackground(new Color(20,85,122));
 			
-			tablePanel.add(new JScrollPane(table));
+			JScrollPane pane = new JScrollPane(table);
+			pane.getViewport().setBackground(new Color(50,50,50));
+			tablePanel.add(pane);
+			
 		}
 		void updateClientContacts() {
 
