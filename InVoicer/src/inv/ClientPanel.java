@@ -25,15 +25,17 @@ public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
 	JScrollPane scrollPane = new JScrollPane(boxPanel);
+	
 	//maybe put these in a jscrollpane?
 	//make a jscrollpane and a second jpanel
 	JPanel buttonPanel = new JPanel();
 	JPanel bufferPanel = new JPanel();
 public ClientPanel() {
 		super();
-		//add(new JLabel("Client Panel"));
 		//two panels - one with the clientboxes one with the control buttons
+		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+		
 		boxPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT*9/10));
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
 		
@@ -66,6 +68,8 @@ void addClient() {
 	clientList.add(cbox);
 	boxPanel.add(cbox);
 	boxPanel.paintAll(boxPanel.getGraphics());
+	boxPanel.revalidate();
+	boxPanel.repaint();
 	
 	//after adding clientbox to clientlist, should actually draw the new boxpanel? or make that its own function that reads through the entire list and sets it up
 	//i think adding every clientbox should be one function and adding a single one should happen here
