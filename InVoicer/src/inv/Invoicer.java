@@ -16,7 +16,7 @@ public class Invoicer {
 	static RecordsPanel rp;
 	static SelectionScreen ss;
 	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
-	public static final int WIDTH = 800, HEIGHT = 700;
+	public static final int WIDTH = 700, HEIGHT = 700;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -40,6 +40,12 @@ public class Invoicer {
 		clp.setBackground(new Color(36,36,36));
 		crp.setBackground(new Color(36,36,36));
 		rp.setBackground(new Color(36,36,36));
+		
+		ss.addChangeListener(e-> {
+	        if(e.getSource()==crp) {
+	        	System.out.println("crp cslected");
+	        }
+	    });
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);

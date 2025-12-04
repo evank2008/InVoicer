@@ -91,6 +91,8 @@ static void updateClientData() {
 		}
 		
 	}
+	//also update creator panel
+	Invoicer.crp.updateClientPicker();
 }
 }
 
@@ -99,7 +101,9 @@ class Client {
 	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
-
+public String toString() {
+	return name;
+}
 }
 class Contact {
 	String name;
@@ -244,7 +248,6 @@ class ClientBox extends JPanel{
 		//add(nameLabel,BorderLayout.NORTH);
 		//add(amountLabel,BorderLayout.WEST);
 		//at the end
-		ClientPanel.clientList.add(this);
 	}
 }
 	class ContactsFrame extends JFrame {
