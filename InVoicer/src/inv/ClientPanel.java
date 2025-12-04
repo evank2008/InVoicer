@@ -34,9 +34,11 @@ public ClientPanel() {
 		super();
 		//two panels - one with the clientboxes one with the control buttons
 		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
+		Dimension boxPanelSize = new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT*9/10);
 		
-		boxPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT*9/10));
+		boxPanel.setPreferredSize(boxPanelSize);
+		//scrollPane.setPreferredSize(boxPanelSize);
+
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
 		
 		boxPanel.setBackground(new Color(31,31,31));
@@ -69,7 +71,7 @@ void addClient() {
 	boxPanel.add(cbox);
 	boxPanel.paintAll(boxPanel.getGraphics());
 	boxPanel.revalidate();
-	boxPanel.repaint();
+	//boxPanel.repaint();
 	
 	//after adding clientbox to clientlist, should actually draw the new boxpanel? or make that its own function that reads through the entire list and sets it up
 	//i think adding every clientbox should be one function and adding a single one should happen here
@@ -130,6 +132,7 @@ class ClientBox extends JPanel{
 
 		this.client=client;
 		this.setPreferredSize(new Dimension(ClientPanel.boxPanel.getPreferredSize().width*39/40,(int)(ClientPanel.boxPanel.getPreferredSize().height/7.6)));
+		this.setMaximumSize(getPreferredSize());
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
@@ -331,7 +334,7 @@ class ClientBox extends JPanel{
 			table.setForeground(Color.white);
 			table.setGridColor(Color.white);
 			table.setSelectionBackground(new Color(20,85,122));
-			
+			table.setSelectionForeground(Color.white);		
 			JScrollPane pane = new JScrollPane(table);
 			pane.getViewport().setBackground(new Color(50,50,50));
 			tablePanel.add(pane);
