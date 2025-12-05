@@ -1,6 +1,7 @@
 package inv;
 
 import java.awt.Color;
+import java.time.LocalDate;
 
 import javax.swing.JLabel;
 
@@ -12,5 +13,10 @@ public class RecordsPanel extends MenuPanel {
 		super();
 		add(new JLabel("Records Panel"));
 		this.getComponent(0).setForeground(Color.white);
+	}
+
+	public static void newRecord(Client client, String service, double amount, LocalDate serviceDate,
+			LocalDate billDate) {
+		//make a record
 	}
 }
