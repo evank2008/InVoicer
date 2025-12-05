@@ -164,7 +164,7 @@ public class CreatorPanel extends MenuPanel {
 	}
 	void generatePDF(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate) {
 		//TODO this
-		
+		//hepl
 		//on success:
 		successLabel.setVisible(true);
 		RecordsPanel.newRecord(client,service,amount,serviceDate,billDate);
