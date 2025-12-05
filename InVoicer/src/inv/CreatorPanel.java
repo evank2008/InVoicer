@@ -4,6 +4,8 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import com.github.lgooddatepicker.components.DatePicker;
+
 //this class should allow you to create an invoice
 //autopull from existing clients ideally but give customization options
 //then generate a pdf of it
@@ -17,6 +19,7 @@ import javax.swing.*;
 		}
  */
 public class CreatorPanel extends MenuPanel {
+	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel;
 	JTextField serviceField;
 	JTextField amountField;
@@ -67,7 +70,8 @@ public class CreatorPanel extends MenuPanel {
 		add(amountField);
 		add(bufferPanel());
 		
-
+		serviceDatePicker = new DatePicker();
+		add(serviceDatePicker);
 	}
 	public void updateClientPicker() {
 		((DefaultComboBoxModel<Client>) clientPicker.getModel()).removeAllElements();
