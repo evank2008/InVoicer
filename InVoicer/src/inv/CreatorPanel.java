@@ -45,7 +45,7 @@ public class CreatorPanel extends MenuPanel {
 		clientLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/25));
 		clientLabel.setAlignmentX(LEFT_ALIGNMENT);
 		clientPicker.setFont(new Font(Font.SANS_SERIF, Font.BOLD, Invoicer.HEIGHT/30));
-
+		
 		add(clientLabel);
 		add(clientPicker);
 		
@@ -95,6 +95,12 @@ public class CreatorPanel extends MenuPanel {
 		add(billDatePicker);
 		add(bufferPanel());
 		add(bufferPanel());
+		
+		clientPicker.addItemListener(e->{
+			//autofill the other boxes with client data
+			Client client = (Client)e.getItem();
+			amountField.setText(""+client.expectedAmt);
+		});
 		
 		generateButton = new JButton("Generate PDF");
 		if(Invoicer.onMac) {
