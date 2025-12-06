@@ -20,6 +20,13 @@ import legacy.Invoice;
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
 
+//prospectiv hierarchy
+//clientpanel(this)
+//holds buttonpanel and scrollpane
+//scrollpane holds boxpanel
+//boxpanel is where clientboxes are added and also bufferpanels
+
+//currently boxpanel and buttonpanel have a preferredsize
 
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
@@ -29,22 +36,26 @@ public class ClientPanel extends MenuPanel {
 	//maybe put these in a jscrollpane?
 	//make a jscrollpane and a second jpanel
 	JPanel buttonPanel = new JPanel();
-	JPanel bufferPanel = new JPanel();
+	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*19/20,Invoicer.HEIGHT*2/15);
 public ClientPanel() {
 		super();
 		//two panels - one with the clientboxes one with the control buttons
 		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		Dimension boxPanelSize = new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT*9/10);
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		
-		boxPanel.setPreferredSize(boxPanelSize);
+		//boxPanel.setPreferredSize(boxPanelSize);
 		//scrollPane.setPreferredSize(boxPanelSize);
 
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
+		buttonPanel.setMaximumSize(buttonPanel.getPreferredSize());
 		
 		boxPanel.setBackground(new Color(31,31,31));
 		boxPanel.setBorder(new LineBorder(new Color(201,201,201),1));
+		
+		boxPanel.setLayout(new BoxLayout(boxPanel,BoxLayout.Y_AXIS));
+
+		
 		buttonPanel.setBackground(new Color(20,85,122));
-		bufferPanel.setBackground(Color.green);
 		
 		JButton addButton = new JButton("Add Client");
 		//40 160 230
@@ -56,7 +67,9 @@ public ClientPanel() {
 		
 		addButton.setBackground(new Color(40,160,230));
 		addButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
-		addButton.addActionListener(e->addClient());
+		addButton.addActionListener(e->{
+			addClient();
+		});
 		addButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width-10,buttonPanel.getPreferredSize().height-10));
 		
 		buttonPanel.add(addButton);
@@ -68,9 +81,20 @@ public ClientPanel() {
 void addClient() {
 	ClientBox cbox = new ClientBox(new Client());
 	clientList.add(cbox);
+	
+	
+	JPanel buffer = new JPanel();
+	buffer.setPreferredSize(new Dimension(25,Invoicer.HEIGHT/40));
+	buffer.setMaximumSize(new Dimension(25,Invoicer.HEIGHT/100));
+	buffer.setBackground(Color.green);
+	boxPanel.add(buffer);
 	boxPanel.add(cbox);
-	boxPanel.paintAll(boxPanel.getGraphics());
+	
+	
 	boxPanel.revalidate();
+	boxPanel.repaint();
+	
+	this.paintAll(getGraphics());
 	//boxPanel.repaint();
 	
 	//after adding clientbox to clientlist, should actually draw the new boxpanel? or make that its own function that reads through the entire list and sets it up
@@ -122,6 +146,8 @@ class Contact {
 	}
 }
 class ClientBox extends JPanel{
+	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*19/20,Invoicer.HEIGHT*2/15);
+
 	//this displays a client's data in a box
 	Client client;
 	JLabel nameLabel;
@@ -135,8 +161,8 @@ class ClientBox extends JPanel{
 		super();
 
 		this.client=client;
-		this.setPreferredSize(new Dimension(ClientPanel.boxPanel.getPreferredSize().width*39/40,(int)(ClientPanel.boxPanel.getPreferredSize().height/7.6)));
-		this.setMaximumSize(getPreferredSize());
+		this.setPreferredSize(clientBoxSize);
+		this.setMaximumSize(clientBoxSize);
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
