@@ -64,6 +64,7 @@ public class Invoicer {
 		//TODO: make this save to files etc
 		//also probably update the data for the other two panels when you get around to them
 		//cant really write the data aving code until all the data fields are set up anyway
+		//no data to save for creatorpanel anyway
 	}
 
 }

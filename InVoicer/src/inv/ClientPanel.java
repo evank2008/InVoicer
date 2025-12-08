@@ -33,8 +33,6 @@ public class ClientPanel extends MenuPanel {
 	static JPanel boxPanel = new JPanel();
 	JScrollPane scrollPane = new JScrollPane(boxPanel);
 	
-	//maybe put these in a jscrollpane?
-	//make a jscrollpane and a second jpanel
 	JPanel buttonPanel = new JPanel();
 	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*19/20,Invoicer.HEIGHT*2/15);
 public ClientPanel() {
@@ -42,9 +40,6 @@ public ClientPanel() {
 		//two panels - one with the clientboxes one with the control buttons
 		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-		
-		//boxPanel.setPreferredSize(boxPanelSize);
-		//scrollPane.setPreferredSize(boxPanelSize);
 
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
 		buttonPanel.setMaximumSize(buttonPanel.getPreferredSize());
@@ -58,7 +53,6 @@ public ClientPanel() {
 		buttonPanel.setBackground(new Color(20,85,122));
 		
 		JButton addButton = new JButton("Add Client");
-		//40 160 230
 		if(Invoicer.onMac) {
 			addButton.setForeground(Color.black);
 		} else {
@@ -76,7 +70,6 @@ public ClientPanel() {
 		
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);		
 		add(buttonPanel);
-		//add(boxPanel);
 		add(scrollPane);
 	}
 void addClient() {
@@ -96,9 +89,6 @@ void addClient() {
 	boxPanel.repaint();
 	
 	this.paintAll(getGraphics());
-	//boxPanel.repaint();
-	
-	//after adding clientbox to clientlist, should actually draw the new boxpanel? or make that its own function that reads through the entire list and sets it up
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
 }
@@ -116,7 +106,7 @@ static void updateClientData() {
 		}
 		
 	}
-	//also update creator panel
+	//also update creator panel picker
 	Invoicer.crp.updateClientPicker();
 }
 }
@@ -283,7 +273,6 @@ class ClientBox extends JPanel{
 		//i think it should have a slightly different layout compared to clientpanel
 		//more of a bare-bones vibe?
 		//one button or two at top for add/delete then just a jtable
-		//TODO: make sure changes to contacts in here are actually saved to the client
 		ArrayList<Contact> contactList;
 		JPanel buttonPanel;
 		JPanel tablePanel;
@@ -349,7 +338,7 @@ class ClientBox extends JPanel{
 			/*
 			String[][] data = new String[2][3];
 			for(int i = 0; i<2;i++) {
-				data[i]= new String[]{"Jeremy Willis","Reconnaisance Field Agent","awesomesauce@aol.com"};
+				data[i]= new String[]{"Jeremy Willis","Reconnaissance Field Agent","awesomesauce@aol.com"};
 			}
 			*/
 			
