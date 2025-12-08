@@ -74,6 +74,7 @@ public ClientPanel() {
 		
 		buttonPanel.add(addButton);
 		
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);		
 		add(buttonPanel);
 		//add(boxPanel);
 		add(scrollPane);
@@ -86,7 +87,7 @@ void addClient() {
 	JPanel buffer = new JPanel();
 	buffer.setPreferredSize(new Dimension(25,Invoicer.HEIGHT/40));
 	buffer.setMaximumSize(new Dimension(25,Invoicer.HEIGHT/100));
-	buffer.setBackground(Color.green);
+	buffer.setBackground(new Color(31,31,31));
 	boxPanel.add(buffer);
 	boxPanel.add(cbox);
 	
@@ -146,7 +147,7 @@ class Contact {
 	}
 }
 class ClientBox extends JPanel{
-	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*19/20,Invoicer.HEIGHT*2/15);
+	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*18/20,Invoicer.HEIGHT*2/15);
 
 	//this displays a client's data in a box
 	Client client;
