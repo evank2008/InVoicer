@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -73,6 +74,17 @@ public class RecordsPanel extends MenuPanel {
 		viewButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
 		inputButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/2-20,buttonPanel.getPreferredSize().height-10));
 		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/2-20,buttonPanel.getPreferredSize().height-10));
+		
+		inputButton.addActionListener(e->{
+			int row = table.getSelectedRow();
+			if(row==-1) {
+				JOptionPane.showMessageDialog(null, "Select an invoice");
+			} else {
+				//check if selected row has already been filled
+				//if so, give a confimration message asking if sure want to override already existing check data
+				//then make a pop up frame to input the check
+			}
+		});
 		
 		buttonPanel.add(inputButton);
 		bufferPanel.setPreferredSize(new Dimension(10,10));
