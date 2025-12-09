@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -12,13 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //let you push a button to say that an invoice has been paid, input check data
-//not sure exactly how many columns should be in the table
-//TODO figure that out
-//bill sent date, service date, service, client name, amount, payment status/check data, notes
 
 //ideal layout:
 /*
@@ -46,9 +45,10 @@ public class RecordsPanel extends MenuPanel {
 	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
 	JScrollPane tablePane;
-	ArrayList<Record> recordsList = new ArrayList<Record>();
+	static ArrayList<Record> recordsList = new ArrayList<Record>();
 	public RecordsPanel() {
 		super();
+		loadRecordsFile();
 		bufferPanel = new JPanel();
 		
 		buttonPanel = new JPanel();
@@ -79,15 +79,37 @@ public class RecordsPanel extends MenuPanel {
 		buttonPanel.add(viewButton);
 		
 		add(buttonPanel);
+		
+		table.setRowHeight(32);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setAutoCreateRowSorter(true);
+		tablePane = new JScrollPane(table);
+		table.setFillsViewportHeight(true);
+		
+		add(tablePane);
+		
 	}
 
-	public static void newRecord(Client client, String service, double amount, LocalDate serviceDate,
+	public void newRecord(Client client, String service, double amount, LocalDate serviceDate,
 			LocalDate billDate) {
 		//make a record and add to recordslist
+		new Record(client.name, service, amount, serviceDate, billDate);
+		updateTable();
+	}
+	void loadRecordsFile() {
+		//TODO this
+		updateTable();
 	}
 	void updateTable() {
 		//fills table with all data from recordslist
-		
+		String[][] array = new String[recordsList.size()][7];
+		for(int i = 0; i<recordsList.size();i++) {
+			array[i]=recordsList.get(i).toStrArray();
+		}
+		String[] titles = {"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"};
+	
+		table = new JTable(new DefaultTableModel(array,titles));
 	}
 }
 class Record {
@@ -111,13 +133,28 @@ class Record {
 		amount=amt;
 		serviceDate=sDate;
 		this.billDate=billDate;
-		check.paymentStatus=false;
 		notes="";
+		check=new Check();
+		
+		RecordsPanel.recordsList.add(this);
 	}
-	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes) {
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes, Check chk) {
+		//should probably be used only when loading from save file
 		this( name,  serv,  amt,  sDate,  billDate);
-		check.paymentStatus=status;
+		check=chk;
 		this.notes=notes;
+	}
+	public String[] toStrArray() {
+		String[] arr=new String[7];
+		//"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"
+		arr[0]=billDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		arr[1]=clientName;
+		arr[2]=serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		arr[3]=service;
+		arr[4]=""+amount;
+		arr[5]=check.toString();
+		arr[6]=notes;
+		return arr;
 	}
 
 }

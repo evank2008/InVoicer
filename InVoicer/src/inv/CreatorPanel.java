@@ -115,6 +115,7 @@ public class CreatorPanel extends MenuPanel {
 				generatePDF(client,service,amount,serviceDate,billDate);
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
+				//ex.printStackTrace();
 			}
 		});
 		generateButton.setPreferredSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/10));
@@ -152,11 +153,11 @@ public class CreatorPanel extends MenuPanel {
 		return bufferPanel;
 	}
 	void generatePDF(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate) {
-		//TODO this
+		//TODO this part where you generate a pdf
 		//hepl
 		//on success:
 		successLabel.setVisible(true);
-		RecordsPanel.newRecord(client,service,amount,serviceDate,billDate);
+		Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
 	}
 }
 
