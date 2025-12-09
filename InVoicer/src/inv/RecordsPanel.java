@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //let you push a button to say that an invoice has been paid, input check data
-
+//not sure exactly how many columns should be in the table
+//TODO figure that out
+//bill sent date, service date, service, client name, amount, payment status/check data, notes
 
 //ideal layout:
 /*
@@ -33,6 +36,9 @@ import javax.swing.JScrollPane;
  * 
  */
 public class RecordsPanel extends MenuPanel {
+	JPanel buttonPanel;
+	JTable table;
+	JScrollPane tablePane;
 	ArrayList<Record> recordsList = new ArrayList<Record>();
 	public RecordsPanel() {
 		super();
@@ -50,13 +56,44 @@ public class RecordsPanel extends MenuPanel {
 class Record {
 	//a record is one entry in the table
 	//per the specs, should store "sent invoice, payment status, check data"
-	//not quite sure what 'sent invoice' means yet - pdf or data?
-	Client client;
+	//will store invoice data
+	//TODO uhhh take in check data?
+	//check will store payment data ahahhaa
+	String clientName;
 	String service;
 	double amount;
 	LocalDate serviceDate;
 	LocalDate billDate;
-	boolean paymentStatus;
+	Check check;
 	String notes;
-	//TODO uhhh take in check data?
+	
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate) {
+		//fresh record off the creator panel
+		clientName=name;
+		service=serv;
+		amount=amt;
+		serviceDate=sDate;
+		this.billDate=billDate;
+		check.paymentStatus=false;
+		notes="";
+	}
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes) {
+		this( name,  serv,  amt,  sDate,  billDate);
+		check.paymentStatus=status;
+		this.notes=notes;
+	}
+
+}
+class Check {
+	//what??
+	//idk bro
+	//i think it needs some sort of number
+	boolean paymentStatus=false;
+	public String toString() {
+		if(paymentStatus) {
+			return "todo add check data";
+		} else {
+			return "Unpaid";
+		}
+	}
 }
