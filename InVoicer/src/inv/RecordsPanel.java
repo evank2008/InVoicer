@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -48,6 +49,7 @@ public class RecordsPanel extends MenuPanel {
 	static ArrayList<Record> recordsList = new ArrayList<Record>();
 	public RecordsPanel() {
 		super();
+		setLayout(new BorderLayout());
 		loadRecordsFile();
 		bufferPanel = new JPanel();
 		
@@ -78,16 +80,23 @@ public class RecordsPanel extends MenuPanel {
 		buttonPanel.add(bufferPanel);
 		buttonPanel.add(viewButton);
 		
-		add(buttonPanel);
+		add(buttonPanel,BorderLayout.NORTH);
 		
-		table.setRowHeight(32);
+		table.setRowHeight(Invoicer.HEIGHT*32/700);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setAutoCreateRowSorter(true);
 		tablePane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
 		
-		add(tablePane);
+		table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*1.4)));
+		table.setBackground(new Color(31,31,31));
+		table.setForeground(Color.white);
+		table.setGridColor(Color.white);
+		table.setSelectionBackground(new Color(20,85,122));
+		table.setSelectionForeground(Color.white);
+		
+		add(tablePane,BorderLayout.CENTER);
 		
 	}
 
@@ -109,7 +118,10 @@ public class RecordsPanel extends MenuPanel {
 		}
 		String[] titles = {"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"};
 	
-		table = new JTable(new DefaultTableModel(array,titles));
+		if(table==null) table = new JTable(new DefaultTableModel(array,titles));
+		else table.setModel(new DefaultTableModel(array,titles));
+		
+		this.paintAll(getGraphics());
 	}
 }
 class Record {

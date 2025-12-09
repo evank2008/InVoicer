@@ -10,6 +10,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
 //TODO: pdf generation
+//TODO: clear the fields after a successful generation
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel;
