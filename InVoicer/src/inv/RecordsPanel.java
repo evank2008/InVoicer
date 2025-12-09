@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -81,9 +82,27 @@ public class RecordsPanel extends MenuPanel {
 				JOptionPane.showMessageDialog(null, "Select an invoice");
 			} else {
 				//check if selected row has already been filled
-				//if so, give a confimration message asking if sure want to override already existing check data
-				//then make a pop up frame to input the check
+				if(!table.getValueAt(row, 5).equals("Unpaid")) {
+					if(JOptionPane.showConfirmDialog(null, "Are you sure you want to override the current check?")==0) {
+						new CheckInputFrame(recordsList.get(row).check);
+					}
+				} else {
+					new CheckInputFrame(recordsList.get(row).check);
+				}
+			
 			}
+		});
+		viewButton.addActionListener(e->{
+			int row = table.getSelectedRow();
+			if(row==-1) {
+				JOptionPane.showMessageDialog(null, "Select an invoice");
+			} else if(table.getValueAt(row, 5).equals("Unpaid")) {
+				JOptionPane.showMessageDialog(null, "No check saved");
+			} else {
+				new CheckViewFrame(recordsList.get(row).check);
+			}
+				
+			
 		});
 		
 		buttonPanel.add(inputButton);
@@ -215,5 +234,31 @@ class Check {
 		} else {
 			return "Unpaid";
 		}
+	}
+}
+class CheckInputFrame extends JFrame {
+	Check check;
+	JPanel panel;
+public CheckInputFrame(Check chk) {
+	super("Input Check Data");
+	check=chk;
+	panel=new JPanel();
+	setSize(Invoicer.WIDTH*8/10,Invoicer.HEIGHT*80/100);
+	setVisible(true);
+	add(panel);
+	panel.setBackground(new Color(10,43,61));
+}
+}
+class CheckViewFrame extends JFrame {
+	Check check;
+	JPanel panel;
+	public CheckViewFrame(Check chk) {
+		super("View Check Data");
+		panel=new JPanel();
+		check=chk;
+		setSize(Invoicer.WIDTH*4/5,Invoicer.HEIGHT*80/100);
+		setVisible(true);
+		add(panel);
+		panel.setBackground(new Color(10,43,61));
 	}
 }
