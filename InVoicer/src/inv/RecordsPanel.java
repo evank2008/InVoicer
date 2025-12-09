@@ -37,6 +37,7 @@ import javax.swing.JTable;
  */
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
+	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
 	JScrollPane tablePane;
 	ArrayList<Record> recordsList = new ArrayList<Record>();
@@ -85,13 +86,35 @@ class Record {
 
 }
 class Check {
-	//what??
-	//idk bro
-	//i think it needs some sort of number
-	boolean paymentStatus=false;
+	LocalDate checkDate;
+	String checkId;
+	double amount;
+	String invoiceNum;
+	LocalDate invoiceDate;
+	boolean paymentStatus;
+	
+	public Check() {
+		paymentStatus=false;
+	}
+	public Check(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
+		paymentStatus=true;
+		invoiceNum=invNum;
+		invoiceDate=invDate;
+		amount=amt;
+		checkDate=chkDate;
+		checkId=chkId;
+	}
+	void fill(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
+		paymentStatus=true;
+		invoiceNum=invNum;
+		invoiceDate=invDate;
+		amount=amt;
+		checkDate=chkDate;
+		checkId=chkId;
+	}
 	public String toString() {
 		if(paymentStatus) {
-			return "todo add check data";
+			return checkId;
 		} else {
 			return "Unpaid";
 		}
