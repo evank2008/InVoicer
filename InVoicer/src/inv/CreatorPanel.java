@@ -146,7 +146,7 @@ public class CreatorPanel extends MenuPanel {
 			((DefaultComboBoxModel<Client>) clientPicker.getModel()).addElement(c.client);
 		}
 	}
-	JPanel bufferPanel() {
+	public static JPanel bufferPanel() {
 		JPanel bufferPanel = new JPanel();
 		bufferPanel.setPreferredSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/50));
 		bufferPanel.setMaximumSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/40));

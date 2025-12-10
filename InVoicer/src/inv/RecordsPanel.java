@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,30 +17,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //let you push a button to say that an invoice has been paid, input check data
-
-//ideal layout:
-/*
- * 1. load data from file
- * 2. place data in recordslist
- * 3. call updatetable to fill table with recordslist data
- */
-//maybe have a separate file for each record
-/*
- * JScrollPane sp = new JScrollPane(jt);
-		jt.setFillsViewportHeight(true);
-		tPanel = new JPanel();
-		tPanel.setLayout(new BorderLayout());
-		tPanel.add(sp);
-		frame.add(tPanel, BorderLayout.AFTER_LAST_LINE);
- */
-/*
- * 
- */
+//TODO: lock all the table cells save for notes
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -239,14 +225,123 @@ class Check {
 class CheckInputFrame extends JFrame {
 	Check check;
 	JPanel panel;
+	DatePicker checkDatePicker, invoiceDatePicker;
+	JTextField checkIdField, amountField, invoiceNumField;
+	JLabel checkDateLabel, invoiceDateLabel, checkIdLabel, amountLabel, invoiceNumLabel;
+	JButton generateButton;
+	JLabel errorLabel;
 public CheckInputFrame(Check chk) {
 	super("Input Check Data");
 	check=chk;
 	panel=new JPanel();
-	setSize(Invoicer.WIDTH*8/10,Invoicer.HEIGHT*80/100);
+	setSize(Invoicer.WIDTH*8/10,Invoicer.HEIGHT*85/100);
 	setVisible(true);
 	add(panel);
-	panel.setBackground(new Color(10,43,61));
+	panel.setBackground(new Color(50,50,50));
+	panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+	Font labelFont = new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30);
+	Font fieldFont = new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35);
+	Dimension fieldDim = new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20);
+	//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
+	invoiceNumLabel = new JLabel("Invoice Number");
+	invoiceNumLabel.setForeground(Color.white);
+	invoiceNumLabel.setFont(labelFont);
+	invoiceNumField = new JTextField();
+	invoiceNumField.setMaximumSize(fieldDim);
+	invoiceNumField.setFont(fieldFont);
+	
+	panel.add(bufferPanel());
+	panel.add(invoiceNumLabel);
+	panel.add(invoiceNumField);
+	panel.add(bufferPanel());
+	
+	invoiceDatePicker = new DatePicker();
+	invoiceDatePicker.setMaximumSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20));
+	invoiceDateLabel = new JLabel("Invoice Date");
+	invoiceDateLabel.setForeground(Color.white);
+	invoiceDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+	
+	panel.add(invoiceDateLabel);
+	panel.add(invoiceDatePicker);
+	panel.add(bufferPanel());
+	
+	amountLabel = new JLabel("Amount");
+	amountLabel.setForeground(Color.white);
+	amountLabel.setFont(labelFont);
+	amountField = new JTextField();
+	amountField.setMaximumSize(fieldDim);
+	amountField.setFont(fieldFont);
+	
+	panel.add(amountLabel);
+	panel.add(amountField);
+	panel.add(bufferPanel());
+	
+	checkDatePicker = new DatePicker();
+	checkDatePicker.setMaximumSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20));
+	checkDateLabel = new JLabel("Check Date");
+	checkDateLabel.setForeground(Color.white);
+	checkDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+	
+	panel.add(checkDateLabel);
+	panel.add(checkDatePicker);
+	panel.add(bufferPanel());
+	
+	checkIdLabel = new JLabel("Check ID");
+	checkIdLabel.setForeground(Color.white);
+	checkIdLabel.setFont(labelFont);
+	checkIdField = new JTextField();
+	checkIdField.setMaximumSize(fieldDim);
+	checkIdField.setFont(fieldFont);
+	
+	panel.add(checkIdLabel);
+	panel.add(checkIdField);
+	panel.add(bufferPanel());
+	
+	//
+	generateButton = new JButton("Input Check Data");
+	if(Invoicer.onMac) {
+		generateButton.setForeground(Color.black);
+	} else {
+		generateButton.setForeground(Color.white);
+	}
+	generateButton.setBackground(new Color(40,160,230));
+	generateButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
+	generateButton.addActionListener(e->{
+		//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
+		try {
+			String invNum = invoiceNumField.getText();
+			LocalDate invDate = invoiceDatePicker.getDate();
+			LocalDate chkDate = checkDatePicker.getDate();	
+			String chkId = checkIdField.getText();
+			double amount = Double.parseDouble((amountField.getText()));
+			if(invNum==null||chkId==null||invNum.equals("")||chkId.equals("")) throw new Exception();
+			//now populate the check
+			check.fill(invNum, invDate, amount, chkDate, chkId);
+			Invoicer.rp.updateTable();
+			this.dispose();
+		} catch (Exception ex) {
+			errorLabel.setVisible(true);
+			//ex.printStackTrace();
+		}
+	});
+	generateButton.setPreferredSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/10));
+	panel.add(generateButton);
+	
+	errorLabel = new JLabel("Some fields not filled out properly");
+	errorLabel.setForeground(Color.red);
+	errorLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
+	errorLabel.setVisible(false);
+	
+	panel.add(bufferPanel());
+	panel.add(errorLabel);
+	
+}
+JPanel bufferPanel() {
+	JPanel buffPanel = new JPanel();
+	buffPanel.setPreferredSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/50));
+	buffPanel.setMaximumSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/40));
+	buffPanel.setBackground(new Color(50,50,50));
+	return buffPanel;
 }
 }
 class CheckViewFrame extends JFrame {
@@ -259,6 +354,6 @@ class CheckViewFrame extends JFrame {
 		setSize(Invoicer.WIDTH*4/5,Invoicer.HEIGHT*80/100);
 		setVisible(true);
 		add(panel);
-		panel.setBackground(new Color(10,43,61));
+		panel.setBackground(new Color(20,85,122));
 	}
 }
