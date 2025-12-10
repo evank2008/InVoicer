@@ -25,7 +25,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //let you push a button to say that an invoice has been paid, input check data
-//TODO: lock all the table cells save for notes
+//TODO view check data button
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -85,7 +85,7 @@ public class RecordsPanel extends MenuPanel {
 			} else if(table.getValueAt(row, 5).equals("Unpaid")) {
 				JOptionPane.showMessageDialog(null, "No check saved");
 			} else {
-				new CheckViewFrame(recordsList.get(row).check);
+				new CheckViewFrame(recordsList.get(row));
 			}
 				
 			
@@ -297,7 +297,7 @@ public CheckInputFrame(Check chk) {
 	panel.add(checkDatePicker);
 	panel.add(bufferPanel());
 	
-	checkIdLabel = new JLabel("Check ID");
+	checkIdLabel = new JLabel("Check Number");
 	checkIdLabel.setForeground(Color.white);
 	checkIdLabel.setFont(labelFont);
 	checkIdField = new JTextField();
@@ -357,14 +357,61 @@ JPanel bufferPanel() {
 }
 class CheckViewFrame extends JFrame {
 	Check check;
+	Record rec;
 	JPanel panel;
-	public CheckViewFrame(Check chk) {
+	//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
+
+	JLabel checkDateLabel, idLabel, amountLabel, invoiceNumLabel, invoiceDateLabel;
+	public CheckViewFrame(Record rec) {
 		super("View Check Data");
 		panel=new JPanel();
-		check=chk;
-		setSize(Invoicer.WIDTH*4/5,Invoicer.HEIGHT*80/100);
+		panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+
+		check=rec.check;
+		this.rec=rec;
+		setSize(Invoicer.WIDTH*4/5,Invoicer.HEIGHT*60/100);
 		setVisible(true);
 		add(panel);
-		panel.setBackground(new Color(20,85,122));
+		panel.add(bufferPanel());
+		panel.setBackground(new Color(40,40,40));
+		
+		
+		invoiceNumLabel = new JLabel("Invoice Number: "+check.invoiceNum);
+		invoiceNumLabel.setForeground(Color.white);
+		invoiceNumLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		panel.add(invoiceNumLabel);
+		panel.add(bufferPanel());
+		
+		invoiceDateLabel = new JLabel("Invoice Date: "+check.invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+		invoiceDateLabel.setForeground(Color.white);
+		invoiceDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		panel.add(invoiceDateLabel);
+		panel.add(bufferPanel());
+		
+		amountLabel = new JLabel("Amount: "+check.amount);
+		amountLabel.setForeground(Color.white);
+		amountLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		panel.add(amountLabel);
+		panel.add(bufferPanel());
+	
+		checkDateLabel = new JLabel("Check Date: "+check.checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+		checkDateLabel.setForeground(Color.white);
+		checkDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		panel.add(checkDateLabel);
+		panel.add(bufferPanel());
+		
+		idLabel = new JLabel("Check Number: "+check.checkId);
+		idLabel.setForeground(Color.white);
+		idLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		panel.add(idLabel);
+		panel.add(bufferPanel());
+		
+}
+	JPanel bufferPanel() {
+		JPanel buffPanel = new JPanel();
+		buffPanel.setPreferredSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/50));
+		buffPanel.setMaximumSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/40));
+		buffPanel.setBackground(new Color(40,40,40));
+		return buffPanel;
 	}
 }
