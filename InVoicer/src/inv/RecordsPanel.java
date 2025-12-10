@@ -140,8 +140,14 @@ public class RecordsPanel extends MenuPanel {
 				if(column==6) return true;
 				return false;
 			}};
+			table.getModel().addTableModelListener(e->{
+			recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
+			});
 			}
 		else table.setModel(new DefaultTableModel(array,titles));
+		table.getModel().addTableModelListener(e->{	
+		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
+		});
 		
 		this.paintAll(getGraphics());
 	}
