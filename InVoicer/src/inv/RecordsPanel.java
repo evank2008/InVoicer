@@ -135,7 +135,12 @@ public class RecordsPanel extends MenuPanel {
 		}
 		String[] titles = {"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"};
 	
-		if(table==null) table = new JTable(new DefaultTableModel(array,titles));
+		if(table==null) {
+			table = new JTable(new DefaultTableModel(array,titles)) {public boolean isCellEditable(int row, int column) {
+				if(column==6) return true;
+				return false;
+			}};
+			}
 		else table.setModel(new DefaultTableModel(array,titles));
 		
 		this.paintAll(getGraphics());
