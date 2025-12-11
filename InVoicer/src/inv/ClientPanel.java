@@ -109,6 +109,13 @@ static void updateClientData() {
 	//also update creator panel picker
 	Invoicer.crp.updateClientPicker();
 }
+public String toFileString() {
+	String s = "";
+	for(ClientBox c: ClientPanel.clientList) {
+		s+=(c.client.toFileString())+"<client>";
+	}
+	return s;
+}
 }
 
 class Client {
@@ -118,6 +125,14 @@ class Client {
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
 public String toString() {
 	return name;
+}
+public String toFileString() {
+	String s = name+","+doctor+","+expectedAmt+"<contactList>";
+	
+	for(Contact c:contactList) {
+		s+=c.toFileString();
+	}
+	return s;
 }
 }
 class Contact {
@@ -134,6 +149,10 @@ class Contact {
 	}
 	public String[] toArray() {
 		return new String[]{name,role,emailAddress};
+	}
+	public String toFileString() {
+		//make sure to have a comma around everything incase of empties
+		return ","+name+","+emailAddress+","+role+",<contact>";
 	}
 }
 class ClientBox extends JPanel{

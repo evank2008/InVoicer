@@ -65,6 +65,16 @@ public class Invoicer {
 		//also probably update the data for the other two panels when you get around to them
 		//cant really write the data aving code until all the data fields are set up anyway
 		//no data to save for creatorpanel anyway
+		//ClientPanel.clientList
+		//RecordsPanel.recordsList
+		//commas should separate things within categories
+		//should be the same amount of commas for each bracket i think? is that wrong
+		//split repeatable things with <>s
+		//take clients for instance you would first split by <client>
+		//a client's tofilestring is name,doctor,amount<contactList>contactstuffwithcommas separated by <contact>
+		//first split by <contactList> then split first one by commas and the second by <contact> and then by commas, system works
+		System.out.println(clp.toFileString());
+		System.out.println(rp.toFileString());
 	}
 
 }

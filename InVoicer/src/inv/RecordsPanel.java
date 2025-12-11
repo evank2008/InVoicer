@@ -151,6 +151,13 @@ public class RecordsPanel extends MenuPanel {
 		
 		this.paintAll(getGraphics());
 	}
+	public String toFileString() {
+		String s="";
+		for(Record r: recordsList) {
+			s+=r.toFileString();
+		}
+		return s;
+	}
 }
 class Record {
 	//a record is one entry in the table
@@ -196,7 +203,16 @@ class Record {
 		arr[6]=notes;
 		return arr;
 	}
-
+	public String toFileString() {
+		/*String clientName;
+	String service;
+	double amount;
+	LocalDate serviceDate;
+	LocalDate billDate;
+	Check check;
+	String notes;*/
+		return ","+clientName+","+service+","+amount+","+serviceDate+","+billDate+","+notes+","+check.toFileString()+"<record>";
+	}
 }
 class Check {
 	LocalDate checkDate;
@@ -231,6 +247,11 @@ class Check {
 		} else {
 			return "Unpaid";
 		}
+	}
+	public String toFileString() {
+		if(!paymentStatus) return "Unpaid";
+		return checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		
 	}
 }
 class CheckInputFrame extends JFrame {
