@@ -153,12 +153,15 @@ public class CreatorPanel extends MenuPanel {
 		bufferPanel.setBackground(new Color(36,36,36));
 		return bufferPanel;
 	}
-	void generatePDF(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate) {
+	void generatePDF(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate) throws Exception {
 		//TODO this part where you generate a pdf
 		//hepl
+		//maybe let you select contacts to be subjects? idk
+		if(PDFGenerator.generatePdf(client, service, amount, serviceDate, billDate)) {
 		//on success:
 		successLabel.setVisible(true);
 		Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
+		} else throw new Exception("Error occurred generating PDF");
 	}
 }
 
