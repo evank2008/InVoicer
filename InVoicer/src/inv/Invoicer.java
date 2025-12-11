@@ -3,8 +3,13 @@ package inv;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 //main class for running and holding the central frame
 //TODO: line 25 add icons to the tabs
 //		add file saving/reading system
@@ -75,6 +80,21 @@ public class Invoicer {
 		//first split by <contactList> then split first one by commas and the second by <contact> and then by commas, system works
 		System.out.println(clp.toFileString());
 		System.out.println(rp.toFileString());
+
+		BufferedWriter bw;
+		try {
+			bw = new BufferedWriter(new FileWriter(
+					new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/invoicerData.txt")));
+				bw.write(clp.toFileString());
+				bw.newLine();
+				bw.append(rp.toFileString());
+				bw.close();
+				System.out.println("saved successfully");
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Error occurred while saving.");
+			e.printStackTrace();
+		}
+	
 	}
 
 }

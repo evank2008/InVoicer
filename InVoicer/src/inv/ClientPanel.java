@@ -152,7 +152,7 @@ class Contact {
 	}
 	public String toFileString() {
 		//make sure to have a comma around everything incase of empties
-		return ","+name+","+emailAddress+","+role+",<contact>";
+		return ","+name+","+role+","+emailAddress+",<contact>";
 	}
 }
 class ClientBox extends JPanel{
