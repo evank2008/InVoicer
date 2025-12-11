@@ -122,8 +122,6 @@ public String toFileString() {
 }
 
 public void loadData(String dataLine) {
-	System.out.println("loading");
-	System.out.println(dataLine);
 String[] clients = dataLine.split("<client>");
 if(clients[0].length()==0) return;
 for(String clientStr: clients) {
@@ -139,7 +137,6 @@ for(String clientStr: clients) {
 		for(String contactStr: contacts) {
 			//"<name>"+name+"<name><role>"+role+"<role><email>"+emailAddress+"<email>"
 			String[] contactFields = contactStr.split(",");
-			System.out.println("contactStr: "+contactStr);
 			String name=contactStr.split("<name>")[0];
 			String role=contactStr.split("<role>")[1];
 			String email=contactStr.split("<email>")[1];

@@ -160,7 +160,9 @@ public class RecordsPanel extends MenuPanel {
 	}
 
 	public void loadData(String line) {
-		
+		System.out.println("Records loading data");
+		System.out.println(line==null?"Null":line);
+		if(line==null) return;
 	}
 }
 class Record {
