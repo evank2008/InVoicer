@@ -37,8 +37,8 @@ public class RecordsPanel extends MenuPanel {
 	static ArrayList<Record> recordsList = new ArrayList<Record>();
 	public RecordsPanel() {
 		super();
+		updateTable();
 		setLayout(new BorderLayout());
-		loadRecordsFile();
 		bufferPanel = new JPanel();
 		
 		buttonPanel = new JPanel();
@@ -123,10 +123,6 @@ public class RecordsPanel extends MenuPanel {
 		new Record(client.name, service, amount, serviceDate, billDate);
 		updateTable();
 	}
-	void loadRecordsFile() {
-		//TODO this
-		updateTable();
-	}
 	void updateTable() {
 		//fills table with all data from recordslist
 		String[][] array = new String[recordsList.size()][7];
@@ -160,9 +156,37 @@ public class RecordsPanel extends MenuPanel {
 	}
 
 	public void loadData(String line) {
-		System.out.println("Records loading data");
-		System.out.println(line==null?"Null":line);
 		if(line==null) return;
+		String[] records = line.split("<record>");
+
+		
+		//record: clientName+","+service+","+amount+","+serviceDate+","+billDate+","+notes+","+check.toFileString()+"<record>"
+		for(String str: records) {
+			Record r;
+			String[] split = str.split("<check>");
+			String s = split[0];
+			String name;
+			String service;
+			double amount;
+			LocalDate serviceDate;
+			LocalDate billDate;
+			Check check=new Check(split[1]);
+			String notes;
+			
+			String[] rec = s.split(",");
+			name=rec[0];
+			service=rec[1];
+			amount=Double.parseDouble(rec[2]);
+			String[] servDA = rec[3].split("-");
+			serviceDate=LocalDate.of(Integer.parseInt(servDA[0]), Integer.parseInt(servDA[1]), Integer.parseInt(servDA[2]));
+			String[] billDA = rec[4].split("-");
+			billDate=LocalDate.of(Integer.parseInt(billDA[0]), Integer.parseInt(billDA[1]), Integer.parseInt(billDA[2]));
+			notes=rec[5].equals("null")?"":rec[5];
+			
+			//	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes, Check chk) {
+			r=new Record(name,service,amount,serviceDate,billDate,notes,check);
+		}
+		updateTable();
 	}
 }
 class Record {
@@ -188,14 +212,19 @@ class Record {
 		this.billDate=billDate;
 		notes="";
 		check=new Check();
-		
 		RecordsPanel.recordsList.add(this);
 	}
-	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes, Check chk) {
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate, String notes, Check chk) {
 		//should probably be used only when loading from save file
-		this( name,  serv,  amt,  sDate,  billDate);
+		clientName=name;
+		service=serv;
+		amount=amt;
+		serviceDate=sDate;
+		this.billDate=billDate;
 		check=chk;
 		this.notes=notes;
+		RecordsPanel.recordsList.add(this);
+
 	}
 	public String[] toStrArray() {
 		String[] arr=new String[7];
@@ -217,7 +246,7 @@ class Record {
 	LocalDate billDate;
 	Check check;
 	String notes;*/
-		return ","+clientName+","+service+","+amount+","+serviceDate+","+billDate+","+notes+","+check.toFileString()+"<record>";
+		return clientName+","+service+","+amount+","+serviceDate+","+billDate+","+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
 	}
 }
 class Check {
@@ -231,6 +260,7 @@ class Check {
 	public Check() {
 		paymentStatus=false;
 	}
+	
 	public Check(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
 		paymentStatus=true;
 		invoiceNum=invNum;
@@ -238,6 +268,22 @@ class Check {
 		amount=amt;
 		checkDate=chkDate;
 		checkId=chkId;
+	}
+	public Check(String fileData) {
+		
+		//for loading from file
+		//checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		if(fileData.equals("Unpaid")) {paymentStatus=false; return;}
+		paymentStatus=true;
+		String[] fields = fileData.split(",");
+		
+		checkDate=LocalDate.parse(fields[0]);
+		checkId=fields[1];
+		amount=Double.parseDouble(fields[2]);
+		invoiceNum=fields[3];
+		
+		invoiceDate=LocalDate.parse(fields[4]);
+		
 	}
 	void fill(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
 		paymentStatus=true;
@@ -259,6 +305,7 @@ class Check {
 		return checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		
 	}
+	
 }
 class CheckInputFrame extends JFrame {
 	Check check;
