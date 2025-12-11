@@ -73,7 +73,10 @@ public ClientPanel() {
 		add(scrollPane);
 	}
 void addClient() {
-	ClientBox cbox = new ClientBox(new Client());
+	addClient(new Client());
+}
+void addClient(Client c) {
+	ClientBox cbox = new ClientBox(c);
 	clientList.add(cbox);
 	
 	
@@ -114,7 +117,39 @@ public String toFileString() {
 	for(ClientBox c: ClientPanel.clientList) {
 		s+=(c.client.toFileString())+"<client>";
 	}
+	if(s.equals("")) return "Empty";
 	return s;
+}
+
+public void loadData(String dataLine) {
+	System.out.println("loading");
+	System.out.println(dataLine);
+String[] clients = dataLine.split("<client>");
+if(clients[0].length()==0) return;
+for(String clientStr: clients) {
+	Client client = new Client();
+	String[] clientArr = clientStr.split("<contactList>");
+	String[] clientFields=clientArr[0].split(",");
+		client.name=clientFields[0];
+		client.doctor=clientFields[1];
+		client.expectedAmt=Double.parseDouble(clientFields[2]);
+		
+	if (clientArr.length > 1 && !clientArr[1].isEmpty()) {
+		String[] contacts = clientArr[1].split("<contact>");
+		for(String contactStr: contacts) {
+			//"<name>"+name+"<name><role>"+role+"<role><email>"+emailAddress+"<email>"
+			String[] contactFields = contactStr.split(",");
+			System.out.println("contactStr: "+contactStr);
+			String name=contactStr.split("<name>")[0];
+			String role=contactStr.split("<role>")[1];
+			String email=contactStr.split("<email>")[1];
+			Contact contact = new Contact(name.equals("null")?"":name, (email.equals("null")?"":email), role.equals("null")?"":role);
+			client.contactList.add(contact);
+			}
+		}
+	addClient(client);
+}
+this.repaint();
 }
 }
 
@@ -132,7 +167,7 @@ public String toFileString() {
 	for(Contact c:contactList) {
 		s+=c.toFileString();
 	}
-	return s;
+	return s+"<contactList>";
 }
 }
 class Contact {
@@ -152,7 +187,7 @@ class Contact {
 	}
 	public String toFileString() {
 		//make sure to have a comma around everything incase of empties
-		return ","+name+","+role+","+emailAddress+",<contact>";
+		return (name.isEmpty()?"null":name)+"<name><role>"+(role.isEmpty()?"null":role)+"<role><email>"+(emailAddress.isEmpty()?"null":emailAddress)+"<email><contact>";
 	}
 }
 class ClientBox extends JPanel{

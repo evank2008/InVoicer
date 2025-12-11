@@ -158,6 +158,10 @@ public class RecordsPanel extends MenuPanel {
 		}
 		return s;
 	}
+
+	public void loadData(String line) {
+		
+	}
 }
 class Record {
 	//a record is one entry in the table

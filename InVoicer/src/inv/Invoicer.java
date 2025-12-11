@@ -3,8 +3,10 @@ package inv;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -80,7 +82,9 @@ public class Invoicer {
 		try {
 			bw = new BufferedWriter(new FileWriter(
 					new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/invoicerData.txt")));
-				bw.write(clp.toFileString());
+				String s=clp.toFileString();
+				bw.write(s);
+				if(s.equals("Empty")) {bw.close();return;};
 				bw.newLine();
 				bw.append(rp.toFileString());
 				bw.close();
@@ -97,6 +101,18 @@ public class Invoicer {
 		File dataFile = new File(path);
 		if(!dataFile.exists()) {
 			JOptionPane.showMessageDialog(null,"Welcome to the Invoicer! Your data file will be saved to "+path+". Enjoy!");
+			return;
+		}
+		try {
+		BufferedReader br = new BufferedReader(new FileReader(dataFile));
+		String s = br.readLine();
+		if(s.equals("Empty")) return;
+		clp.loadData(s);
+		rp.loadData(br.readLine());
+		String recordsDataLine=br.readLine();
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Error occurred while loading: "+e.toString());
+			e.printStackTrace();
 		}
 	}
 }
