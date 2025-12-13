@@ -26,6 +26,8 @@ import com.github.lgooddatepicker.components.DatePicker;
 //payment status, date sent, all the info about the invoice
 //add button to delete record
 //make sure you can sort by doctor
+//remove invoice number and invoice date from input, just use current date, still show them but not as input
+
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -310,9 +312,9 @@ class Check {
 class CheckInputFrame extends JFrame {
 	Check check;
 	JPanel panel;
-	DatePicker checkDatePicker, invoiceDatePicker;
-	JTextField checkIdField, amountField, invoiceNumField;
-	JLabel checkDateLabel, invoiceDateLabel, checkIdLabel, amountLabel, invoiceNumLabel;
+	DatePicker checkDatePicker;//, invoiceDatePicker;
+	JTextField checkIdField, amountField;//, invoiceNumField;
+	JLabel checkDateLabel, checkIdLabel, amountLabel;//, invoiceNumLabel, invoiceDateLabel;
 	JButton generateButton;
 	JLabel errorLabel;
 public CheckInputFrame(Check chk) {
@@ -328,6 +330,8 @@ public CheckInputFrame(Check chk) {
 	Font fieldFont = new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35);
 	Dimension fieldDim = new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20);
 	//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
+	panel.add(bufferPanel());
+/*
 	invoiceNumLabel = new JLabel("Invoice Number");
 	invoiceNumLabel.setForeground(Color.white);
 	invoiceNumLabel.setFont(labelFont);
@@ -335,7 +339,6 @@ public CheckInputFrame(Check chk) {
 	invoiceNumField.setMaximumSize(fieldDim);
 	invoiceNumField.setFont(fieldFont);
 	
-	panel.add(bufferPanel());
 	panel.add(invoiceNumLabel);
 	panel.add(invoiceNumField);
 	panel.add(bufferPanel());
@@ -349,7 +352,7 @@ public CheckInputFrame(Check chk) {
 	panel.add(invoiceDateLabel);
 	panel.add(invoiceDatePicker);
 	panel.add(bufferPanel());
-	
+	*/
 	amountLabel = new JLabel("Amount");
 	amountLabel.setForeground(Color.white);
 	amountLabel.setFont(labelFont);
@@ -394,8 +397,8 @@ public CheckInputFrame(Check chk) {
 	generateButton.addActionListener(e->{
 		//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
 		try {
-			String invNum = invoiceNumField.getText();
-			LocalDate invDate = invoiceDatePicker.getDate();
+			LocalDate invDate = LocalDate.now();
+			String invNum = invDate.getYear()+"-"+invDate.getMonthValue();
 			LocalDate chkDate = checkDatePicker.getDate();	
 			String chkId = checkIdField.getText();
 			double amount = Double.parseDouble((amountField.getText()));

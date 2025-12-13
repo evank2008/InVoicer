@@ -23,7 +23,6 @@ import legacy.Invoice;
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
 
-//add an hourly rate section next to monthly amount
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
