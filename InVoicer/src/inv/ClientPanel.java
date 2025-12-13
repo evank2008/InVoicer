@@ -24,7 +24,6 @@ import legacy.Invoice;
 //TODO: option to delete clients?
 
 //add an hourly rate section next to monthly amount
-//replace commas in tofilestring with <break>s
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();

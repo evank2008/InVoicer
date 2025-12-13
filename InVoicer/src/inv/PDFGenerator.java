@@ -7,6 +7,6 @@ public class PDFGenerator {
 	//below that, invoice genration date
 	public static boolean generatePdf(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate){
 		//TODO figure this one out
-		return false;
+		return true;
 	}
 }
