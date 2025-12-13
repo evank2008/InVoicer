@@ -175,7 +175,7 @@ public class RecordsPanel extends MenuPanel {
 			Check check=new Check(split[1]);
 			String notes;
 			
-			String[] rec = s.split(",");
+			String[] rec = s.split("<break>");
 			name=rec[0];
 			service=rec[1];
 			amount=Double.parseDouble(rec[2]);
@@ -248,7 +248,7 @@ class Record {
 	LocalDate billDate;
 	Check check;
 	String notes;*/
-		return clientName+","+service+","+amount+","+serviceDate+","+billDate+","+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
+		return clientName+"<break>"+service+"<break>"+amount+"<break>"+serviceDate+"<break>"+billDate+"<break>"+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
 	}
 }
 class Check {
@@ -304,7 +304,7 @@ class Check {
 	}
 	public String toFileString() {
 		if(!paymentStatus) return "Unpaid";
-		return checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		return checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<break>"+checkId+"<break>"+amount+"<break>"+invoiceNum+"<break>"+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		
 	}
 	
