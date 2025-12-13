@@ -24,8 +24,10 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
-//let you push a button to say that an invoice has been paid, input check data
-//TODO view check data button
+//replace commas in tofilestring with <break>s
+//and in loadData
+//add button to delete record
+//make sure you can sort by doctor
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;

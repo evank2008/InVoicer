@@ -20,14 +20,8 @@ import legacy.Invoice;
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
 
-//prospectiv hierarchy
-//clientpanel(this)
-//holds buttonpanel and scrollpane
-//scrollpane holds boxpanel
-//boxpanel is where clientboxes are added and also bufferpanels
-
-//currently boxpanel and buttonpanel have a preferredsize
-
+//add an hourly rate section next to monthly amount
+//replace commas in tofilestring with <break>s
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
