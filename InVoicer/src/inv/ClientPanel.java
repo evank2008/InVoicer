@@ -20,7 +20,9 @@ import legacy.Invoice;
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
 
-//add an hourly rate section next to monthly amount
+//i think we have to redo the file system because we need to add significantly more data to be saved for clients
+//all fields in creatorpanel can basically be saved here as hidden data
+//have to revamp the autofill system
 //replace commas in tofilestring with <break>s
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
@@ -153,13 +155,17 @@ public String toString() {
 	return name;
 }
 public String toFileString() {
+	/*
 	String s = name+","+doctor+","+expectedAmt+"<contactList>";
 	
 	for(Contact c:contactList) {
 		s+=c.toFileString();
 	}
 	return s+"<contactList>";
+	*/
+	return null;
 }
+
 }
 class Contact {
 	String name;

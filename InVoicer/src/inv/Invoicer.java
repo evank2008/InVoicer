@@ -66,7 +66,7 @@ public class Invoicer {
 				System.exit(0);
 			}
 		});
-		loadFile();
+		//loadFile();
 	}
 	void saveAllData() {
 		ClientPanel.updateClientData();
@@ -109,7 +109,6 @@ public class Invoicer {
 		if(s.equals("Empty")) return;
 		clp.loadData(s);
 		rp.loadData(br.readLine());
-		String recordsDataLine=br.readLine();
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "Error occurred while loading: "+e.toString());
 			e.printStackTrace();

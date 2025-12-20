@@ -24,10 +24,9 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
-//replace commas in tofilestring with <break>s
 //and in loadData
 //add button to delete record
-//make sure you can sort by doctor
+//TODO make sure you can sort by doctor
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -149,47 +148,12 @@ public class RecordsPanel extends MenuPanel {
 		
 		this.paintAll(getGraphics());
 	}
-	public String toFileString() {
-		String s="";
-		for(Record r: recordsList) {
-			s+=r.toFileString();
-		}
-		return s;
-	}
-
-	public void loadData(String line) {
-		if(line==null) return;
-		String[] records = line.split("<record>");
-
-		
-		//record: clientName+","+service+","+amount+","+serviceDate+","+billDate+","+notes+","+check.toFileString()+"<record>"
-		for(String str: records) {
-			Record r;
-			String[] split = str.split("<check>");
-			String s = split[0];
-			String name;
-			String service;
-			double amount;
-			LocalDate serviceDate;
-			LocalDate billDate;
-			Check check=new Check(split[1]);
-			String notes;
-			
-			String[] rec = s.split(",");
-			name=rec[0];
-			service=rec[1];
-			amount=Double.parseDouble(rec[2]);
-			String[] servDA = rec[3].split("-");
-			serviceDate=LocalDate.of(Integer.parseInt(servDA[0]), Integer.parseInt(servDA[1]), Integer.parseInt(servDA[2]));
-			String[] billDA = rec[4].split("-");
-			billDate=LocalDate.of(Integer.parseInt(billDA[0]), Integer.parseInt(billDA[1]), Integer.parseInt(billDA[2]));
-			notes=rec[5].equals("null")?"":rec[5];
-			
-			//	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes, Check chk) {
-			r=new Record(name,service,amount,serviceDate,billDate,notes,check);
-		}
-		updateTable();
-	}
+public String toFileString() {
+	return null;
+}
+public void loadData(String fileData) {
+	
+}
 }
 class Record {
 	//a record is one entry in the table
@@ -229,6 +193,7 @@ class Record {
 
 	}
 	public String[] toStrArray() {
+		//when adding doctor maybe change updateTable()
 		String[] arr=new String[7];
 		//"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"
 		arr[0]=billDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
@@ -241,32 +206,23 @@ class Record {
 		return arr;
 	}
 	public String toFileString() {
-		/*String clientName;
-	String service;
-	double amount;
-	LocalDate serviceDate;
-	LocalDate billDate;
-	Check check;
-	String notes;*/
-		return clientName+","+service+","+amount+","+serviceDate+","+billDate+","+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
+
+		return null;
 	}
 }
 class Check {
 	LocalDate checkDate;
 	String checkId;
 	double amount;
-	String invoiceNum;
-	LocalDate invoiceDate;
 	boolean paymentStatus;
 	
 	public Check() {
 		paymentStatus=false;
 	}
 	
-	public Check(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
+	public Check(double amt, LocalDate chkDate, String chkId) {
 		paymentStatus=true;
-		invoiceNum=invNum;
-		invoiceDate=invDate;
+
 		amount=amt;
 		checkDate=chkDate;
 		checkId=chkId;
@@ -274,23 +230,11 @@ class Check {
 	public Check(String fileData) {
 		
 		//for loading from file
-		//checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		if(fileData.equals("Unpaid")) {paymentStatus=false; return;}
-		paymentStatus=true;
-		String[] fields = fileData.split(",");
-		
-		checkDate=LocalDate.parse(fields[0]);
-		checkId=fields[1];
-		amount=Double.parseDouble(fields[2]);
-		invoiceNum=fields[3];
-		
-		invoiceDate=LocalDate.parse(fields[4]);
 		
 	}
-	void fill(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId) {
+	void fill(double amt, LocalDate chkDate, String chkId) {
 		paymentStatus=true;
-		invoiceNum=invNum;
-		invoiceDate=invDate;
 		amount=amt;
 		checkDate=chkDate;
 		checkId=chkId;
@@ -304,7 +248,7 @@ class Check {
 	}
 	public String toFileString() {
 		if(!paymentStatus) return "Unpaid";
-		return checkDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+","+checkId+","+amount+","+invoiceNum+","+invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		return null;
 		
 	}
 	
@@ -312,9 +256,9 @@ class Check {
 class CheckInputFrame extends JFrame {
 	Check check;
 	JPanel panel;
-	DatePicker checkDatePicker, invoiceDatePicker;
-	JTextField checkIdField, amountField, invoiceNumField;
-	JLabel checkDateLabel, invoiceDateLabel, checkIdLabel, amountLabel, invoiceNumLabel;
+	DatePicker checkDatePicker;
+	JTextField checkIdField, amountField;
+	JLabel checkDateLabel, checkIdLabel, amountLabel;
 	JButton generateButton;
 	JLabel errorLabel;
 public CheckInputFrame(Check chk) {
@@ -330,26 +274,8 @@ public CheckInputFrame(Check chk) {
 	Font fieldFont = new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35);
 	Dimension fieldDim = new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20);
 	//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
-	invoiceNumLabel = new JLabel("Invoice Number");
-	invoiceNumLabel.setForeground(Color.white);
-	invoiceNumLabel.setFont(labelFont);
-	invoiceNumField = new JTextField();
-	invoiceNumField.setMaximumSize(fieldDim);
-	invoiceNumField.setFont(fieldFont);
 	
-	panel.add(bufferPanel());
-	panel.add(invoiceNumLabel);
-	panel.add(invoiceNumField);
-	panel.add(bufferPanel());
 	
-	invoiceDatePicker = new DatePicker();
-	invoiceDatePicker.setMaximumSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20));
-	invoiceDateLabel = new JLabel("Invoice Date");
-	invoiceDateLabel.setForeground(Color.white);
-	invoiceDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
-	
-	panel.add(invoiceDateLabel);
-	panel.add(invoiceDatePicker);
 	panel.add(bufferPanel());
 	
 	amountLabel = new JLabel("Amount");
@@ -396,14 +322,12 @@ public CheckInputFrame(Check chk) {
 	generateButton.addActionListener(e->{
 		//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
 		try {
-			String invNum = invoiceNumField.getText();
-			LocalDate invDate = invoiceDatePicker.getDate();
 			LocalDate chkDate = checkDatePicker.getDate();	
 			String chkId = checkIdField.getText();
 			double amount = Double.parseDouble((amountField.getText()));
-			if(invNum==null||chkId==null||invNum.equals("")||chkId.equals("")) throw new Exception();
+			if(chkId==null||chkId.equals("")) throw new Exception();
 			//now populate the check
-			check.fill(invNum, invDate, amount, chkDate, chkId);
+			check.fill(amount, chkDate, chkId);
 			Invoicer.rp.updateTable();
 			this.dispose();
 		} catch (Exception ex) {
@@ -437,7 +361,7 @@ class CheckViewFrame extends JFrame {
 	JPanel panel;
 	//(String invNum, LocalDate invDate, double amt, LocalDate chkDate, String chkId
 
-	JLabel checkDateLabel, idLabel, amountLabel, invoiceNumLabel, invoiceDateLabel;
+	JLabel checkDateLabel, idLabel, amountLabel;
 	public CheckViewFrame(Record rec) {
 		super("View Check Data");
 		panel=new JPanel();
@@ -450,19 +374,6 @@ class CheckViewFrame extends JFrame {
 		add(panel);
 		panel.add(bufferPanel());
 		panel.setBackground(new Color(40,40,40));
-		
-		
-		invoiceNumLabel = new JLabel("Invoice Number: "+check.invoiceNum);
-		invoiceNumLabel.setForeground(Color.white);
-		invoiceNumLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
-		panel.add(invoiceNumLabel);
-		panel.add(bufferPanel());
-		
-		invoiceDateLabel = new JLabel("Invoice Date: "+check.invoiceDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-		invoiceDateLabel.setForeground(Color.white);
-		invoiceDateLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
-		panel.add(invoiceDateLabel);
-		panel.add(bufferPanel());
 		
 		amountLabel = new JLabel("Amount: "+check.amount);
 		amountLabel.setForeground(Color.white);

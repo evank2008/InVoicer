@@ -9,13 +9,12 @@ import javax.swing.*;
 import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
+//TODO: add a field for hourly rate(optional)
 //TODO: pdf generation
+//TODO: line 149 revamp autofill
 //TODO: clear the fields after a successful generation
 //have a button thats says 'advance all dates for clients of this doctor by a month'
 //add autosave for all fields so you dont have to type in anything eventually
-//fix bug where pressing add button with contacts erases currently focused text box, change focus first?
-//remove invoice number and invoice date from input, just use current date, still show them but not as input
-//save invoice number data to records
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel;
@@ -95,7 +94,7 @@ public class CreatorPanel extends MenuPanel {
 		clientPicker.addItemListener(e->{
 			//autofill the other boxes with client data
 			Client client = (Client)e.getItem();
-			amountField.setText(""+client.expectedAmt);
+			autofill(client);
 		});
 		
 		generateButton = new JButton("Generate PDF");
@@ -144,6 +143,10 @@ public class CreatorPanel extends MenuPanel {
 		successLabel.setVisible(false);
 		errorLabel.setVisible(false);
 
+	}
+	private void autofill(Client client) {
+		//TODO this
+		amountField.setText(""+client.expectedAmt);
 	}
 	public void updateClientPicker() {
 		((DefaultComboBoxModel<Client>) clientPicker.getModel()).removeAllElements();
