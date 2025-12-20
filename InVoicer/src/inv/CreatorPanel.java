@@ -14,7 +14,8 @@ import com.github.lgooddatepicker.components.DatePicker;
 //add hourly amount section
 //have a button thats says 'advance all dates for clients of this doctor by a month'
 //add autosave for all fields so you dont have to type in anything eventually
-//save invoice number data to records - wait actually no im not doing that it already saves the date
+//fix bug where pressing add button with contacts erases currently focused text box, change focus first?
+//save invoice number data to records
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel;

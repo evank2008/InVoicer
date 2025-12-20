@@ -22,7 +22,6 @@ import legacy.Invoice;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
-//fix bug where pressing add button with contacts erases currently focused text box, change focus first?
 
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
@@ -370,10 +369,7 @@ class ClientBox extends JPanel{
 			
 			addButton=new JButton("Add");
 			addButton.addActionListener(e->{
-				if(table.getCellEditor()!=null)table.getCellEditor().stopCellEditing();
-				DefaultTableModel t=(DefaultTableModel) table.getModel();
-				t.addRow(new Object[] {"","",""});
-				//TableExtender.extend(table);
+				TableExtender.extend(table);
 				table.getModel().addTableModelListener(listener);
 				});
 			addButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width-80,buttonPanel.getPreferredSize().height-10));
