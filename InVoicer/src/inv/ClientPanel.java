@@ -324,9 +324,7 @@ class ClientBox extends JPanel{
 		JTable table;
 		JButton addButton;
 		Client client;
-		TableModelListener listener = ((e)->{
-			updateClientContacts();
-		});
+		
 		
 		public ContactsFrame(Client client) {
 			super(client.name+" Contacts");
@@ -352,8 +350,9 @@ class ClientBox extends JPanel{
 			
 			addButton=new JButton("Add");
 			addButton.addActionListener(e->{
-				TableExtender.extend(table);
-				table.getModel().addTableModelListener(listener);
+				if(table.getCellEditor()!=null)table.getCellEditor().stopCellEditing();
+				DefaultTableModel t=(DefaultTableModel) table.getModel();
+				t.addRow(new Object[] {"","",""});
 				});
 			addButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width-80,buttonPanel.getPreferredSize().height-10));
 			addButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,buttonPanel.getPreferredSize().height*5/12));
@@ -392,7 +391,9 @@ class ClientBox extends JPanel{
 
 			table.setRowHeight(t.height/8);
 			table.getTableHeader().setReorderingAllowed(false);
-			table.getModel().addTableModelListener(listener);
+			table.getModel().addTableModelListener((e)->{
+				updateClientContacts();
+			});
 			table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*1.2)));
 			table.setBackground(new Color(31,31,31));
 			table.setForeground(Color.white);
