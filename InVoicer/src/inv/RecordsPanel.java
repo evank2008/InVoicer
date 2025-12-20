@@ -26,6 +26,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 //payment status, date sent, all the info about the invoice
 //add button to delete record
 //make sure you can sort by doctor
+//remove invoice number and invoice date from input, just use current date, still show them but not as input
 
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
@@ -121,29 +122,29 @@ public class RecordsPanel extends MenuPanel {
 	public void newRecord(Client client, String service, double amount, LocalDate serviceDate,
 			LocalDate billDate) {
 		//make a record and add to recordslist
-		new Record(client.name, client.doctor, service, amount, serviceDate, billDate);
+		new Record(client.name, service, amount, serviceDate, billDate);
 		updateTable();
 	}
 	void updateTable() {
 		//fills table with all data from recordslist
-		String[][] array = new String[recordsList.size()][8];
+		String[][] array = new String[recordsList.size()][7];
 		for(int i = 0; i<recordsList.size();i++) {
 			array[i]=recordsList.get(i).toStrArray();
 		}
-		String[] titles = {"Date Sent","Client","Doctor","Date of Service","Service","Amount","Check","Notes"};
+		String[] titles = {"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"};
 	
 		if(table==null) {
 			table = new JTable(new DefaultTableModel(array,titles)) {public boolean isCellEditable(int row, int column) {
-				if(column==7) return true;
+				if(column==6) return true;
 				return false;
 			}};
 			table.getModel().addTableModelListener(e->{
-			recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 7);
+			recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
 			});
 			}
 		else table.setModel(new DefaultTableModel(array,titles));
 		table.getModel().addTableModelListener(e->{	
-		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 7);
+		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
 		});
 		
 		this.paintAll(getGraphics());
@@ -160,14 +161,13 @@ public class RecordsPanel extends MenuPanel {
 		if(line==null) return;
 		String[] records = line.split("<record>");
 
-		System.out.println("line "+line);
+		
 		//record: clientName+","+service+","+amount+","+serviceDate+","+billDate+","+notes+","+check.toFileString()+"<record>"
 		for(String str: records) {
 			Record r;
 			String[] split = str.split("<check>");
 			String s = split[0];
 			String name;
-			String doc;
 			String service;
 			double amount;
 			LocalDate serviceDate;
@@ -177,17 +177,16 @@ public class RecordsPanel extends MenuPanel {
 			
 			String[] rec = s.split("<break>");
 			name=rec[0];
-			doc=rec[1];
-			service=rec[2];
-			amount=Double.parseDouble(rec[3]);
-			String[] servDA = rec[4].split("-");
+			service=rec[1];
+			amount=Double.parseDouble(rec[2]);
+			String[] servDA = rec[3].split("-");
 			serviceDate=LocalDate.of(Integer.parseInt(servDA[0]), Integer.parseInt(servDA[1]), Integer.parseInt(servDA[2]));
-			String[] billDA = rec[5].split("-");
+			String[] billDA = rec[4].split("-");
 			billDate=LocalDate.of(Integer.parseInt(billDA[0]), Integer.parseInt(billDA[1]), Integer.parseInt(billDA[2]));
-			notes=rec[6].equals("null")?"":rec[6];
+			notes=rec[5].equals("null")?"":rec[5];
 			
 			//	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate,boolean status, String notes, Check chk) {
-			r=new Record(name,doc,service,amount,serviceDate,billDate,notes,check);
+			r=new Record(name,service,amount,serviceDate,billDate,notes,check);
 		}
 		updateTable();
 	}
@@ -199,7 +198,6 @@ class Record {
 	//TODO uhhh take in check data?
 	//check will store payment data ahahhaa
 	String clientName;
-	String docName;
 	String service;
 	double amount;
 	LocalDate serviceDate;
@@ -207,10 +205,9 @@ class Record {
 	Check check;
 	String notes;
 	
-	public Record(String name,  String doctor, String serv, double amt, LocalDate sDate, LocalDate billDate) {
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate) {
 		//fresh record off the creator panel
 		clientName=name;
-		docName=doctor;
 		service=serv;
 		amount=amt;
 		serviceDate=sDate;
@@ -219,10 +216,9 @@ class Record {
 		check=new Check();
 		RecordsPanel.recordsList.add(this);
 	}
-	public Record(String name, String doctor, String serv, double amt, LocalDate sDate, LocalDate billDate, String notes, Check chk) {
+	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate, String notes, Check chk) {
 		//should probably be used only when loading from save file
 		clientName=name;
-		docName=doctor;
 		service=serv;
 		amount=amt;
 		serviceDate=sDate;
@@ -233,28 +229,26 @@ class Record {
 
 	}
 	public String[] toStrArray() {
-		String[] arr=new String[8];
+		String[] arr=new String[7];
 		//"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"
 		arr[0]=billDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		arr[1]=clientName;
-		arr[2]=docName;
-		arr[3]=serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
-		arr[4]=service;
-		arr[5]=""+amount;
-		arr[6]=check.toString();
-		arr[7]=notes;
+		arr[2]=serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		arr[3]=service;
+		arr[4]=""+amount;
+		arr[5]=check.toString();
+		arr[6]=notes;
 		return arr;
 	}
 	public String toFileString() {
 		/*String clientName;
-		 * String doc;
 	String service;
 	double amount;
 	LocalDate serviceDate;
 	LocalDate billDate;
 	Check check;
 	String notes;*/
-		return clientName+"<break>"+docName+"<break>"+service+"<break>"+amount+"<break>"+serviceDate+"<break>"+billDate+"<break>"+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
+		return clientName+"<break>"+service+"<break>"+amount+"<break>"+serviceDate+"<break>"+billDate+"<break>"+(notes.isEmpty()?"null":notes)+"<check>"+check.toFileString()+"<record>";
 	}
 }
 class Check {
