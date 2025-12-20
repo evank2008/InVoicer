@@ -121,29 +121,29 @@ public class RecordsPanel extends MenuPanel {
 	public void newRecord(Client client, String service, double amount, LocalDate serviceDate,
 			LocalDate billDate) {
 		//make a record and add to recordslist
-		new Record(client.name, service, amount, serviceDate, billDate);
+		new Record(client.name, client.doctor, service, amount, serviceDate, billDate);
 		updateTable();
 	}
 	void updateTable() {
 		//fills table with all data from recordslist
-		String[][] array = new String[recordsList.size()][7];
+		String[][] array = new String[recordsList.size()][8];
 		for(int i = 0; i<recordsList.size();i++) {
 			array[i]=recordsList.get(i).toStrArray();
 		}
-		String[] titles = {"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"};
+		String[] titles = {"Date Sent","Client","Doctor","Date of Service","Service","Amount","Check","Notes"};
 	
 		if(table==null) {
 			table = new JTable(new DefaultTableModel(array,titles)) {public boolean isCellEditable(int row, int column) {
-				if(column==6) return true;
+				if(column==7) return true;
 				return false;
 			}};
 			table.getModel().addTableModelListener(e->{
-			recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
+			recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 7);
 			});
 			}
 		else table.setModel(new DefaultTableModel(array,titles));
 		table.getModel().addTableModelListener(e->{	
-		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 6);
+		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 7);
 		});
 		
 		this.paintAll(getGraphics());
@@ -162,6 +162,7 @@ class Record {
 	//TODO uhhh take in check data?
 	//check will store payment data ahahhaa
 	String clientName;
+	String docName;
 	String service;
 	double amount;
 	LocalDate serviceDate;
@@ -169,8 +170,9 @@ class Record {
 	Check check;
 	String notes;
 	
-	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate) {
+	public Record(String name, String doctor, String serv, double amt, LocalDate sDate, LocalDate billDate) {
 		//fresh record off the creator panel
+		docName=doctor;
 		clientName=name;
 		service=serv;
 		amount=amt;
@@ -180,8 +182,9 @@ class Record {
 		check=new Check();
 		RecordsPanel.recordsList.add(this);
 	}
-	public Record(String name, String serv, double amt, LocalDate sDate, LocalDate billDate, String notes, Check chk) {
+	public Record(String name, String doctor, String serv, double amt, LocalDate sDate, LocalDate billDate, String notes, Check chk) {
 		//should probably be used only when loading from save file
+		docName=doctor;
 		clientName=name;
 		service=serv;
 		amount=amt;
@@ -194,15 +197,16 @@ class Record {
 	}
 	public String[] toStrArray() {
 		//when adding doctor maybe change updateTable()
-		String[] arr=new String[7];
+		String[] arr=new String[8];
 		//"Date Sent","Client","Date of Service","Service","Amount","Check","Notes"
 		arr[0]=billDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		arr[1]=clientName;
-		arr[2]=serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
-		arr[3]=service;
-		arr[4]=""+amount;
-		arr[5]=check.toString();
-		arr[6]=notes;
+		arr[2]=docName;
+		arr[3]=serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+		arr[4]=service;
+		arr[5]=""+amount;
+		arr[6]=check.toString();
+		arr[7]=notes;
 		return arr;
 	}
 	public String toFileString() {
