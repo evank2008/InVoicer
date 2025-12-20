@@ -2,13 +2,10 @@ package inv;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -60,8 +57,6 @@ public ClientPanel() {
 		addButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
 		addButton.addActionListener(e->{
 			addClient();
-			boxPanel.revalidate();
-			boxPanel.repaint();
 		});
 		addButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width-10,buttonPanel.getPreferredSize().height-10));
 		
@@ -87,9 +82,10 @@ void addClient(Client c) {
 	boxPanel.add(cbox);
 	
 	
+	boxPanel.revalidate();
+	boxPanel.repaint();
 	
-	
-//	boxPanel.paintAll(boxPanel.getGraphics());
+	this.paintAll(getGraphics());
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
 }
@@ -125,7 +121,7 @@ if(clients[0].length()==0) return;
 for(String clientStr: clients) {
 	Client client = new Client();
 	String[] clientArr = clientStr.split("<contactList>");
-	String[] clientFields=clientArr[0].split("<break>");
+	String[] clientFields=clientArr[0].split(",");
 		client.name=clientFields[0];
 		client.doctor=clientFields[1];
 		client.expectedAmt=Double.parseDouble(clientFields[2]);
@@ -134,6 +130,7 @@ for(String clientStr: clients) {
 		String[] contacts = clientArr[1].split("<contact>");
 		for(String contactStr: contacts) {
 			//"<name>"+name+"<name><role>"+role+"<role><email>"+emailAddress+"<email>"
+			String[] contactFields = contactStr.split(",");
 			String name=contactStr.split("<name>")[0];
 			String role=contactStr.split("<role>")[1];
 			String email=contactStr.split("<email>")[1];
@@ -144,8 +141,6 @@ for(String clientStr: clients) {
 	addClient(client);
 }
 this.repaint();
-boxPanel.revalidate();
-boxPanel.repaint();
 }
 }
 
@@ -158,7 +153,7 @@ public String toString() {
 	return name;
 }
 public String toFileString() {
-	String s = name+"<break>"+doctor+"<break>"+expectedAmt+"<contactList>";
+	String s = name+","+doctor+","+expectedAmt+"<contactList>";
 	
 	for(Contact c:contactList) {
 		s+=c.toFileString();
@@ -193,6 +188,7 @@ class ClientBox extends JPanel{
 	Client client;
 	JLabel nameLabel;
 	JLabel amountLabel;
+	JLabel doctorLabel;
 	JTextField nameField, amountField, doctorField;
 	JPanel namePanel, amountPanel;
 	JButton contactsButton;
@@ -217,12 +213,12 @@ class ClientBox extends JPanel{
 		nameLabel.setForeground(darkWhite);
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height*7/24)));
 		
-		nameField=new JTextField(client.name,20);
+		nameField=new JTextField(client.name);
 		nameField.setFont(nameLabel.getFont());
 		nameField.setForeground(darkWhite);
 		nameField.setBackground(new Color(34,34,34));
 		nameField.setCaretColor(Color.white);
-	//	nameField.setPreferredSize(new Dimension(nameField.getPreferredSize().width*5/2,nameField.getPreferredSize().height));
+		nameField.setPreferredSize(new Dimension(nameField.getPreferredSize().width*5/2,nameField.getPreferredSize().height));
 		nameField.addActionListener(e->{
 			this.requestFocusInWindow();
 			ClientPanel.updateClientData();
@@ -230,25 +226,20 @@ class ClientBox extends JPanel{
 		});
 		
 		namePanel=new JPanel();
-		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
-		nameLabel.setAlignmentY(Component.TOP_ALIGNMENT);
-		nameField.setAlignmentY(Component.TOP_ALIGNMENT);
 		namePanel.add(nameLabel);
 		namePanel.add(nameField);
 		namePanel.setOpaque(false);
-		namePanel.setMinimumSize(namePanel.getPreferredSize());
-
 		
 		amountLabel=new JLabel("       Expected Monthly Amount: $");
 		amountLabel.setForeground(darkWhite);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
 		
-		amountField=new JTextField(""+client.expectedAmt,10);
+		amountField=new JTextField(""+client.expectedAmt);
 		amountField.setFont(amountLabel.getFont());
 		amountField.setForeground(darkWhite);
 		amountField.setBackground(new Color(34,34,34));
 		amountField.setCaretColor(Color.white);
-		//amountField.setPreferredSize(new Dimension(amountField.getPreferredSize().width*5/2,amountLabel.getPreferredSize().height/2));
+		amountField.setPreferredSize(new Dimension(amountField.getPreferredSize().width*5/2,amountLabel.getPreferredSize().height/2));
 		amountField.addActionListener(e->{
 			this.requestFocusInWindow();
 			ClientPanel.updateClientData();
@@ -258,21 +249,12 @@ class ClientBox extends JPanel{
 		//adding anything but the label breaks all the gui
 		//even just a regular panel with only the label in it
 		amountPanel=new JPanel();
-		amountPanel.setLayout(new GridBagLayout());
-		GridBagConstraints apc = new GridBagConstraints();
-		apc.anchor = GridBagConstraints.WEST;
-
-		apc.gridx = 0;
-		amountPanel.add(amountLabel, apc);
-
-		apc.gridx = 1;
-		apc.weightx = 1.0;
-		apc.fill = GridBagConstraints.HORIZONTAL;
-		amountPanel.add(amountField, apc);
+		amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
+		amountPanel.add(amountLabel);
+		amountPanel.add(amountField);
 		amountPanel.setOpaque(false);
 		
-		doctorField=new JTextField(client.doctor,12);
-		//doctorField.setMaximumSize(new Dimension(Invoicer.WIDTH/5,Invoicer.HEIGHT));
+		doctorField=new JTextField(client.doctor);
 		doctorField.setForeground(darkWhite);
 		doctorField.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/5)));
 		doctorField.setBackground(new Color(34,34,34));
@@ -298,8 +280,7 @@ class ClientBox extends JPanel{
 		 gbc.gridx = 0;
          gbc.gridy = 0;
          gbc.weightx = 0.8; // relative width
-         gbc.weighty = 0;
-         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.weighty = 0.5;
          add(namePanel, gbc);
 
          // Row 0, Col 1 (Top Right)
@@ -314,7 +295,7 @@ class ClientBox extends JPanel{
          gbc.gridx = 0;
          gbc.gridy = 1;
          gbc.weightx = 0.8;
-         gbc.weighty = 1;
+         gbc.weighty = 0.5;
          add(amountPanel, gbc);
          //:(
 
