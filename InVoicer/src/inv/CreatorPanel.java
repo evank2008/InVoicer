@@ -9,7 +9,6 @@ import javax.swing.*;
 import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
-//TODO: add a field for hourly rate(optional)
 //TODO: pdf generation
 //TODO: line 149 revamp autofill
 //TODO: clear the fields after a successful generation
@@ -137,6 +136,8 @@ public class CreatorPanel extends MenuPanel {
 				LocalDate billDate = billDatePicker.getDate();
 				
 				generatePDF(client,service,amount,hourly,serviceDate,billDate);
+				client.serviceDate=serviceDate;
+				client.service=service;
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
 				//ex.printStackTrace();
@@ -149,14 +150,12 @@ public class CreatorPanel extends MenuPanel {
 		errorLabel.setForeground(Color.red);
 		errorLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
 
-		add(bufferPanel());
 		add(errorLabel);
 		
 		successLabel = new JLabel("Success! TODO make this say file save loc");
 		successLabel.setForeground(Color.green);
 		successLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
 
-		add(bufferPanel());
 		add(successLabel);
 		
 		successLabel.setVisible(false);
@@ -166,6 +165,8 @@ public class CreatorPanel extends MenuPanel {
 	private void autofill(Client client) {
 		//TODO this
 		amountField.setText(""+client.expectedAmt);
+		serviceDatePicker.setDate(client.serviceDate);
+		serviceField.setText(client.service);
 	}
 	public void updateClientPicker() {
 		((DefaultComboBoxModel<Client>) clientPicker.getModel()).removeAllElements();

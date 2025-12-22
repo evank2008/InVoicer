@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -150,6 +151,8 @@ class Client {
 	String name="New Client";
 	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
+	String service;
+	LocalDate serviceDate;
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
 public String toString() {
 	return name;
