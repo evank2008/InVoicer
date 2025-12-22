@@ -17,10 +17,11 @@ import com.github.lgooddatepicker.components.DatePicker;
 //add autosave for all fields so you dont have to type in anything eventually
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
-	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel;
+	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel, hourlyLabel;
 	JLabel errorLabel, successLabel;
 	JTextField serviceField;
 	JTextField amountField;
+	JTextField hourlyField;
 	JButton generateButton;
 	//two date pickers
 	JComboBox<Client> clientPicker;
@@ -69,6 +70,17 @@ public class CreatorPanel extends MenuPanel {
 		add(amountField);
 		add(bufferPanel());
 		
+		hourlyLabel = new JLabel("Hourly Rate (Optional)");
+		hourlyLabel.setForeground(Color.white);
+		hourlyLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/30));
+		hourlyField = new JTextField();
+		hourlyField.setMaximumSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20));
+		hourlyField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
+
+		add(hourlyLabel);
+		add(hourlyField);
+		add(bufferPanel());
+		
 		serviceDatePicker = new DatePicker();
 		serviceDatePicker.setMaximumSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/20));
 		serviceDateLabel = new JLabel("Service Date");
@@ -113,11 +125,18 @@ public class CreatorPanel extends MenuPanel {
 				Client client = (Client) clientPicker.getSelectedItem();
 				String service = serviceField.getText();
 				double amount = Double.parseDouble((amountField.getText()));
+				double hourly=0;
+				try {
+					hourly=Double.parseDouble((hourlyField.getText()));
+				}catch(Exception exc) {
+					hourlyField.setText("0");
+					hourly=0;
+				}
 				LocalDate serviceDate = serviceDatePicker.getDate();
 				if(serviceDate==null||amount<0||service.equals("")) throw new Exception();
 				LocalDate billDate = billDatePicker.getDate();
 				
-				generatePDF(client,service,amount,serviceDate,billDate);
+				generatePDF(client,service,amount,hourly,serviceDate,billDate);
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
 				//ex.printStackTrace();
@@ -161,13 +180,14 @@ public class CreatorPanel extends MenuPanel {
 		bufferPanel.setBackground(new Color(36,36,36));
 		return bufferPanel;
 	}
-	void generatePDF(Client client, String service, double amount, LocalDate serviceDate, LocalDate billDate) throws Exception {
+	void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws Exception {
 		//TODO this part where you generate a pdf
 		//hepl
 		//maybe let you select contacts to be subjects? idk
-		if(PDFGenerator.generatePdf(client, service, amount, serviceDate, billDate)) {
+		if(PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate)) {
 		//on success:
 		successLabel.setVisible(true);
+		//dont really need to record an hourly rate so i shall eschew it
 		Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
 		} else throw new Exception("Error occurred generating PDF");
 	}
