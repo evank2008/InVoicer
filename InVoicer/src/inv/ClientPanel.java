@@ -20,6 +20,7 @@ import legacy.Invoice;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
+//TODO rebuild the file system
 
 //i think we have to redo the file system because we need to add significantly more data to be saved for clients
 //all fields in creatorpanel can basically be saved here as hidden data
