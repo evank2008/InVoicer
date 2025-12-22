@@ -151,6 +151,7 @@ class Client {
 	String name="New Client";
 	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
+	double hourly=0;
 	String service;
 	LocalDate serviceDate;
 	ArrayList<Contact> contactList = new ArrayList<Contact>();

@@ -10,10 +10,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
 //TODO: pdf generation
-//TODO: line 149 revamp autofill
-//TODO: clear the fields after a successful generation
 //have a button thats says 'advance all dates for clients of this doctor by a month'
-//add autosave for all fields so you dont have to type in anything eventually
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel, hourlyLabel;
@@ -136,8 +133,13 @@ public class CreatorPanel extends MenuPanel {
 				LocalDate billDate = billDatePicker.getDate();
 				
 				generatePDF(client,service,amount,hourly,serviceDate,billDate);
+				//this is for autofill purposes
 				client.serviceDate=serviceDate;
 				client.service=service;
+				client.hourly=hourly;
+				//now to clear the fields
+				autofill(new Client());
+				
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
 				//ex.printStackTrace();
@@ -152,7 +154,7 @@ public class CreatorPanel extends MenuPanel {
 
 		add(errorLabel);
 		
-		successLabel = new JLabel("Success! TODO make this say file save loc");
+		successLabel = new JLabel("Generated pdf! TODO make this say file save loc");
 		successLabel.setForeground(Color.green);
 		successLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
 
@@ -167,6 +169,7 @@ public class CreatorPanel extends MenuPanel {
 		amountField.setText(""+client.expectedAmt);
 		serviceDatePicker.setDate(client.serviceDate);
 		serviceField.setText(client.service);
+		hourlyField.setText(client.hourly==0?null:""+client.hourly);
 	}
 	public void updateClientPicker() {
 		((DefaultComboBoxModel<Client>) clientPicker.getModel()).removeAllElements();
