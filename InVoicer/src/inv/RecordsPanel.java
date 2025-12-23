@@ -24,7 +24,6 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
-//TODO file system
 //TODO add button to delete record
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
