@@ -38,9 +38,14 @@ public class PDFGenerator {
 		Contact clark = new Contact("Clark Contact","clark@client.net","Beer Drinker");
 		c.contactList.add(jim);
 		c.contactList.add(clark);
-		generatePdf(c,"Stabbing",500,20.5,LocalDate.EPOCH,LocalDate.now());
+		try {
+			generatePdf(c,"Stabbing",500,20.5,LocalDate.EPOCH,LocalDate.now());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	public static boolean generatePdf(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate){
+	public static boolean generatePdf(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException{
 		//TODO figure this one out
 		//ingredients that are variable:
 		/*
@@ -56,7 +61,7 @@ public class PDFGenerator {
 		 */
 		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
 		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/invoice.pdf";
-		try {
+		
 			PdfWriter writer = new PdfWriter(path);
 			PdfDocument pDoc = new PdfDocument(writer);
 			Document doc = new Document(pDoc);
@@ -137,10 +142,7 @@ public class PDFGenerator {
 			doc.add(bodyTable);
 			
 			doc.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		return true;
 	}
 }

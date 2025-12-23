@@ -1,6 +1,7 @@
 package inv;
 
 import java.awt.*;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -154,7 +155,7 @@ public class CreatorPanel extends MenuPanel {
 
 		add(errorLabel);
 		
-		successLabel = new JLabel("Generated pdf! TODO make this say file save loc");
+		successLabel = new JLabel("PDF generated.");
 		successLabel.setForeground(Color.green);
 		successLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/35));
 
@@ -184,16 +185,14 @@ public class CreatorPanel extends MenuPanel {
 		bufferPanel.setBackground(new Color(36,36,36));
 		return bufferPanel;
 	}
-	void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws Exception {
-		//TODO this part where you generate a pdf
-		//hepl
-		//maybe let you select contacts to be subjects? idk
-		if(PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate)) {
+	void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException {
+		
+		PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate);
 		//on success:
 		successLabel.setVisible(true);
 		//dont really need to record an hourly rate so i shall eschew it
 		Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
-		} else throw new Exception("Error occurred generating PDF");
+		
 	}
 }
 
