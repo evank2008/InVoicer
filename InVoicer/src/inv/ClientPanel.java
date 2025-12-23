@@ -62,7 +62,8 @@ public ClientPanel() {
 		
 		buttonPanel.add(addButton);
 		
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);		
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(6);
 		add(buttonPanel);
 		add(scrollPane);
 	}

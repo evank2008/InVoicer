@@ -103,6 +103,7 @@ public class RecordsPanel extends MenuPanel {
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setAutoCreateRowSorter(true);
 		tablePane = new JScrollPane(table);
+		tablePane.getVerticalScrollBar().setUnitIncrement(6);
 		table.setFillsViewportHeight(true);
 		
 		table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*1.4)));
