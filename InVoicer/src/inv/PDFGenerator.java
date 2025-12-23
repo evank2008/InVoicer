@@ -71,7 +71,7 @@ public class PDFGenerator {
 			table.addCell(new Cell().add("Geriatric Psychiatry").setItalic().setBold().setFontSize(24).setBorder(Border.NO_BORDER));
 			table.addCell(new Cell().add("INVOICE\n"+invoiceNum).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setFont(roman));
 			table.addCell(new Cell().add("8677 Villa La Jolla Dr #205\nLa Jolla, CA 92037\n(619) 299-4374\nJK@SeniorMedicalAssociates.com").setBold().setHeight(80).setBorder(Border.NO_BORDER));
-			table.addCell(new Cell().add(LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu/MM/d"))).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.BOTTOM));
+			table.addCell(new Cell().add(billDate.format(DateTimeFormatter.ofPattern("MM/d/uuuu"))).setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.BOTTOM));
 			doc.add(table);
 			
 			Table contactTable=new Table(new float[] {500,500});
