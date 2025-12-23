@@ -117,6 +117,7 @@ public String toFileString() {
 		s+=(c.client.toFileString())+"<client>";
 	}
 	if(s.equals("")) return "Empty";
+	
 	return s;
 }
 
@@ -126,19 +127,22 @@ if(clients[0].length()==0) return;
 for(String clientStr: clients) {
 	Client client = new Client();
 	String[] clientArr = clientStr.split("<contactList>");
-	String[] clientFields=clientArr[0].split(",");
+	String[] clientFields=clientArr[0].split("<break>");
 		client.name=clientFields[0];
 		client.doctor=clientFields[1];
 		client.expectedAmt=Double.parseDouble(clientFields[2]);
+		client.hourly=Double.parseDouble(clientFields[3]);
+		client.service=clientFields[4];
+		client.serviceDate=LocalDate.parse(clientFields[5]);
 		
 	if (clientArr.length > 1 && !clientArr[1].isEmpty()) {
 		String[] contacts = clientArr[1].split("<contact>");
 		for(String contactStr: contacts) {
 			//"<name>"+name+"<name><role>"+role+"<role><email>"+emailAddress+"<email>"
-			String[] contactFields = contactStr.split(",");
-			String name=contactStr.split("<name>")[0];
-			String role=contactStr.split("<role>")[1];
-			String email=contactStr.split("<email>")[1];
+			String[] contactFields = contactStr.split("<break>");
+			String name=contactFields[0];
+			String role=contactFields[1];
+			String email=contactFields[2];
 			Contact contact = new Contact(name.equals("null")?"":name, (email.equals("null")?"":email), role.equals("null")?"":role);
 			client.contactList.add(contact);
 			}

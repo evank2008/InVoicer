@@ -66,7 +66,7 @@ public class Invoicer {
 				System.exit(0);
 			}
 		});
-		//loadFile();
+		loadFile();
 	}
 	void saveAllData() {
 		ClientPanel.updateClientData();

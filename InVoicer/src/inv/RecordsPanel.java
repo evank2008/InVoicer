@@ -156,7 +156,23 @@ public String toFileString() {
 	return s;
 }
 public void loadData(String fileData) {
-	
+	if(fileData.equals("Empty")) return;
+	String[] recordsArr = fileData.split("<record>");
+	for(String recordStr:recordsArr) {
+		//Record(String name, String doctor, String serv, double amt, 
+		//LocalDate sDate, LocalDate billDate, String notes, Check chk) 
+		String[] fields = recordStr.split("<break>");
+		String name = fields[0];
+		String doc=fields[1];
+		String service = fields[2];
+		double amt = Double.parseDouble(fields[3]);
+		LocalDate serviceDate=LocalDate.parse(fields[4]);
+		LocalDate billDate=LocalDate.parse(fields[5]);
+		String notes = fields[6].equals("null")?"":fields[6];
+		Check check = new Check(fields[7]);
+		new Record(name,doc,service,amt,serviceDate,billDate,notes,check);
+	}
+	updateTable();
 }
 }
 class Record {
@@ -254,7 +270,11 @@ class Check {
 		
 		//for loading from file
 		if(fileData.equals("Unpaid")) {paymentStatus=false; return;}
-		
+		paymentStatus=true;
+		String[] arr = fileData.split("<chbreak>");
+		checkDate=LocalDate.parse(arr[0]);
+		checkId=arr[1];
+		amount=Double.parseDouble(arr[2]);
 	}
 	void fill(double amt, LocalDate chkDate, String chkId) {
 		paymentStatus=true;
