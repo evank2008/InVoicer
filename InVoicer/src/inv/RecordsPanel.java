@@ -230,7 +230,7 @@ class Record {
 		String s=clientName+"<break>"+docName+"<break>"+service+"<break>"+amount+"<break>"+serviceDate
 				+"<break>"+billDate+"<break>"+(notes.isEmpty()?"null":notes)+"<break>"+check.toFileString()
 				+"<record>"; 
-		return null;
+		return s;
 	}
 }
 class Check {
