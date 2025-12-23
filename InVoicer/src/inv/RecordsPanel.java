@@ -68,7 +68,7 @@ public class RecordsPanel extends MenuPanel {
 				JOptionPane.showMessageDialog(null, "Select an invoice");
 			} else {
 				//check if selected row has already been filled
-				if(!table.getValueAt(row, 5).equals("Unpaid")) {
+				if(!table.getValueAt(row, 6).equals("Unpaid")) {
 					if(JOptionPane.showConfirmDialog(null, "Are you sure you want to override the current check?")==0) {
 						new CheckInputFrame(recordsList.get(row).check);
 					}
@@ -82,7 +82,7 @@ public class RecordsPanel extends MenuPanel {
 			int row = table.getSelectedRow();
 			if(row==-1) {
 				JOptionPane.showMessageDialog(null, "Select an invoice");
-			} else if(table.getValueAt(row, 5).equals("Unpaid")) {
+			} else if(table.getValueAt(row, 6).equals("Unpaid")) {
 				JOptionPane.showMessageDialog(null, "No check saved");
 			} else {
 				new CheckViewFrame(recordsList.get(row));
@@ -148,7 +148,12 @@ public class RecordsPanel extends MenuPanel {
 		this.paintAll(getGraphics());
 	}
 public String toFileString() {
-	return null;
+	String s = "";
+	for(Record record:recordsList) {
+		s+=record.toFileString();
+	}
+	if(s.isEmpty()) return "Empty";
+	return s;
 }
 public void loadData(String fileData) {
 	
@@ -209,7 +214,22 @@ class Record {
 		return arr;
 	}
 	public String toFileString() {
-
+		//make sure to end it with <record>
+		/*
+	String clientName;
+	String docName;
+	String service;
+	double amount;
+	LocalDate serviceDate;
+	LocalDate billDate;
+	Check check;
+	String notes;
+	*/
+		//should probably place notes before check
+		
+		String s=clientName+"<break>"+docName+"<break>"+service+"<break>"+amount+"<break>"+serviceDate
+				+"<break>"+billDate+"<break>"+(notes.isEmpty()?"null":notes)+"<break>"+check.toFileString()
+				+"<record>"; 
 		return null;
 	}
 }
@@ -251,7 +271,9 @@ class Check {
 	}
 	public String toFileString() {
 		if(!paymentStatus) return "Unpaid";
-		return null;
+		//do not use <break> in here
+		String s = checkDate+"<chbreak>"+checkId+"<chbreak>"+amount;
+		return s;
 		
 	}
 	
