@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -153,22 +154,22 @@ class Client {
 	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
 	double hourly=0;
-	String service;
-	LocalDate serviceDate;
+	String service="null";
+	LocalDate serviceDate=LocalDate.EPOCH;
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
 public String toString() {
 	return name;
 }
 public String toFileString() {
-	/*
-	String s = name+","+doctor+","+expectedAmt+"<contactList>";
+	
+	String s = name+"<break>"+doctor+"<break>"+expectedAmt
+			+"<break>"+hourly+"<break>"+service+"<break>"
+			+serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<contactList>";
 	
 	for(Contact c:contactList) {
 		s+=c.toFileString();
 	}
-	return s+"<contactList>";
-	*/
-	return null;
+	return s;
 }
 
 }
@@ -188,8 +189,7 @@ class Contact {
 		return new String[]{name,role,emailAddress};
 	}
 	public String toFileString() {
-		//make sure to have a comma around everything incase of empties
-		return (name.isEmpty()?"null":name)+"<name><role>"+(role.isEmpty()?"null":role)+"<role><email>"+(emailAddress.isEmpty()?"null":emailAddress)+"<email><contact>";
+		return (name.isEmpty()?"null":name)+"<break>"+(role.isEmpty()?"null":role)+"<break>"+(emailAddress.isEmpty()?"null":emailAddress)+"<contact>";
 	}
 }
 class ClientBox extends JPanel{

@@ -167,8 +167,8 @@ public class CreatorPanel extends MenuPanel {
 	private void autofill(Client client) {
 		//TODO this
 		amountField.setText(""+client.expectedAmt);
-		serviceDatePicker.setDate(client.serviceDate);
-		serviceField.setText(client.service);
+		serviceDatePicker.setDate(client.serviceDate.equals(LocalDate.EPOCH)?null:client.serviceDate);
+		serviceField.setText(client.service.equals("null")?null:client.service);
 		hourlyField.setText(client.hourly==0?null:""+client.hourly);
 	}
 	public void updateClientPicker() {
