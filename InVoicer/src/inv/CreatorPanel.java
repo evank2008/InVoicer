@@ -10,8 +10,7 @@ import javax.swing.*;
 import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
-//TODO: pdf generation
-//have a button thats says 'advance all dates for clients of this doctor by a month'
+//TODO: have a button thats says 'advance all dates for clients of this doctor by a month'
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel, hourlyLabel;

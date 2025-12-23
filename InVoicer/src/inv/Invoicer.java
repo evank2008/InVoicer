@@ -14,9 +14,7 @@ import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 //main class for running and holding the central frame
-//TODO: line 25 add icons to the tabs
-//		add file saving/reading system
-//		maybe just make it save on close? with the jframe
+
 public class Invoicer {
 	String errorMsg="";
 	static JFrame frame;
