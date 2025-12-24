@@ -28,7 +28,8 @@ import com.github.lgooddatepicker.components.DatePicker;
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
-	JPanel bufferPanel;
+	JButton deleteButton;
+	JPanel bufferPanel, buffer2Panel;
 
 	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
@@ -39,6 +40,7 @@ public class RecordsPanel extends MenuPanel {
 		updateTable();
 		setLayout(new BorderLayout());
 		bufferPanel = new JPanel();
+		buffer2Panel = new JPanel();
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
@@ -47,19 +49,25 @@ public class RecordsPanel extends MenuPanel {
 		
 		inputButton = new JButton("Input Check");
 		viewButton = new JButton("View Check");
+		deleteButton = new JButton("Delete");
 		if(Invoicer.onMac) {
 			inputButton.setForeground(Color.black);
 			viewButton.setForeground(Color.black);
+			deleteButton.setForeground(Color.black);
 		} else {
 			inputButton.setForeground(Color.white);
 			viewButton.setForeground(Color.white);
+			deleteButton.setForeground(Color.white);
 		}
 		inputButton.setBackground(new Color(40,160,230));
-		inputButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
+		inputButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
 		viewButton.setBackground(new Color(40,160,230));
-		viewButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
-		inputButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/2-20,buttonPanel.getPreferredSize().height-10));
-		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/2-20,buttonPanel.getPreferredSize().height-10));
+		viewButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
+		deleteButton.setBackground(new Color(40,160,230));
+		deleteButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
+		inputButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
+		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
+		deleteButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
 		
 		inputButton.addActionListener(e->{
 			int row = table.getSelectedRow();
@@ -86,8 +94,15 @@ public class RecordsPanel extends MenuPanel {
 			} else {
 				new CheckViewFrame(recordsList.get(row));
 			}
-				
-			
+		});
+		deleteButton.addActionListener(e->{
+			int row = table.getSelectedRow();
+			if(row==-1) {
+				JOptionPane.showMessageDialog(null, "Select an invoice");
+			} else if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record?")==0) {
+				recordsList.remove(row);
+				updateTable();
+			}
 		});
 		
 		buttonPanel.add(inputButton);
@@ -95,6 +110,10 @@ public class RecordsPanel extends MenuPanel {
 		bufferPanel.setBackground(new Color(20,85,122));
 		buttonPanel.add(bufferPanel);
 		buttonPanel.add(viewButton);
+		buffer2Panel.setPreferredSize(new Dimension(10,10));
+		buffer2Panel.setBackground(new Color(20,85,122));
+		buttonPanel.add(buffer2Panel);
+		buttonPanel.add(deleteButton);
 		
 		add(buttonPanel,BorderLayout.NORTH);
 		
