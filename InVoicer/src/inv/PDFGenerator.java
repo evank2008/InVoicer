@@ -1,6 +1,7 @@
 package inv;
 
 import java.awt.Font;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -47,7 +48,12 @@ public class PDFGenerator {
 		 * 
 		 */
 		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
-		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoice.pdf";
+		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoice";
+		int i = 0;
+		while(new File(path+i+".pdf").exists()) {
+			i++;
+		}
+		path=path+i+".pdf";
 		
 			PdfWriter writer = new PdfWriter(path);
 			PdfDocument pDoc = new PdfDocument(writer);

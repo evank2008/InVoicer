@@ -78,7 +78,7 @@ public class Invoicer {
 		BufferedWriter bw;
 		//create the folder
 		File f = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer");
-		if(!f.exists()&&f.mkdir()) {} else System.out.println("Error creating directory");
+		f.mkdir();
 		try {
 			bw = new BufferedWriter(new FileWriter(
 					new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer/invoicerData.txt")));
