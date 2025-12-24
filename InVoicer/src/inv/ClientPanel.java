@@ -17,7 +17,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import legacy.Invoice;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
