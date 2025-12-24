@@ -47,7 +47,7 @@ public class PDFGenerator {
 		 * 
 		 */
 		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
-		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/invoice.pdf";
+		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoice.pdf";
 		
 			PdfWriter writer = new PdfWriter(path);
 			PdfDocument pDoc = new PdfDocument(writer);
