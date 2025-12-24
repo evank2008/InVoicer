@@ -31,20 +31,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 public class PDFGenerator {
 //top right number is 'invoice number' which can just be year+month of service date
 	//below that, invoice genration date
-	public static void main(String[] args) {
-		Client c = new Client();
-		c.name="J. P. Client Co.";
-		Contact jim = new Contact("Jim Contact","jim@client.net","Director of Jim");
-		Contact clark = new Contact("Clark Contact","clark@client.net","Beer Drinker");
-		c.contactList.add(jim);
-		c.contactList.add(clark);
-		try {
-			generatePdf(c,"Stabbing",500,20.5,LocalDate.EPOCH,LocalDate.now());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 	public static boolean generatePdf(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException{
 		//TODO figure this one out
 		//ingredients that are variable:
