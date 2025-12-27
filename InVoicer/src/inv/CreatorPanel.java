@@ -180,6 +180,7 @@ public class CreatorPanel extends MenuPanel {
 		((DefaultComboBoxModel<Client>) clientPicker.getModel()).removeAllElements();
 		for(ClientBox c: ClientPanel.clientList) {
 			((DefaultComboBoxModel<Client>) clientPicker.getModel()).addElement(c.client);
+			MailPanel.updateDoctorList();
 		}
 	}
 	public static JPanel bufferPanel() {
