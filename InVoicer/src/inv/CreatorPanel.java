@@ -10,10 +10,7 @@ import javax.swing.*;
 import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should allow you to create an invoice
-//TODO: have a button thats says 'advance all dates for clients of this doctor by a month'
 
-//add a jcombobox where you can select a doctor and theres a button below it
-//it for-eaches each client and generates a pdf where you advance all their dates by a month
 public class CreatorPanel extends MenuPanel {
 	DatePicker serviceDatePicker, billDatePicker;
 	JLabel clientLabel, serviceDateLabel, billDateLabel, serviceFieldLabel, amountLabel, hourlyLabel;
@@ -39,7 +36,12 @@ public class CreatorPanel extends MenuPanel {
 		clientLabel.setForeground(Color.white);
 		clientLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Invoicer.HEIGHT/25));
 		clientLabel.setAlignmentX(LEFT_ALIGNMENT);
+		if(Invoicer.onMac) {
+			clientPicker.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+
+		} else {
 		clientPicker.setFont(new Font(Font.SANS_SERIF, Font.BOLD, Invoicer.HEIGHT/30));
+		}
 		
 		add(clientLabel);
 		add(clientPicker);
@@ -130,7 +132,7 @@ public class CreatorPanel extends MenuPanel {
 				}catch(Exception exc) {
 					hourlyField.setText("0");
 					hourly=0;
-				}
+					}
 				LocalDate serviceDate = serviceDatePicker.getDate();
 				if(serviceDate==null||amount<0||service.equals("")) throw new Exception();
 				LocalDate billDate = billDatePicker.getDate();

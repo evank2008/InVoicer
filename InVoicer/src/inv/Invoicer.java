@@ -21,6 +21,7 @@ public class Invoicer {
 	static ClientPanel clp;
 	static CreatorPanel crp;
 	static RecordsPanel rp;
+	static MailPanel mp;
 	static SelectionScreen ss;
 	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
 	public static final int WIDTH = 700, HEIGHT = 700;
@@ -31,6 +32,7 @@ public class Invoicer {
 		crp = new CreatorPanel();
 		rp = new RecordsPanel();
 		ss = new SelectionScreen();
+		mp = new MailPanel();
 		new Invoicer();
 	}
 
@@ -43,16 +45,12 @@ public class Invoicer {
 		ss.addTab("Clients", clp);
 		ss.addTab("Invoice", crp);
 		ss.addTab("Records", rp);
+		ss.addTab("Mail", mp);
 		
 		clp.setBackground(new Color(36,36,36));
 		crp.setBackground(new Color(36,36,36));
 		rp.setBackground(new Color(36,36,36));
-		
-		ss.addChangeListener(e-> {
-	        if(e.getSource()==crp) {
-	        	System.out.println("crp cslected");
-	        }
-	    });
+		mp.setBackground(new Color(36,36,36));
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
