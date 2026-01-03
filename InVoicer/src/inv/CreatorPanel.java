@@ -190,7 +190,7 @@ public class CreatorPanel extends MenuPanel {
 		bufferPanel.setBackground(new Color(36,36,36));
 		return bufferPanel;
 	}
-	void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException {
+	public void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException {
 		
 		PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate);
 		//on success:

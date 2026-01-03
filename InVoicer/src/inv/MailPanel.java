@@ -2,6 +2,8 @@ package inv;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -32,12 +34,12 @@ public class MailPanel extends MenuPanel{
 		
 		parseButton = new JButton("Doctor Autogen");
 		parseButton.setToolTipText("Make a PDF for each of this\n"
-				+ "doctor's clients and move all\n"
+				+ "doctor's clients that have had one made before and move all\n"
 				+ "their dates up by a month");
 		
 		parseButton.addActionListener(e->{
 			//do parsing stuff
-			genLabel.setText("Generated "+5+" invoices.");
+			genLabel.setText(autoGen());
 			t=new Thread(()->{
 				try {
 					Thread.sleep(8000);
@@ -54,11 +56,12 @@ public class MailPanel extends MenuPanel{
 		
 		genLabel = new JLabel();
 		genLabel.setForeground(Color.green);
+		genLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		
 		
 		autogenPanel = new JPanel();
-		autogenPanel.setMaximumSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/6));
+		autogenPanel.setMaximumSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/5));
 		autogenPanel.setBackground(new Color(36,36,36));
 
 		autogenPanel.add(docBox);	
@@ -83,5 +86,26 @@ public class MailPanel extends MenuPanel{
 		((DefaultComboBoxModel<String>)docBox.getModel()).removeAllElements();
 		((DefaultComboBoxModel<String>)docBox.getModel()).addAll(doctorList);
 		
+	}
+	String autoGen() {
+		if(docBox.getSelectedItem()==null) return "null selection";
+		int i=0;
+		for(ClientBox cb: ClientPanel.clientList) {
+			Client c = cb.client;
+			//only gen if correct doctor and also if the client has an autogen
+			if((!c.doctor.equals(docBox.getSelectedItem()))||c.service.equals("null")) continue;
+			try {
+				if(c.serviceDate.isAfter(LocalDate.now().plusMonths(1))) return "<html>Client "+c.name+" has a<br>service date after current date</html>";
+				Invoicer.crp.generatePDF(c, c.service, c.expectedAmt, c.hourly, c.serviceDate, LocalDate.now());
+				i++;
+				//now increment the dates by a month
+				c.serviceDate=c.serviceDate.plusMonths(1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return "error occurred: "+e.getMessage();
+			}
+		}
+		return "Generated "+i+" invoices.";
 	}
 }
