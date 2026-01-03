@@ -20,24 +20,57 @@ public class MailPanel extends MenuPanel{
 	static ArrayList<String> doctorList = new ArrayList<String>();
 	static JComboBox<String> docBox;
 	JButton parseButton;
-	JLabel parseLabel;
+	JPanel autogenPanel;
+	JPanel bufferPanel;
+	JLabel genLabel;
+	Thread t;
 	public MailPanel() {
 		super();
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		docBox = new JComboBox<String>(new DefaultComboBoxModel<String>());
 		updateDoctorList();
 		
-		parseButton = new JButton("make");
-		parseLabel = new JLabel("Make a PDF for each of this\n"
-							+ "doctor's clients and move all\n"
-							+ "their service dates by a month");
-		parseLabel.setForeground(Color.white);
+		parseButton = new JButton("Doctor Autogen");
+		parseButton.setToolTipText("Make a PDF for each of this\n"
+				+ "doctor's clients and move all\n"
+				+ "their dates up by a month");
+		
+		parseButton.addActionListener(e->{
+			//do parsing stuff
+			genLabel.setText("Generated "+5+" invoices.");
+			t=new Thread(()->{
+				try {
+					Thread.sleep(8000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				genLabel.setText("");
+			});
+			t.start();
+		});
 		
 		docBox.setMaximumSize(new Dimension(Invoicer.WIDTH,Invoicer.HEIGHT/12));
 		
-		add(docBox);	
-		add(parseLabel);
-		add(parseButton);
+		genLabel = new JLabel();
+		genLabel.setForeground(Color.green);
+		
+		
+		
+		autogenPanel = new JPanel();
+		autogenPanel.setMaximumSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/6));
+		autogenPanel.setBackground(new Color(36,36,36));
+
+		autogenPanel.add(docBox);	
+		autogenPanel.add(parseButton);
+		autogenPanel.add(genLabel);
+		
+		bufferPanel = new JPanel();
+		bufferPanel.setBackground(new Color(36,36,36));
+		bufferPanel.setMaximumSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/30));
+		
+		add(bufferPanel);
+		add(autogenPanel);
 	}
 	public static void updateDoctorList() {
 		doctorList.clear();
