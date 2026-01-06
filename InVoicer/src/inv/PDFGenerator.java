@@ -48,12 +48,16 @@ public class PDFGenerator {
 		 * 
 		 */
 		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
-		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoice";
-		int i = 0;
-		while(new File(path+i+".pdf").exists()) {
-			i++;
+		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/"+client.name+" "+invoiceNum;
+		int i = 1;
+		if(new File(path+".pdf").exists()) {
+			while(new File(path+"("+i+").pdf").exists()) {
+				i++;
+			}
+			path+="("+i+").pdf";
+		} else {
+		path=path+".pdf";
 		}
-		path=path+i+".pdf";
 		
 			PdfWriter writer = new PdfWriter(path);
 			PdfDocument pDoc = new PdfDocument(writer);
