@@ -191,12 +191,27 @@ public class CreatorPanel extends MenuPanel {
 		return bufferPanel;
 	}
 	public void generatePDF(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException {
+		boolean hasEmail = false;
+		for(Contact c: client.contactList) {
+			if(!c.emailAddress.isEmpty()) hasEmail=true;
+		}
+		if(!hasEmail) {
+			JOptionPane.showMessageDialog(null, "Error: no email addresses found for client.");
+			return;
+		}
+		try {
+			PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate);
+			successLabel.setVisible(true);
+			//dont really need to record an hourly rate so i shall eschew it
+			Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			//TODO make it show the error
+		}
 		
-		PDFGenerator.generatePdf(client, service, amount, hourly, serviceDate, billDate);
-		//on success:
-		successLabel.setVisible(true);
-		//dont really need to record an hourly rate so i shall eschew it
-		Invoicer.rp.newRecord(client,service,amount,serviceDate,billDate);
+		
 		
 	}
 }

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -35,7 +36,8 @@ public class PDFGenerator {
 //top right number is 'invoice number' which can just be year+month of service date
 	//below that, invoice genration date
 	
-	public static boolean generatePdf(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException{
+	public static boolean generatePdf(Client client, String service, double amount, double hourly, LocalDate serviceDate, LocalDate billDate) throws IOException, Exception{
+		
 		//TODO figure this one out
 		//ingredients that are variable:
 		/*
@@ -141,56 +143,34 @@ public class PDFGenerator {
 			doc.add(bodyTable);
 			
 			doc.close();
-			MailMaker.newMail(new File(path));
+			MailMaker.newMail(new File(path),client.contactList);
 		return true;
 	}
 }
 class MailMaker {
-	public static void newMail(File file) {
+	final static String subject = "Hello";
+	final static String body = "Hello";
+	public static void newMail(File file,List<Contact> cList) throws Exception {
 		if(!Invoicer.onMac) {
 		JOptionPane.showMessageDialog(null, "this would be an email with your pdf: "+file.getName()+" if you were on mac");
 	} else {
-		//do the mail
-		List<String> to = List.of(
-	            "alice@example.com",
-	            "bob@example.com"
-	        );
-
-	        List<String> cc = List.of(
-	            "carol@example.com"
-	        );
-
-	        List<String> bcc = List.of(
-	            "dave@example.com"
-	        );
-
+		//do the mail		
 	        StringBuilder script = new StringBuilder();
-
+	        
 	        script.append("tell application \"Mail\"\n")
 	              .append("activate\n")
 	              .append("set newMessage to make new outgoing message with properties ")
-	              .append("{subject:\"Hello\", content:\"Email body here\" & return & return, visible:true}\n")
+	              .append("{subject:\""+subject+"\", content:\""+body+"\" & return & return, visible:true}\n")
 	              .append("tell newMessage\n");
 
-	        for (String email : to) {
+	        for (Contact c : cList) {
+	        	
 	            script.append("make new to recipient at end of to recipients ")
 	                  .append("with properties {address:\"")
-	                  .append(email)
+	                  .append(c.emailAddress)
 	                  .append("\"}\n");
-	        }
+	        	
 
-	        for (String email : cc) {
-	            script.append("make new cc recipient at end of cc recipients ")
-	                  .append("with properties {address:\"")
-	                  .append(email)
-	                  .append("\"}\n");
-	        }
-
-	        for (String email : bcc) {
-	            script.append("make new bcc recipient at end of bcc recipients ")
-	                  .append("with properties {address:\"")
-	                  .append(email)
-	                  .append("\"}\n");
 	        }
 
 	        script.append("make new attachment with properties {file name:POSIX file \"")
@@ -205,6 +185,8 @@ class MailMaker {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+	        
 	}
 	}
 }
