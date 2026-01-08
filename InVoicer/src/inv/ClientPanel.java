@@ -20,7 +20,6 @@ import javax.swing.table.DefaultTableModel;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
-//checkbox on clients to mark as inactive(skip for autogen)
 
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
