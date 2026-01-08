@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.DateFormatter;
 
@@ -139,7 +140,12 @@ public class PDFGenerator {
 			doc.add(bodyTable);
 			
 			doc.close();
-		
+			MailMaker.newMail(new File(path));
 		return true;
+	}
+}
+class MailMaker {
+	public static void newMail(File mail) {
+		JOptionPane.showMessageDialog(null, "imagine this is an email with your pdf: "+mail.getName());
 	}
 }

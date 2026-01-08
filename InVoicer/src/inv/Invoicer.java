@@ -74,9 +74,7 @@ public class Invoicer {
 		//first split by <contactList> then split first one by commas and the second by <contact> and then by commas, system works
 
 		BufferedWriter bw;
-		//create the folder
-		File f = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer");
-		f.mkdir();
+		
 		try {
 			bw = new BufferedWriter(new FileWriter(
 					new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer/invoicerData.txt")));
@@ -99,6 +97,9 @@ public class Invoicer {
 		File dataFile = new File(path);
 		if(!dataFile.exists()) {
 			JOptionPane.showMessageDialog(null,"Welcome to the Invoicer! Your data file will be saved to "+path+". Enjoy!");
+			//create the folder
+			File f = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer");
+			f.mkdir();
 			return;
 		}
 		try {

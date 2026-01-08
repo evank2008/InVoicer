@@ -20,9 +20,7 @@ import javax.swing.table.DefaultTableModel;
 
 //this class should display the clients, let you add/remove clients, input data about clients
 //TODO: option to delete clients?
-//not sure if this would be plausible since it's not a jtable and you can't easily select
-//would have to add a delete button to the clientbox and that would be hell
-//i think id rather not tbh
+//checkbox on clients to mark as inactive(skip for autogen)
 
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
