@@ -130,6 +130,7 @@ for(String clientStr: clients) {
 		client.hourly=Double.parseDouble(clientFields[3]);
 		client.service=clientFields[4];
 		client.serviceDate=LocalDate.parse(clientFields[5]);
+		client.isActive=Boolean.parseBoolean(clientFields[6]);
 		
 	if (clientArr.length > 1 && !clientArr[1].isEmpty()) {
 		String[] contacts = clientArr[1].split("<contact>");
@@ -150,6 +151,7 @@ this.repaint();
 }
 
 class Client {
+	boolean isActive=true;
 	String name="New Client";
 	String doctor="Doctorguy";
 	double expectedAmt=0.00; //expected monthly billing amount in dollars
@@ -164,7 +166,7 @@ public String toFileString() {
 	
 	String s = name+"<break>"+doctor+"<break>"+expectedAmt
 			+"<break>"+hourly+"<break>"+service+"<break>"
-			+serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<contactList>";
+			+serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<break>"+isActive+"<contactList>";
 	
 	for(Contact c:contactList) {
 		s+=c.toFileString();
@@ -203,6 +205,7 @@ class ClientBox extends JPanel{
 	JTextField nameField, amountField, doctorField;
 	JPanel namePanel, amountPanel;
 	JButton contactsButton;
+	JCheckBox activeBox;
 	Color darkWhite = new Color(220,220,220);
 	public ClientBox(Client client) {
 		super();
@@ -241,7 +244,7 @@ class ClientBox extends JPanel{
 		namePanel.add(nameField);
 		namePanel.setOpaque(false);
 		
-		amountLabel=new JLabel("       Expected Monthly Amount: $");
+		amountLabel=new JLabel("    Expected Monthly Amount: $");
 		amountLabel.setForeground(darkWhite);
 		amountLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height/4)));
 		
@@ -259,8 +262,17 @@ class ClientBox extends JPanel{
 		//amountPanel is tricky to work with
 		//adding anything but the label breaks all the gui
 		//even just a regular panel with only the label in it
+		//maybe try to add the activeBox to it
+		activeBox = new JCheckBox();
+		activeBox.setOpaque(false);
+		activeBox.setSelected(client.isActive);
+		activeBox.addActionListener(e->{
+			client.isActive=activeBox.isSelected();
+		});
+		
 		amountPanel=new JPanel();
 		amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));
+		amountPanel.add(activeBox);
 		amountPanel.add(amountLabel);
 		amountPanel.add(amountField);
 		amountPanel.setOpaque(false);
