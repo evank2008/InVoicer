@@ -146,6 +146,10 @@ public class PDFGenerator {
 }
 class MailMaker {
 	public static void newMail(File mail) {
-		JOptionPane.showMessageDialog(null, "imagine this is an email with your pdf: "+mail.getName());
+		if(!Invoicer.onMac) {
+		JOptionPane.showMessageDialog(null, "this would be an email with your pdf: "+mail.getName()+" if you were on mac");
+	} else {
+		//do the mail
+	}
 	}
 }
