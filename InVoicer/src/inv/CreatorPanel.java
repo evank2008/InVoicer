@@ -139,15 +139,16 @@ public class CreatorPanel extends MenuPanel {
 				
 				generatePDF(client,service,amount,hourly,serviceDate,billDate);
 				//this is for autofill purposes
-				client.serviceDate=serviceDate;
+				client.serviceDate=serviceDate.plusMonths(1);
 				client.service=service;
 				client.hourly=hourly;
+				
 				//now to clear the fields
 				autofill(new Client());
 				
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 		});
 		generateButton.setPreferredSize(new Dimension(Invoicer.WIDTH*8/10,Invoicer.HEIGHT/10));
