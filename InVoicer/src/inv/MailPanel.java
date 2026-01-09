@@ -63,8 +63,13 @@ public class MailPanel extends MenuPanel{
 		autogenPanel = new JPanel();
 		autogenPanel.setMaximumSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/5));
 		autogenPanel.setBackground(new Color(36,36,36));
-
+		
+		JPanel bufferPanel = new JPanel();
+		bufferPanel.setPreferredSize(new Dimension(Invoicer.WIDTH/3,Invoicer.HEIGHT/15));
+		bufferPanel.setOpaque(false);
+		
 		autogenPanel.add(docBox);	
+		autogenPanel.add(bufferPanel);
 		autogenPanel.add(parseButton);
 		autogenPanel.add(genLabel);
 		

@@ -148,12 +148,31 @@ public class PDFGenerator {
 	}
 }
 class MailMaker {
-	final static String subject = "Hello";
-	final static String body = "Hello";
+	 static String subject = "INVOICE";
+	 static String body = "Hello";
 	public static void newMail(File file,List<Contact> cList) throws Exception {
 		if(!Invoicer.onMac) {
 		JOptionPane.showMessageDialog(null, "this would be an email with your pdf: "+file.getName()+" if you were on mac");
 	} else {
+		
+		//make the body
+		String names=cList.get(0).name.split(" ")[0];
+		if(cList.size()==2) names+=" and "+cList.get(1).name.split(" ")[0];
+
+		if(cList.size()>2) {
+		for(int i = 1;i<cList.size()-1;i++) {
+			names+=", "+cList.get(i).name.split(" ")[0];
+		}
+		names+=", and "+cList.get(cList.size()-1).name.split(" ")[0];
+		}
+		body = "Hi "+names+",\n\n" +
+		"Attached is my latest invoice. \n \n"
+		+ "Thank you,\n\n"
+		+ "Jason Keri, M.D. \n"
+		+ "Diplomate, American Board of Psychiatry & Neurology, With Added Qualification in Geriatric Psychiatry\n"
+		+ "Associate Clinical Professor, UCSD Health Sciences\n"
+		+ "Co-Founder, Senior Medical Associates, Inc.";
+		System.out.println(body);
 		//do the mail		
 	        StringBuilder script = new StringBuilder();
 	        
