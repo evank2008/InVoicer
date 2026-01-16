@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -88,10 +89,10 @@ public class Simon extends JPanel implements MouseListener{
 		this.paintAll(getGraphics());
 		
 		//load sounds
-		redTone=loadClip("InVoicer/src/red.wav");
-		blueTone=loadClip("InVoicer/src/blue.wav");
-		yellowTone=loadClip("InVoicer/src/yellow.wav");
-		greenTone=loadClip("InVoicer/src/green.wav");
+		redTone=loadClip("red.wav");
+		blueTone=loadClip("blue.wav");
+		yellowTone=loadClip("yellow.wav");
+		greenTone=loadClip("green.wav");
 		
 		sounds = new Clip[]{greenTone,redTone,yellowTone,blueTone};
 			for(Clip c: sounds) {
@@ -103,8 +104,9 @@ public class Simon extends JPanel implements MouseListener{
 	}
 	Clip loadClip(String path) {
         try {
-        	File file = new File(path);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+        	java.net.URL is = this.getClass().getResource(path);
+        	//File file = new File(path);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(is);
 
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
