@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileSystemView;
 //main class for running and holding the central frame
 
 public class Invoicer {
+	String versionNum = "2.1";
 	String errorMsg="";
 	static JFrame frame;
 	static ClientPanel clp;
@@ -40,7 +41,7 @@ public class Invoicer {
 
 	public Invoicer() {
 
-		frame = new JFrame("Invoicer");
+		frame = new JFrame("Invoicer v"+versionNum);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setVisible(true);
 		
