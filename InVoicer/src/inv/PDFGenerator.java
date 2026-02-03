@@ -51,6 +51,7 @@ public class PDFGenerator {
 		 * total amount
 		 * 
 		 */
+		String lineBreakCode = "~";
 		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
 		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/"+client.name+" "+invoiceNum;
 		int i = 1;
@@ -106,7 +107,9 @@ public class PDFGenerator {
 			bodyTable.addCell(new Cell().add("").setHeight(50));
 
 			bodyTable.addCell(new Cell().add(serviceDate.format(DateTimeFormatter.ofPattern("MMM uuuu"))));
-			bodyTable.addCell(new Cell().add(service));
+			
+			String serviceWithBreaks = service.replaceAll(lineBreakCode, "\n");
+			bodyTable.addCell(new Cell().add(serviceWithBreaks));
 			bodyTable.addCell(new Cell().add(""));
 			
 			bodyTable.addCell(new Cell().add("").setHeight(bodyTable.getCell(0, 0).getHeight()));
