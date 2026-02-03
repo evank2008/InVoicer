@@ -52,7 +52,7 @@ public class PDFGenerator {
 		 * 
 		 */
 		String lineBreakCode = "~";
-		String invoiceNum = LocalDate.now().getYear()+"-"+LocalDate.now().getMonthValue(); //2025-12
+		String invoiceNum = serviceDate.getYear()+"-"+serviceDate.getMonthValue(); //2025-12
 		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/"+client.name+" "+invoiceNum;
 		int i = 1;
 		if(new File(path+".pdf").exists()) {
