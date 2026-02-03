@@ -335,11 +335,7 @@ class ClientBox extends JPanel{
 	}
 }
 	class ContactsFrame extends JFrame {
-		//how should this look?
-		//its basically just a list of Contacts[name, email address, role]
-		//i think it should have a slightly different layout compared to clientpanel
-		//more of a bare-bones vibe?
-		//one button or two at top for add/delete then just a jtable
+		static ArrayList<Client> currentWindows = new ArrayList<Client>();
 		ArrayList<Contact> contactList;
 		JPanel buttonPanel;
 		JPanel tablePanel;
@@ -350,6 +346,12 @@ class ClientBox extends JPanel{
 		
 		public ContactsFrame(Client client) {
 			super(client.name+" Contacts");
+			if(currentWindows.contains(client)) {
+				this.dispose();
+				return;
+			} else {
+				currentWindows.add(client);
+			}
 			this.client=client;
 			contactList=client.contactList;
 			setSize(Invoicer.WIDTH*2/3,Invoicer.HEIGHT*80/100);
@@ -359,6 +361,10 @@ class ClientBox extends JPanel{
 			addWindowListener(new java.awt.event.WindowAdapter() {
 				@Override
 				public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				     if (table.isEditing()) {
+				            table.getCellEditor().stopCellEditing();
+				        }
+				     currentWindows.remove(client);
 					updateClientContacts();
 				}
 			});

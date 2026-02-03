@@ -85,8 +85,14 @@ public class PDFGenerator {
 			contactTable.setBorder(new SolidBorder(Color.BLACK,1));
 			//contactTable.addCell(new Cell().add("text").setBorder(Border.NO_BORDER));
 			contactTable.addCell(new Cell().add("To:").setBorder(Border.NO_BORDER));
+			
+			ArrayList<Contact> contactsNoBlanks = new ArrayList<Contact>(client.contactList);
+			contactsNoBlanks.removeIf((c)->{
+				return c.name.isEmpty();
+			});
+			
 			contactTable.addCell(new Cell().add("For: "+client.name).setBorder(Border.NO_BORDER));
-			for(Contact con:client.contactList) {
+			for(Contact con:contactsNoBlanks) {
 				contactTable.addCell(new Cell().add(con.name+"\n"+con.emailAddress).setBorder(Border.NO_BORDER).setHeight(50));
 				contactTable.addCell(new Cell().setBorder(Border.NO_BORDER));
 			}
@@ -157,16 +163,19 @@ class MailMaker {
 		if(!Invoicer.onMac) {
 		JOptionPane.showMessageDialog(null, "this would be an email with your pdf: "+file.getName()+" if you were on mac");
 	} else {
-		
+		ArrayList<Contact> contactsNoBlanks = new ArrayList<Contact>(cList);
+		contactsNoBlanks.removeIf((c)->{
+			return c.name.isEmpty();
+		});
 		//make the body
-		String names=cList.get(0).name.split(" ")[0];
-		if(cList.size()==2) names+=" and "+cList.get(1).name.split(" ")[0];
+		String names=contactsNoBlanks.get(0).name.split(" ")[0];
+		if(contactsNoBlanks.size()==2) names+=" and "+contactsNoBlanks.get(1).name.split(" ")[0];
 
-		if(cList.size()>2) {
-		for(int i = 1;i<cList.size()-1;i++) {
-			names+=", "+cList.get(i).name.split(" ")[0];
+		if(contactsNoBlanks.size()>2) {
+		for(int i = 1;i<contactsNoBlanks.size()-1;i++) {
+			names+=", "+contactsNoBlanks.get(i).name.split(" ")[0];
 		}
-		names+=", and "+cList.get(cList.size()-1).name.split(" ")[0];
+		names+=", and "+contactsNoBlanks.get(contactsNoBlanks.size()-1).name.split(" ")[0];
 		}
 		body = "Hi "+names+",\n\n" +
 		"Attached is my latest invoice. \n \n"
