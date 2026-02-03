@@ -226,7 +226,8 @@ class ClientBox extends JPanel{
 		nameLabel.setForeground(darkWhite);
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height*7/24)));
 		
-		nameField=new JTextField(client.name);
+		nameField = new JTextField(15);
+		nameField.setText(client.name);
 		nameField.setFont(nameLabel.getFont());
 		nameField.setForeground(darkWhite);
 		nameField.setBackground(new Color(34,34,34));
