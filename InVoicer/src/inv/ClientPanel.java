@@ -116,12 +116,19 @@ public String toFileString() {
 		s+=(c.client.toFileString())+"<client>";
 	}
 	if(s.equals("")) return "Empty";
-	
+	if(resized) {
+		s+="<resize>"+nColumns;
+	}
 	return s;
 }
 
 public void loadData(String dataLine) {
-String[] clients = dataLine.split("<client>");
+	String[] resizeTemp = dataLine.split("<resize>");
+	if(resizeTemp.length>1) {
+		nColumns=Integer.parseInt(resizeTemp[1]);
+		resized=true;
+	}
+String[] clients = resizeTemp[0].split("<client>");
 if(clients[0].length()==0) return;
 for(String clientStr: clients) {
 	Client client = new Client();
