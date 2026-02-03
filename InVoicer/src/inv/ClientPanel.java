@@ -8,6 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import javax.swing.table.DefaultTableModel;
 public class ClientPanel extends MenuPanel {
 	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
+	static boolean resized = false;
+	static int nColumns=-1;
 	JScrollPane scrollPane = new JScrollPane(boxPanel);
 	
 	JPanel buttonPanel = new JPanel();
@@ -147,6 +151,28 @@ for(String clientStr: clients) {
 }
 this.repaint();
 }
+public void calibrateNameFields() {
+		JSlider slider = new JSlider(0,25,15);
+	JFrame columnPopup = new JFrame();
+	columnPopup.addWindowListener(new WindowAdapter() {
+	    @Override
+	    public void windowClosing(WindowEvent e) {
+	    	nColumns=slider.getValue();
+	    	resized=true;
+	    }
+	    });
+	columnPopup.setSize(300,100);
+	columnPopup.setVisible(true);
+	slider.setPreferredSize(new Dimension(200,30));
+	slider.addChangeListener(e->{
+		for(ClientBox cbox: this.clientList) {
+		cbox.nameField.setColumns(slider.getValue());
+		cbox.validate();
+		cbox.repaint();
+		}
+	});
+	columnPopup.add(slider);
+	}
 }
 
 class Client {
@@ -226,7 +252,8 @@ class ClientBox extends JPanel{
 		nameLabel.setForeground(darkWhite);
 		nameLabel.setFont(nameLabel.getFont().deriveFont((float)(this.getPreferredSize().height*7/24)));
 		
-		nameField = new JTextField(15);
+		if(ClientPanel.resized) {nameField = new JTextField(ClientPanel.nColumns);}
+		else nameField=new JTextField(15);
 		nameField.setText(client.name);
 		nameField.setFont(nameLabel.getFont());
 		nameField.setForeground(darkWhite);

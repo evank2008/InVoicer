@@ -24,6 +24,7 @@ public class Invoicer {
 	static RecordsPanel rp;
 	static MailPanel mp;
 	static SelectionScreen ss;
+	static SettingsPanel sp;
 	static Simon simon;
 	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
 	public static final int WIDTH = 700, HEIGHT = 700;
@@ -36,6 +37,7 @@ public class Invoicer {
 		ss = new SelectionScreen();
 		mp = new MailPanel();
 		simon = new Simon();
+		sp = new SettingsPanel();
 		new Invoicer();
 	}
 
@@ -49,12 +51,14 @@ public class Invoicer {
 		ss.addTab("Invoice", crp);
 		ss.addTab("Records", rp);
 		ss.addTab("Mail", mp);
+		ss.addTab("Settings", sp);
 		ss.addTab("Simon", simon);
 		
 		clp.setBackground(new Color(36,36,36));
 		crp.setBackground(new Color(36,36,36));
 		rp.setBackground(new Color(36,36,36));
 		mp.setBackground(new Color(36,36,36));
+		sp.setBackground(new Color(36,36,36));
 		
 		//ss.setSize(WIDTH,HEIGHT);
 		frame.add(ss);
