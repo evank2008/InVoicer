@@ -16,7 +16,7 @@ import javax.swing.filechooser.FileSystemView;
 //main class for running and holding the central frame
 
 public class Invoicer {
-	String versionNum = "2.1.1";
+	String versionNum = "2.1.2";
 	String errorMsg="";
 	static JFrame frame;
 	static ClientPanel clp;
