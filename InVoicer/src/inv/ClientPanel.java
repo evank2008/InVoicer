@@ -159,7 +159,7 @@ for(String clientStr: clients) {
 this.repaint();
 }
 public void calibrateNameFields() {
-		JSlider slider = new JSlider(0,25,15);
+		JSlider slider = new JSlider(0,35,15);
 	JFrame columnPopup = new JFrame();
 	columnPopup.addWindowListener(new WindowAdapter() {
 	    @Override
@@ -228,8 +228,9 @@ class Contact {
 }
 class ClientBox extends JPanel{
 	Dimension clientBoxSize = new Dimension(Invoicer.WIDTH*18/20,Invoicer.HEIGHT*2/15);
-
+	Dimension maxSize = new Dimension(Integer.MAX_VALUE,Invoicer.HEIGHT*2/15);
 	//this displays a client's data in a box
+	String nameTemp; //for startup
 	Client client;
 	JLabel nameLabel;
 	JLabel amountLabel;
@@ -244,11 +245,12 @@ class ClientBox extends JPanel{
 
 		this.client=client;
 		this.setPreferredSize(clientBoxSize);
-		this.setMaximumSize(clientBoxSize);
+		this.setMaximumSize(maxSize);
 		this.setBorder(new LineBorder(new Color(201,201,201),2,true));
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
 		this.setFocusable(true);
+		nameTemp=client.name;
 		GridBagConstraints gbc = new GridBagConstraints();
 		//what is displayed?
 		/*
@@ -261,7 +263,7 @@ class ClientBox extends JPanel{
 		
 		if(ClientPanel.resized) {nameField = new JTextField(ClientPanel.nColumns);}
 		else nameField=new JTextField(15);
-		nameField.setText(client.name);
+		nameField.setText("New Client");
 		nameField.setFont(nameLabel.getFont());
 		nameField.setForeground(darkWhite);
 		nameField.setBackground(new Color(34,34,34));

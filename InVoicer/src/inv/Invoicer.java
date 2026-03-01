@@ -39,6 +39,9 @@ public class Invoicer {
 		simon = new Simon();
 		sp = new SettingsPanel();
 		new Invoicer();
+		for(ClientBox cb: clp.clientList) {
+			cb.nameField.setText(cb.nameTemp);
+		}
 	}
 
 	public Invoicer() {
