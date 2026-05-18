@@ -93,6 +93,24 @@ void addClient(Client c) {
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
 }
+static void updateClientData(boolean save) {
+	if(save) updateClientData();
+	else {
+		for(ClientBox cb:clientList) {
+			cb.client.doctor=cb.doctorField.getText();
+			cb.client.name=cb.nameField.getText();
+			try {
+			cb.client.expectedAmt=Double.parseDouble((cb.amountField.getText()));
+			} catch(Exception e) {
+				cb.client.expectedAmt=0.0;
+				cb.amountField.setText("Error!");
+			}
+			
+		}
+		//also update creator panel picker
+		Invoicer.crp.updateClientPicker();
+	}
+}
 static void updateClientData() {
 	//parse each clientbox's textfields and store their data in their client's variables
 	//notably, doesn't save data on contacts
@@ -109,6 +127,7 @@ static void updateClientData() {
 	}
 	//also update creator panel picker
 	Invoicer.crp.updateClientPicker();
+	Invoicer.saveAllData();
 }
 public String toFileString() {
 	String s = "";
@@ -166,6 +185,7 @@ public void calibrateNameFields() {
 	    public void windowClosing(WindowEvent e) {
 	    	nColumns=slider.getValue();
 	    	resized=true;
+	    	Invoicer.saveAllData();;
 	    }
 	    });
 	columnPopup.setSize(300,100);
@@ -476,6 +496,7 @@ class ClientBox extends JPanel{
 			client.contactList.clear();
 			for (int i = 0; i < table.getRowCount(); i++) {
 				client.contactList.add(new Contact((String)table.getValueAt(i, 0),(String)table.getValueAt(i, 2),(String)table.getValueAt(i, 1)));
-			}		
+			}
+			Invoicer.saveAllData();
 		}
 	}

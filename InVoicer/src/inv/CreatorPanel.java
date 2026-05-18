@@ -144,7 +144,7 @@ public class CreatorPanel extends MenuPanel {
 				
 				//now to clear the fields
 				autofill(new Client());
-				
+				Invoicer.saveAllData();
 			} catch (Exception ex) {
 				errorLabel.setVisible(true);
 				//ex.printStackTrace();

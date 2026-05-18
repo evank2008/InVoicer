@@ -40,6 +40,7 @@ public class MailPanel extends MenuPanel{
 		parseButton.addActionListener(e->{
 			//do parsing stuff
 			genLabel.setText(autoGen());
+			Invoicer.saveAllData();
 			t=new Thread(()->{
 				try {
 					Thread.sleep(20000);

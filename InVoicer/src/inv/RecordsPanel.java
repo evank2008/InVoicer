@@ -101,6 +101,7 @@ public class RecordsPanel extends MenuPanel {
 			} else if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record?")==0) {
 				recordsList.remove(row);
 				updateTable();
+				Invoicer.saveAllData();
 			}
 		});
 		
@@ -392,6 +393,7 @@ public CheckInputFrame(Check chk) {
 			//now populate the check
 			check.fill(amount, chkDate, chkId);
 			Invoicer.rp.updateTable();
+			Invoicer.saveAllData();
 			this.dispose();
 		} catch (Exception ex) {
 			errorLabel.setVisible(true);

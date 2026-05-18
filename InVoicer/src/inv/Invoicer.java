@@ -16,8 +16,8 @@ import javax.swing.filechooser.FileSystemView;
 //main class for running and holding the central frame
 
 public class Invoicer {
-	String versionNum = "2.1.2";
-	String errorMsg="";
+	String versionNum = "2.2";
+	static String errorMsg="";
 	static JFrame frame;
 	static ClientPanel clp;
 	static CreatorPanel crp;
@@ -27,6 +27,7 @@ public class Invoicer {
 	static SettingsPanel sp;
 	static Simon simon;
 	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
+	static boolean saveable = false;
 	public static final int WIDTH = 700, HEIGHT = 700;
 
 	public static void main(String[] args) {
@@ -42,6 +43,7 @@ public class Invoicer {
 		for(ClientBox cb: clp.clientList) {
 			cb.nameField.setText(cb.nameTemp);
 		}
+		saveable = true;
 	}
 
 	public Invoicer() {
@@ -75,8 +77,10 @@ public class Invoicer {
 		});
 		loadFile();
 	}
-	void saveAllData() {
-		ClientPanel.updateClientData();
+	static void saveAllData() {
+		if(!saveable) return;
+		ClientPanel.updateClientData(false);
+		errorMsg = "";
 		//commas should separate things within categories
 		//should be the same amount of commas for each bracket i think? is that wrong
 		//split repeatable things with <>s
@@ -95,7 +99,7 @@ public class Invoicer {
 				bw.newLine();
 				bw.append(rp.toFileString());
 				bw.close();
-				System.out.println("saved successfully");
+				//System.out.println("saved successfully");
 		} catch (IOException e) {
 			Arrays.asList(e.getStackTrace()).forEach(j->errorMsg+=j.toString()+"\n");
 			JOptionPane.showMessageDialog(null, "Error occurred while saving: "+errorMsg);
