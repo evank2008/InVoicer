@@ -99,7 +99,10 @@ public class MailPanel extends MenuPanel{
 		for(ClientBox cb: ClientPanel.clientList) {
 			Client c = cb.client;
 			//only gen if correct doctor and also if the client has an autogen
-			if((!c.doctor.equals(docBox.getSelectedItem()))||c.service.equals("null")||!c.isActive) continue;
+			if((!c.doctor.equals(docBox.getSelectedItem()))||c.service.equals("null")||!c.isActive) {
+				if(c.service.equals("null")) System.out.println("service was null so we skipped one");
+				continue;
+				}
 			try {
 				if(c.serviceDate.isAfter(LocalDate.now().plusMonths(1))) return "<html>Client "+c.name+" has a<br>service date after current date</html>";
 				Invoicer.crp.generatePDF(c, c.service, c.expectedAmt, c.hourly, c.serviceDate, LocalDate.now());
