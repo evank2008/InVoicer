@@ -7,6 +7,8 @@ import java.awt.Font;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.filechooser.FileSystemView;
 
 public class SettingsPanel extends MenuPanel{
 
@@ -31,6 +33,15 @@ public class SettingsPanel extends MenuPanel{
 		nameFieldsButton.setPreferredSize(new Dimension(Invoicer.WIDTH/5,Invoicer.HEIGHT/30));
 		nameFieldsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(nameFieldsButton);
+		
+		add(CreatorPanel.bufferPanel());
+		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "\\InVoicer\\invoicerData.txt";
+		JLabel label = new JLabel("Directory: "+path);
+		label.setForeground(nameFieldsButton.getForeground());
+		label.setFont(nameFieldsButton.getFont().deriveFont(20f));
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		add(label);
 		
 	}
 }
