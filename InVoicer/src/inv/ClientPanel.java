@@ -325,6 +325,7 @@ class ClientBox extends JPanel{
 		activeBox.addActionListener(e->{
 			client.isActive=activeBox.isSelected();
 		});
+		activeBox.setToolTipText("Enable this client for mail autogen");
 		
 		amountPanel=new JPanel();
 		amountPanel.setLayout(new BoxLayout(amountPanel, BoxLayout.X_AXIS));

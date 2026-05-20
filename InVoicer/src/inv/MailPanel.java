@@ -100,7 +100,8 @@ public class MailPanel extends MenuPanel{
 			Client c = cb.client;
 			//only gen if correct doctor and also if the client has an autogen
 			if((!c.doctor.equals(docBox.getSelectedItem()))||c.service.equals("null")||!c.isActive) {
-				if(c.service.equals("null")) System.out.println("service was null so we skipped one");
+				if(c.service.equals("null")) System.out.println("not generating pdf for "+c.name+" because service was null");
+				if(!c.isActive) System.out.println("not generating pdf for "+c.name+" because marked inactive");
 				continue;
 				}
 			try {
