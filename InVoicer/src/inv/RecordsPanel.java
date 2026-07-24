@@ -1,23 +1,12 @@
 package inv;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import com.github.lgooddatepicker.components.DatePicker;
@@ -28,7 +17,8 @@ public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
 	JButton deleteButton;
-	JPanel bufferPanel, buffer2Panel;
+	JPanel bufferPanel, buffer2Panel, buffer3Panel;
+	JButton analyzeButton;
 
 	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
@@ -40,6 +30,7 @@ public class RecordsPanel extends MenuPanel {
 		setLayout(new BorderLayout());
 		bufferPanel = new JPanel();
 		buffer2Panel = new JPanel();
+		buffer3Panel = new JPanel();
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setPreferredSize(new Dimension((int)(Invoicer.WIDTH/1.1), Invoicer.HEIGHT/10));
@@ -59,14 +50,20 @@ public class RecordsPanel extends MenuPanel {
 			deleteButton.setForeground(Color.white);
 		}
 		inputButton.setBackground(new Color(40,160,230));
-		inputButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
+		inputButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
 		viewButton.setBackground(new Color(40,160,230));
-		viewButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
+		viewButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
 		deleteButton.setBackground(new Color(40,160,230));
-		deleteButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/25));
-		inputButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
-		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
-		deleteButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/3-20,buttonPanel.getPreferredSize().height-10));
+		deleteButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
+		inputButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
+		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
+		deleteButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
+		
+		analyzeButton = new JButton("Scan Checks");
+		analyzeButton.setForeground(Color.white);
+		analyzeButton.setBackground(new Color(40,160,230));
+		analyzeButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
+		analyzeButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
 		
 		inputButton.addActionListener(e->{
 			int row = table.getSelectedRow();
@@ -107,13 +104,21 @@ public class RecordsPanel extends MenuPanel {
 		
 		buttonPanel.add(inputButton);
 		bufferPanel.setPreferredSize(new Dimension(10,10));
-		bufferPanel.setBackground(new Color(20,85,122));
+		bufferPanel.setOpaque(false);
 		buttonPanel.add(bufferPanel);
 		buttonPanel.add(viewButton);
 		buffer2Panel.setPreferredSize(new Dimension(10,10));
-		buffer2Panel.setBackground(new Color(20,85,122));
+		buffer2Panel.setOpaque(false);
 		buttonPanel.add(buffer2Panel);
 		buttonPanel.add(deleteButton);
+		
+		buffer3Panel.setPreferredSize(new Dimension(10,10));
+		buffer3Panel.setOpaque(false);
+		buttonPanel.add(buffer3Panel);
+		buttonPanel.add(analyzeButton);
+		
+		JLabel imageLabel = new JLabel(new ImageIcon(getClass().getResource("ai_icon_dual_final.png")));
+		buttonPanel.add(imageLabel);
 		
 		add(buttonPanel,BorderLayout.NORTH);
 		

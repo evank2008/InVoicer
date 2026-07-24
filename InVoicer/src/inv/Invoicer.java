@@ -28,7 +28,7 @@ public class Invoicer {
 	static Simon simon;
 	static boolean onMac=System.getProperty("os.name").substring(0,3).toLowerCase().equals("mac");
 	static boolean saveable = false;
-	public static final int WIDTH = 700, HEIGHT = 700;
+	public static final int WIDTH = 900, HEIGHT = 700;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
