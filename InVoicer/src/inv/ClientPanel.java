@@ -309,7 +309,7 @@ class ClientBox extends JPanel{
 		amountField.setForeground(darkWhite);
 		amountField.setBackground(new Color(34,34,34));
 		amountField.setCaretColor(Color.white);
-		amountField.setPreferredSize(new Dimension(amountField.getPreferredSize().width*5/2,amountLabel.getPreferredSize().height/2));
+		amountField.setPreferredSize(new Dimension(amountField.getFontMetrics(amountField.getFont()).charWidth('m')*8,amountLabel.getPreferredSize().height/2));
 		amountField.addActionListener(e->{
 			this.requestFocusInWindow();
 			ClientPanel.updateClientData();
