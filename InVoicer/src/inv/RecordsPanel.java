@@ -13,6 +13,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
+//TODO: analysisframe(powered by AI)
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -40,14 +41,18 @@ public class RecordsPanel extends MenuPanel {
 		inputButton = new JButton("Input Check");
 		viewButton = new JButton("View Check");
 		deleteButton = new JButton("Delete");
+		analyzeButton = new JButton("Scan Checks");
 		if(Invoicer.onMac) {
 			inputButton.setForeground(Color.black);
 			viewButton.setForeground(Color.black);
 			deleteButton.setForeground(Color.black);
+			analyzeButton.setForeground(Color.black);
+			
 		} else {
 			inputButton.setForeground(Color.white);
 			viewButton.setForeground(Color.white);
 			deleteButton.setForeground(Color.white);
+			analyzeButton.setForeground(Color.white);
 		}
 		inputButton.setBackground(new Color(40,160,230));
 		inputButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
@@ -59,8 +64,7 @@ public class RecordsPanel extends MenuPanel {
 		viewButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
 		deleteButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
 		
-		analyzeButton = new JButton("Scan Checks");
-		analyzeButton.setForeground(Color.white);
+		
 		analyzeButton.setBackground(new Color(40,160,230));
 		analyzeButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
 		analyzeButton.setPreferredSize(new Dimension(buttonPanel.getPreferredSize().width/4-20,buttonPanel.getPreferredSize().height-10));
@@ -92,14 +96,28 @@ public class RecordsPanel extends MenuPanel {
 			}
 		});
 		deleteButton.addActionListener(e->{
-			int row = table.getSelectedRow();
-			if(row==-1) {
+			int[] rows = table.getSelectedRows();
+			if(rows.length==0) {
 				JOptionPane.showMessageDialog(null, "Select an invoice");
-			} else if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record?")==0) {
-				recordsList.remove(row);
+			} else if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete th"+(rows.length==1?"is":"ese")+" record"+(rows.length==1?"":"s")+"?")==0) {
+				for(int i=rows.length-1;i>=0;i--) recordsList.remove(rows[i]);
 				updateTable();
 				Invoicer.saveAllData();
 			}
+		});
+		analyzeButton.addActionListener(e->{
+			ArrayList<Record> unpaidList = new ArrayList<Record>();
+			for(Record r: recordsList) {
+				if(!r.check.paymentStatus) {
+					unpaidList.add(r);
+				}
+			}
+			if(unpaidList.size()==0) {
+				JOptionPane.showMessageDialog(null,"No unpaid checks remaining");
+			} else {
+				new AnalysisFrame(unpaidList);
+			}
+			
 		});
 		
 		buttonPanel.add(inputButton);
@@ -470,5 +488,14 @@ class CheckViewFrame extends JFrame {
 		buffPanel.setMaximumSize(new Dimension(Invoicer.WIDTH*6/10,Invoicer.HEIGHT/40));
 		buffPanel.setBackground(new Color(40,40,40));
 		return buffPanel;
+	}
+}
+
+class AnalysisFrame extends JFrame {
+	public AnalysisFrame(ArrayList<Record> unpaidList) {
+		super("Check Analysis");
+		setSize(600,600);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setVisible(true);
 	}
 }
