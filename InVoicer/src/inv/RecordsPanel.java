@@ -1,19 +1,39 @@
 package inv;
 
 import java.awt.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
+import com.anthropic.client.AnthropicClient;
+import com.anthropic.client.okhttp.AnthropicOkHttpClient;
+import com.anthropic.models.messages.Base64ImageSource;
+import com.anthropic.models.messages.ContentBlockParam;
+import com.anthropic.models.messages.ImageBlockParam;
+import com.anthropic.models.messages.Message;
+import com.anthropic.models.messages.MessageCreateParams;
+import com.anthropic.models.messages.MessageParam;
+import com.anthropic.models.messages.Model;
+import com.anthropic.models.messages.TextBlockParam;
 import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //TODO: analysisframe(powered by AI)
+//TODO: line 133 uncomment the safeguards
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -112,11 +132,11 @@ public class RecordsPanel extends MenuPanel {
 					unpaidList.add(r);
 				}
 			}
-			if(unpaidList.size()==0) {
+		/*	if(unpaidList.size()==0) {
 				JOptionPane.showMessageDialog(null,"No unpaid checks remaining");
-			} else {
+			} else {*/
 				new AnalysisFrame(unpaidList);
-			}
+			//}
 			
 		});
 		
@@ -157,6 +177,8 @@ public class RecordsPanel extends MenuPanel {
 		
 		add(tablePane,BorderLayout.CENTER);
 		
+		AnalysisFrame.apiKey = System.getenv("CLAUDE_API_KEY");
+		AnalysisFrame.client = AnthropicOkHttpClient.builder().apiKey(AnalysisFrame.apiKey).build();
 	}
 
 	public void newRecord(Client client, String service, double amount, LocalDate serviceDate,
@@ -492,10 +514,160 @@ class CheckViewFrame extends JFrame {
 }
 
 class AnalysisFrame extends JFrame {
+	static AnthropicClient client;
+	static String apiKey;
+	JPanel panel, leftPanel, rightPanel, topLeftPanel, bottomLeftPanel;
+	File imageFile;
+	JLabel imageDisplay;
+	ImageIcon scaledIcon;
+	JButton scanButton;
+	/*
+	 * 1. take in picture
+	 * 2. send to ai and get back data???
+	 * 3. parse data and try to match with checks
+	 * 4. if any errors or mismatches try to have the uncertain ones just not be filled but the other ones be filled
+	 * 5. fill the good checks
+	 * 6. popup saying how many checks filled successfully, how many not, errors etc
+	 * 7. dispose
+	 */
 	public AnalysisFrame(ArrayList<Record> unpaidList) {
 		super("Check Analysis");
-		setSize(600,600);
+		setSize(400,400);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		panel = new JPanel();
+		panel.setBackground(new Color(36,36,36));
+		JPanel centerPanel = new JPanel();
+		centerPanel.setOpaque(false);
+		
+	     
+			JLabel imageLabel = new JLabel("imagefilename");
+			imageLabel.setForeground(new Color(36,36,36));
+			imageDisplay = new JLabel();
+			
+			
+			JButton chooserButton = new JButton("Choose Image");
+			chooserButton.addActionListener(e->{
+				JFileChooser jfc = new JFileChooser();
+				FileFilter ff = new FileFilter() {
+					public boolean accept(File f) {
+						String name = f.getName();
+						
+						return name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||f.isDirectory();
+					}
+
+					@Override
+					public String getDescription() {
+						// TODO Auto-generated method stub
+						return "Image Files (.png, .jpg)";
+					}
+				};
+				jfc.setFileFilter(ff);
+				if(jfc.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
+					imageFile = jfc.getSelectedFile();
+				
+				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")) {	
+				imageLabel.setText(imageFile.getName());
+				imageLabel.setForeground(Color.white);
+				ImageIcon unscaledIcon=new ImageIcon(imageFile.getPath());
+				int unscaledWidth = unscaledIcon.getIconWidth();
+				int unscaledHeight = unscaledIcon.getIconHeight();
+				double ratio;
+				if(unscaledWidth>unscaledHeight) {
+					ratio = 200d/unscaledWidth;
+				} else ratio = 200d/unscaledHeight;
+				scaledIcon = new ImageIcon(unscaledIcon.getImage().getScaledInstance((int)(unscaledWidth*ratio), (int)(unscaledHeight*ratio), Image.SCALE_SMOOTH));
+				imageDisplay.setIcon(scaledIcon);
+				}} else return;
+			});
+			
+			scanButton = new JButton("Scan");
+			
+			if(Invoicer.onMac) {
+				scanButton.setForeground(Color.black);
+				chooserButton.setForeground(Color.black);
+				
+			} else {
+				scanButton.setForeground(Color.white);
+				chooserButton.setForeground(Color.white);
+				
+			}
+			
+			scanButton.setBackground(new Color(40,160,230));
+			scanButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
+			scanButton.setPreferredSize(new Dimension(150,50));
+			chooserButton.setBackground(new Color(40,160,230));
+			chooserButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
+			chooserButton.setPreferredSize(new Dimension(250,50));
+			
+		add(panel);
+		centerPanel.setPreferredSize(new Dimension(400,200));
+		panel.add(centerPanel);
+		centerPanel.add(chooserButton);
+		centerPanel.add(imageDisplay);
+		centerPanel.add(imageLabel);
+		panel.add(scanButton);
+		
+		
+		
 		setVisible(true);
+		//to fill a check
+		//check.fill(amount, chkDate, chkId);
+		//Invoicer.rp.updateTable();
+		//Invoicer.saveAllData();
+	}
+	String callAI(String prompt, File img) throws IOException{
+		if(img==null) return null;
+		long maxTokens=512;
+		boolean isJpeg = isJpeg(img.getPath());
+		String b64;
+			
+								
+				byte[] bytes = Files.readAllBytes(img.toPath());
+				b64 = Base64.getEncoder().encodeToString(bytes);
+
+			
+		MessageCreateParams params = MessageCreateParams.builder()
+				.system("Respond only in plain text.")
+				.model(Model.CLAUDE_HAIKU_4_5)
+				//.addUserMessage(prompt)
+				.addMessage(MessageParam.builder()
+						.role(MessageParam.Role.USER)
+						.content(MessageParam.Content.ofBlockParams(List.of(
+								ContentBlockParam.ofImage(ImageBlockParam.builder().source(Base64ImageSource.builder()
+										.data(b64)
+										.mediaType(isJpeg?Base64ImageSource.MediaType.IMAGE_JPEG:Base64ImageSource.MediaType.IMAGE_PNG)
+										.build()
+										).build()
+						), ContentBlockParam.ofText(TextBlockParam.builder().text(prompt).build())
+								))).build())
+				.maxTokens(maxTokens)
+				.build();
+		
+		Message msg = client.messages().create(params);
+		return msg.toString();
+			}
+	boolean isJpeg(String filePath) {
+		byte[] header = new byte[8];
+		try {
+			if(new BufferedInputStream(new FileInputStream(filePath)).read(header,0,8)<2) {
+				throw new RuntimeException("GigaError - small file");
+			}
+			if(header[0]==(byte)0xFF&&header[1]==(byte)0xD8) {
+				return true;
+			}
+			byte[] pngMagic = {(byte) 0x89 ,0x50 ,0x4E ,0x47 ,0x0D ,0x0A ,0x1A ,0x0A};
+			if(Arrays.equals(header, pngMagic)) return false;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		throw new RuntimeException("Super GigaError");
+	}
+	String parseMessage(String rawMessage) {
+		return rawMessage.split("text=")[2].split(", type=text")[0];
 	}
 }
+
