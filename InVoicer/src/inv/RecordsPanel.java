@@ -32,14 +32,15 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
-//TODO: analysisframe(powered by AI)
-//TODO: line 133 uncomment the safeguards
+//TODO: line 624 how do i make ai do the work
+//TODO: line 133 uncomment the safeguards when finished
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
 	JButton deleteButton;
 	JPanel bufferPanel, buffer2Panel, buffer3Panel;
 	JButton analyzeButton;
+	AnalysisFrame aFrame;
 
 	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
@@ -135,7 +136,8 @@ public class RecordsPanel extends MenuPanel {
 		/*	if(unpaidList.size()==0) {
 				JOptionPane.showMessageDialog(null,"No unpaid checks remaining");
 			} else {*/
-				new AnalysisFrame(unpaidList);
+				if(aFrame!=null) aFrame.dispose();
+				aFrame = new AnalysisFrame(unpaidList);
 			//}
 			
 		});
@@ -522,7 +524,7 @@ class AnalysisFrame extends JFrame {
 	ImageIcon scaledIcon;
 	JButton scanButton;
 	/*
-	 * 1. take in picture
+	 * 1. (DONE) take in picture
 	 * 2. send to ai and get back data???
 	 * 3. parse data and try to match with checks
 	 * 4. if any errors or mismatches try to have the uncertain ones just not be filled but the other ones be filled
@@ -581,6 +583,9 @@ class AnalysisFrame extends JFrame {
 			});
 			
 			scanButton = new JButton("Scan");
+			scanButton.addActionListener(e->{
+				scanCheck(imageFile);
+			});
 			
 			if(Invoicer.onMac) {
 				scanButton.setForeground(Color.black);
@@ -614,6 +619,9 @@ class AnalysisFrame extends JFrame {
 		//check.fill(amount, chkDate, chkId);
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
+	}
+	void scanCheck(File image) {
+		//return number of how many checks couldn't be identified?
 	}
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
