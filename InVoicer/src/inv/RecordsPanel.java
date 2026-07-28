@@ -721,7 +721,7 @@ class AnalysisFrame extends JFrame {
 		JDialog dialog = new JDialog(RecordsPanel.aFrame, true);
 		dialog.setSize(300,150);
 		dialog.setLocationRelativeTo(RecordsPanel.aFrame);
-		JLabel message = new JLabel("Converting image... (0%)");
+		JLabel message = new JLabel("            Converting image... (0%)");
 		dialog.add(message);
 		dialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
@@ -735,21 +735,21 @@ class AnalysisFrame extends JFrame {
 			 
 			 int width = (int) image.getWidth();
 	            int height = (int) image.getHeight();
-	            message.setText("Converting image... (10%)");
+	            message.setText("            Converting image... (10%)");
 	            // 3. Extract the raw pixel blocks as ARGB integers
 	            int[] pixels = image.getInt32Array(PixelFormat.Argb32);
-	            message.setText("Converting image... (30%)");
+	            message.setText("            Converting image... (30%)");
 	            // 4. Create an empty blank standard Java BufferedImage 
 	            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-	            message.setText("Converting image... (40%)");
+	            message.setText("            Converting image... (40%)");
 	            // 5. Blast the raw pixel block arrays onto the buffered object canvas
 	            bufferedImage.setRGB(0, 0, width, height, pixels, 0, width);
-	            message.setText("Converting image... (50%)");
+	            message.setText("            Converting image... (50%)");
 	            // 3. Write out using standard ImageIO
 	            try {
-	            	message.setText("Converting image... (60%)");
+	            	message.setText("            Converting image... (60%)");
 					ImageIO.write(bufferedImage, "PNG", output);
-					message.setText("Converting image... (100%)");
+					message.setText("            Converting image... (100%)");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
