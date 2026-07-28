@@ -1,11 +1,13 @@
 package inv;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,9 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 
 import com.anthropic.client.AnthropicClient;
@@ -30,6 +35,11 @@ import com.anthropic.models.messages.Model;
 import com.anthropic.models.messages.TextBlockParam;
 import com.github.lgooddatepicker.components.DatePicker;
 
+import openize.heic.decoder.HeicImage;
+import openize.heic.decoder.PixelFormat;
+import openize.io.IOFileStream;
+import openize.io.IOMode;
+
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
 //TODO: line 624 how do i make ai do the work
@@ -40,7 +50,7 @@ public class RecordsPanel extends MenuPanel {
 	JButton deleteButton;
 	JPanel bufferPanel, buffer2Panel, buffer3Panel;
 	JButton analyzeButton;
-	AnalysisFrame aFrame;
+	static AnalysisFrame aFrame;
 
 	//will hold two buttons - 1 to input check data, 1 to view check info of selected row
 	JTable table;
@@ -523,6 +533,7 @@ class AnalysisFrame extends JFrame {
 	JLabel imageDisplay;
 	ImageIcon scaledIcon;
 	JButton scanButton;
+	File output;
 	/*
 	 * 1. (DONE) take in picture
 	 * 2. send to ai and get back data???
@@ -554,23 +565,23 @@ class AnalysisFrame extends JFrame {
 					public boolean accept(File f) {
 						String name = f.getName();
 						
-						return name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||f.isDirectory();
+						return name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||f.isDirectory()||name.endsWith(".heic");
 					}
 
 					@Override
 					public String getDescription() {
 						// TODO Auto-generated method stub
-						return "Image Files (.png, .jpg)";
+						return "Image Files (.png, .jpg, .heic)";
 					}
 				};
 				jfc.setFileFilter(ff);
 				if(jfc.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
 					imageFile = jfc.getSelectedFile();
 				
-				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")) {	
+				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")||imageFile.getPath().endsWith(".heic")) {	
 				imageLabel.setText(imageFile.getName());
 				imageLabel.setForeground(Color.white);
-				ImageIcon unscaledIcon=new ImageIcon(imageFile.getPath());
+				ImageIcon unscaledIcon=new ImageIcon(!isHeicFile(imageFile)?imageFile.getPath():heicToPng(imageFile).getPath());
 				int unscaledWidth = unscaledIcon.getIconWidth();
 				int unscaledHeight = unscaledIcon.getIconHeight();
 				double ratio;
@@ -625,6 +636,7 @@ class AnalysisFrame extends JFrame {
 	}
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
+		if(isHeicFile(img)) return callAI(prompt, heicToPng(img));
 		long maxTokens=512;
 		boolean isJpeg = isJpeg(img.getPath());
 		String b64;
@@ -674,8 +686,80 @@ class AnalysisFrame extends JFrame {
 		}
 		throw new RuntimeException("Super GigaError");
 	}
+	    public static boolean isHeicFile(File file) {
+	    	 Set<String> HEIC_BRANDS = Set.of("heic", "heix", "mif1", "msf1");
+	        if (file == null || !file.exists() || file.isDirectory()) {
+	            return false;
+	        }
+
+	        byte[] header = new byte[12];
+	        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+	            int bytesRead = bis.read(header, 0, 12);
+	            if (bytesRead < 12) {
+	                return false;
+	            }
+	        } catch (IOException e) {
+	            return false; // Handle or log exception according to your application logic
+	        }
+
+	        // Extract "ftyp" signature from bytes 4-7
+	        String ftyp = new String(header, 4, 4, StandardCharsets.US_ASCII);
+	        if (!"ftyp".equals(ftyp)) {
+	            return false;
+	        }
+
+	        // Extract the major brand from bytes 8-11
+	        String majorBrand = new String(header, 8, 4, StandardCharsets.US_ASCII).toLowerCase();
+	        
+	        return HEIC_BRANDS.contains(majorBrand);
+	    }
 	String parseMessage(String rawMessage) {
 		return rawMessage.split("text=")[2].split(", type=text")[0];
+	}
+	File heicToPng(File heicFile) {
+		
+		JDialog dialog = new JDialog(RecordsPanel.aFrame, true);
+		dialog.setSize(300,150);
+		dialog.setLocationRelativeTo(RecordsPanel.aFrame);
+		JLabel message = new JLabel("Converting image... (0%)");
+		dialog.add(message);
+		dialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		
+		Thread t = new Thread(()->{
+			String filename = heicFile.getName().substring(0,heicFile.getName().lastIndexOf("."))+".png";
+			output = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer/"+filename);
+			output.deleteOnExit();
+		
+			IOFileStream fs = new IOFileStream(heicFile.getAbsolutePath(), IOMode.READ);
+			 HeicImage image = HeicImage.load(fs);
+			 
+			 int width = (int) image.getWidth();
+	            int height = (int) image.getHeight();
+	            message.setText("Converting image... (10%)");
+	            // 3. Extract the raw pixel blocks as ARGB integers
+	            int[] pixels = image.getInt32Array(PixelFormat.Argb32);
+	            message.setText("Converting image... (30%)");
+	            // 4. Create an empty blank standard Java BufferedImage 
+	            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	            message.setText("Converting image... (40%)");
+	            // 5. Blast the raw pixel block arrays onto the buffered object canvas
+	            bufferedImage.setRGB(0, 0, width, height, pixels, 0, width);
+	            message.setText("Converting image... (50%)");
+	            // 3. Write out using standard ImageIO
+	            try {
+	            	message.setText("Converting image... (60%)");
+					ImageIO.write(bufferedImage, "PNG", output);
+					message.setText("Converting image... (100%)");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					dialog.dispose();
+				}
+	    		dialog.dispose();
+		});
+		t.start();
+		dialog.setVisible(true);
+		return output;
 	}
 }
 

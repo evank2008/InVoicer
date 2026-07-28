@@ -15,6 +15,12 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+        <id>AsposeJavaRepo</id>
+        <url>https://releases.aspose.com/java/repo/</url>
+    </repository>
+</repositories>
   <dependencies>
   	<dependency>
     <groupId>com.github.lgooddatepicker</groupId>
@@ -80,6 +86,12 @@
     <version>2.48.0</version>
     <scope>compile</scope>
 	</dependency>
+	<dependency>
+    <groupId>com.aspose</groupId>
+    <artifactId>openize-heic</artifactId>
+    <version>26.5</version>
+    <scope>compile</scope>
+</dependency>
 
   </dependencies>
 </project>
