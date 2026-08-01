@@ -616,7 +616,7 @@ class AnalysisFrame extends JFrame {
 				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")||imageFile.getPath().endsWith(".heic")) {	
 				imageLabel.setText(imageFile.getName());
 				imageLabel.setForeground(Color.white);
-				imageFileConverted = !isHeicFile(imageFile)?imageFile:heicToPng(imageFile);
+				imageFileConverted = !isHeicFile(imageFile)?imageFile:heicToJpg(imageFile);
 				ImageIcon unscaledIcon=new ImageIcon(imageFileConverted.getPath());
 				int unscaledWidth = unscaledIcon.getIconWidth();
 				int unscaledHeight = unscaledIcon.getIconHeight();
@@ -679,7 +679,7 @@ class AnalysisFrame extends JFrame {
 	}
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
-		if(isHeicFile(img)) return callAI(prompt, heicToPng(img));
+		if(isHeicFile(img)) return callAI(prompt, heicToJpg(img));
 		long maxTokens=512;
 		boolean isJpeg = isJpeg(img.getPath());
 		String b64;
@@ -759,7 +759,7 @@ class AnalysisFrame extends JFrame {
 	String parseMessage(String rawMessage) {
 		return rawMessage.split("text=")[2].split(", type=text")[0];
 	}
-	File heicToPng(File heicFile) {
+	File heicToJpg(File heicFile) {
 		
 		JDialog dialog = new JDialog(RecordsPanel.aFrame, "HEIC Convertion", true);
 		dialog.setSize(300,150);
@@ -769,7 +769,7 @@ class AnalysisFrame extends JFrame {
 		dialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		Thread t = new Thread(()->{
-			String filename = heicFile.getName().substring(0,heicFile.getName().lastIndexOf("."))+".png";
+			String filename = heicFile.getName().substring(0,heicFile.getName().lastIndexOf("."))+".jpeg";
 			output = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/InVoicer/"+filename);
 			output.deleteOnExit();
 		
@@ -783,7 +783,7 @@ class AnalysisFrame extends JFrame {
 	            int[] pixels = image.getInt32Array(PixelFormat.Argb32);
 	            message.setText("            Converting image... (30%)");
 	            // 4. Create an empty blank standard Java BufferedImage 
-	            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	            message.setText("            Converting image... (40%)");
 	            // 5. Blast the raw pixel block arrays onto the buffered object canvas
 	            bufferedImage.setRGB(0, 0, width, height, pixels, 0, width);
@@ -791,7 +791,7 @@ class AnalysisFrame extends JFrame {
 	            // 3. Write out using standard ImageIO
 	            try {
 	            	message.setText("            Converting image... (60%)");
-					ImageIO.write(bufferedImage, "PNG", output);
+	            	ImageIO.write(bufferedImage, "JPG", output);
 					message.setText("            Converting image... (100%)");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
