@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -189,7 +190,15 @@ public class RecordsPanel extends MenuPanel {
 		
 		add(tablePane,BorderLayout.CENTER);
 		
-		AnalysisFrame.apiKey = System.getenv("CLAUDE_API_KEY");
+		File f = new File("/Volumes/HPBMCIASH/claude api key.txt");
+		if(f.exists())
+			try {
+				AnalysisFrame.apiKey = new Scanner(f).nextLine();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		else AnalysisFrame.apiKey = System.getenv("CLAUDE_API_KEY");
 		AnalysisFrame.client = AnthropicOkHttpClient.builder().apiKey(AnalysisFrame.apiKey).build();
 	}
 
