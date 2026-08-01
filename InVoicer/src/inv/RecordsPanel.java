@@ -539,16 +539,42 @@ class AnalysisFrame extends JFrame {
 	static String apiKey;
 	JPanel panel, leftPanel, rightPanel, topLeftPanel, bottomLeftPanel;
 	File imageFile;
+	File imageFileConverted;
 	JLabel imageDisplay;
 	ImageIcon scaledIcon;
 	JButton scanButton;
 	File output;
+	String prompt = "Attached is an image of multiple check stubs. "
+			+ "Return a list in CSV format, where each line represents one check stub."
+			+ "Each entry in a line should follow the following format: "
+			+ "name,invoice date,amount,id. don't include a period at the end."
+			+ "for name, enter the client name displayed in the top left "
+			+ "of each stub in bold. For invoice date, enter the date listed under"
+			+ "the text that reads Invoice Date, second from the left on the stubs."
+			+ "This date should be exactly as it is written on the stub, for example,"
+			+ " 10/15/2025. For amount, this should be a simple number with no commas,"
+			+ " though it is okay to have a decimal point and the number of cents at the end. "
+			+ "The amount can be found under Net Paid Amt on the check stub."
+			+ " The id is the seven-digit number at the top right of the stub."
+			+ " In the case that a single check stub has multiple lines under Invoice "
+			+ "Date and Net Paid Amt, the returned list should contain a separate"
+			+ " line for each listed date/amount pairing, with the name and id being identical."
+			+ " Your response should contain nothing but the information that would be in a"
+			+ " CSV file, with no commentary before or after.";
 	/*
 	 * 1. (DONE) take in picture
 	 * 2. send to ai and get back data???
+	 * give ai the list of unpaid records, list of client names, check image, 
+	 * get back some sort of list with client name, invoice date, check amount, check id??
+	 * when filling in manually, you have to know:
+	 * -which invoice
+	 * -check amount
+	 * -check date
+	 * -check number
 	 * 3. parse data and try to match with checks
 	 * 4. if any errors or mismatches try to have the uncertain ones just not be filled but the other ones be filled
 	 * 5. fill the good checks
+	 * -update records or something?
 	 * 6. popup saying how many checks filled successfully, how many not, errors etc
 	 * 7. dispose
 	 */
@@ -590,7 +616,8 @@ class AnalysisFrame extends JFrame {
 				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")||imageFile.getPath().endsWith(".heic")) {	
 				imageLabel.setText(imageFile.getName());
 				imageLabel.setForeground(Color.white);
-				ImageIcon unscaledIcon=new ImageIcon(!isHeicFile(imageFile)?imageFile.getPath():heicToPng(imageFile).getPath());
+				imageFileConverted = !isHeicFile(imageFile)?imageFile:heicToPng(imageFile);
+				ImageIcon unscaledIcon=new ImageIcon(imageFileConverted.getPath());
 				int unscaledWidth = unscaledIcon.getIconWidth();
 				int unscaledHeight = unscaledIcon.getIconHeight();
 				double ratio;
@@ -604,7 +631,7 @@ class AnalysisFrame extends JFrame {
 			
 			scanButton = new JButton("Scan");
 			scanButton.addActionListener(e->{
-				scanCheck(imageFile);
+				scanCheck(imageFileConverted);
 			});
 			
 			if(Invoicer.onMac) {
@@ -642,6 +669,13 @@ class AnalysisFrame extends JFrame {
 	}
 	void scanCheck(File image) {
 		//return number of how many checks couldn't be identified?
+		try {
+			System.out.println(parseMessage(callAI(prompt, image)));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
@@ -727,7 +761,7 @@ class AnalysisFrame extends JFrame {
 	}
 	File heicToPng(File heicFile) {
 		
-		JDialog dialog = new JDialog(RecordsPanel.aFrame, true);
+		JDialog dialog = new JDialog(RecordsPanel.aFrame, "HEIC Convertion", true);
 		dialog.setSize(300,150);
 		dialog.setLocationRelativeTo(RecordsPanel.aFrame);
 		JLabel message = new JLabel("            Converting image... (0%)");

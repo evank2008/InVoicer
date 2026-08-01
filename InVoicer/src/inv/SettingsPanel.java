@@ -35,9 +35,11 @@ public class SettingsPanel extends MenuPanel{
 		add(nameFieldsButton);
 		
 		add(CreatorPanel.bufferPanel());
-		String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "\\InVoicer\\invoicerData.txt";
+		String path;
+		if(Invoicer.onMac)path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoicerData.txt";
+		else path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "\\InVoicer\\invoicerData.txt";
 		JLabel label = new JLabel("Directory: "+path);
-		label.setForeground(nameFieldsButton.getForeground());
+		label.setForeground(Color.white);
 		label.setFont(nameFieldsButton.getFont().deriveFont(20f));
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
