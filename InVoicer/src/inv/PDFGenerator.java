@@ -184,7 +184,6 @@ class MailMaker {
 		+ "Diplomate, American Board of Psychiatry & Neurology, With Added Qualification in Geriatric Psychiatry\n"
 		+ "Associate Clinical Professor, UCSD Health Sciences\n"
 		+ "Co-Founder, Senior Medical Associates, Inc.";
-		System.out.println(body);
 		//do the mail		
 	        StringBuilder script = new StringBuilder();
 	        

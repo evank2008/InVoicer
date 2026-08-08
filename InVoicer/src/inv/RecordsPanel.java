@@ -547,12 +547,15 @@ class AnalysisFrame extends JFrame {
 	String prompt = "Attached is an image of multiple check stubs. "
 			+ "Return a list in CSV format, where each line represents one check stub."
 			+ "Each entry in a line should follow the following format: "
-			+ "name,invoice date,amount,id. don't include a period at the end."
+			+ "name,invoice date,check date,amount,id. don't include a period at the end."
 			+ "for name, enter the client name displayed in the top left "
 			+ "of each stub in bold. For invoice date, enter the date listed under"
 			+ "the text that reads Invoice Date, second from the left on the stubs."
 			+ "This date should be exactly as it is written on the stub, for example,"
-			+ " 10/15/2025. For amount, this should be a simple number with no commas,"
+			+ " 10/15/2025. For check date, enter the date listed under the text that reads Check Date"
+			+ " on the right side. The check date might be written on the check in a format "
+			+ "that spells out the month name. In your response, write it in the month/day/year format "
+			+ "identically to the format for invoice date. For amount, this should be a simple number with no commas,"
 			+ " though it is okay to have a decimal point and the number of cents at the end. "
 			+ "The amount can be found under Net Paid Amt on the check stub."
 			+ " The id is the seven-digit number at the top right of the stub."
@@ -571,6 +574,15 @@ class AnalysisFrame extends JFrame {
 	 * -check amount
 	 * -check date
 	 * -check number
+	 * following info taken from check in order of the csv:
+	 * -client name
+	 * -invoice date
+	 * -check date
+	 * -amount
+	 * -check number
+	 * therefore to select the proper invoice you use:
+	 * -client name
+	 * -invoice date
 	 * 3. parse data and try to match with checks
 	 * 4. if any errors or mismatches try to have the uncertain ones just not be filled but the other ones be filled
 	 * 5. fill the good checks
@@ -611,7 +623,6 @@ class AnalysisFrame extends JFrame {
 				jfc.setFileFilter(ff);
 				if(jfc.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
 					imageFile = jfc.getSelectedFile();
-				System.out.println(imageFile);
 				String name = imageFile.getName().toLowerCase();
 				if(name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".heic")) {	
 				imageLabel.setText(imageFile.getName());
