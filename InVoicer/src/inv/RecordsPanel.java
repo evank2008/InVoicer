@@ -572,6 +572,7 @@ class AnalysisFrame extends JFrame {
 			+ " line for each listed date/amount pairing, with the name and id being identical."
 			+ " Your response should contain nothing but the information that would be in a"
 			+ " CSV file, with no commentary before or after.";
+	ArrayList<Record> unpaidList;
 	/*
 	 * 1. (DONE) take in picture
 	 * 2. send to ai and get back data???
@@ -607,6 +608,7 @@ class AnalysisFrame extends JFrame {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setOpaque(false);
 		
+		this.unpaidList=unpaidList;
 	     
 			JLabel imageLabel = new JLabel("imagefilename");
 			imageLabel.setForeground(new Color(36,36,36));
@@ -687,9 +689,29 @@ class AnalysisFrame extends JFrame {
 		//Invoicer.saveAllData();
 	}
 	void scanCheck(File image) {
+		//this is where the magic happens
 		//return number of how many checks couldn't be identified?
+		//MISSION HILLS,10/15/2025,11/10/2025,1000.00,3718123
 		try {
-			System.out.println(parseMessage(callAI(prompt, image)));
+			String response = parseMessage(callAI(prompt, image));
+			//System.out.println(response);
+			String[] lines = response.split("\n");
+			for(String line: lines) {
+				//unpaidList exists
+				String[] splitLine = line.split(",");
+				String name = splitLine[0];
+					String[] splitInvDate = splitLine[1].split("/");
+					String[] splitChkDate = splitLine[2].split("/");
+				LocalDate invoiceDate = LocalDate.of(Integer.parseInt(splitInvDate[2]), Integer.parseInt(splitInvDate[0]), Integer.parseInt(splitInvDate[1]));
+				LocalDate checkDate = LocalDate.of(Integer.parseInt(splitChkDate[2]), Integer.parseInt(splitChkDate[0]), Integer.parseInt(splitChkDate[1]));
+				double amount = Double.parseDouble(splitLine[3]);
+				String checkNum = splitLine[4];
+				System.out.println("name: "+name);
+				System.out.println("invd "+invoiceDate);
+				System.out.println("chkd: "+checkDate);
+				System.out.println("amt: "+amount);
+				System.out.println("num: "+checkNum);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
