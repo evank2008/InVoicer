@@ -98,7 +98,10 @@ static void updateClientData(boolean save) {
 	else {
 		for(ClientBox cb:clientList) {
 			cb.client.doctor=cb.doctorField.getText();
+			String currentName = cb.client.name;
+			String newName = cb.nameField.getText();
 			cb.client.name=cb.nameField.getText();
+			Invoicer.rp.nameChange(currentName, newName);
 			try {
 			cb.client.expectedAmt=Double.parseDouble((cb.amountField.getText()));
 			} catch(Exception e) {
@@ -116,7 +119,10 @@ static void updateClientData() {
 	//notably, doesn't save data on contacts
 	for(ClientBox cb:clientList) {
 		cb.client.doctor=cb.doctorField.getText();
+		String currentName = cb.client.name;
+		String newName = cb.nameField.getText();
 		cb.client.name=cb.nameField.getText();
+		Invoicer.rp.nameChange(currentName, newName);
 		try {
 		cb.client.expectedAmt=Double.parseDouble((cb.amountField.getText()));
 		} catch(Exception e) {

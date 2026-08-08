@@ -259,6 +259,14 @@ public void loadData(String fileData) {
 	}
 	updateTable();
 }
+
+public void nameChange(String currentName, String newName) {
+	//when client name is changed, change name of all records to reflect new name
+	for (Record r: recordsList) {
+		if(r.clientName.equals(currentName)) r.clientName=newName;
+	}
+	updateTable();
+}
 }
 class Record {
 	//a record is one entry in the table
