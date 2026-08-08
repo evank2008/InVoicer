@@ -598,8 +598,7 @@ class AnalysisFrame extends JFrame {
 				JFileChooser jfc = new JFileChooser();
 				FileFilter ff = new FileFilter() {
 					public boolean accept(File f) {
-						String name = f.getName();
-						
+						String name = f.getName().toLowerCase();					
 						return name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||f.isDirectory()||name.endsWith(".heic");
 					}
 
@@ -612,8 +611,9 @@ class AnalysisFrame extends JFrame {
 				jfc.setFileFilter(ff);
 				if(jfc.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
 					imageFile = jfc.getSelectedFile();
-				
-				if(imageFile.getPath().endsWith(".png")||imageFile.getPath().endsWith(".jpg")||imageFile.getPath().endsWith(".jpeg")||imageFile.getPath().endsWith(".heic")) {	
+				System.out.println(imageFile);
+				String name = imageFile.getName().toLowerCase();
+				if(name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".heic")) {	
 				imageLabel.setText(imageFile.getName());
 				imageLabel.setForeground(Color.white);
 				imageFileConverted = !isHeicFile(imageFile)?imageFile:heicToJpg(imageFile);
