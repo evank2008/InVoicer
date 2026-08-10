@@ -692,8 +692,9 @@ class AnalysisFrame extends JFrame {
 		//this is where the magic happens
 		//return number of how many checks couldn't be identified?
 		//MISSION HILLS,10/15/2025,11/10/2025,1000.00,3718123
+		String response=null;
 		try {
-			String response = parseMessage(callAI(prompt, image));
+			 response = parseMessage(callAI(prompt, image));
 			//System.out.println(response);
 			String[] lines = response.split("\n");
 			for(String line: lines) {
@@ -715,6 +716,10 @@ class AnalysisFrame extends JFrame {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error parsing AI response.");
+			System.out.println(response);
 		}
 		
 	}
