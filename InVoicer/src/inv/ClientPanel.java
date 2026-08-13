@@ -166,7 +166,11 @@ for(String clientStr: clients) {
 		client.service=clientFields[4];
 		client.serviceDate=LocalDate.parse(clientFields[5]);
 		client.isActive=Boolean.parseBoolean(clientFields[6]);
-		
+		try {
+		client.checkAlias=clientFields[7].equals("null")?null:clientFields[7];
+		} catch(ArrayIndexOutOfBoundsException e) {
+			client.checkAlias=null;
+		}
 	if (clientArr.length > 1 && !clientArr[1].isEmpty()) {
 		String[] contacts = clientArr[1].split("<contact>");
 		for(String contactStr: contacts) {
@@ -217,6 +221,7 @@ class Client {
 	String service="null";
 	LocalDate serviceDate=LocalDate.EPOCH;
 	ArrayList<Contact> contactList = new ArrayList<Contact>();
+	String checkAlias="null";
 public String toString() {
 	return name;
 }
@@ -224,7 +229,7 @@ public String toFileString() {
 	
 	String s = name+"<break>"+doctor+"<break>"+expectedAmt
 			+"<break>"+hourly+"<break>"+service+"<break>"
-			+serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<break>"+isActive+"<contactList>";
+			+serviceDate.format(DateTimeFormatter.ISO_LOCAL_DATE)+"<break>"+isActive+"<break>"+checkAlias+"<contactList>";
 	
 	for(Contact c:contactList) {
 		s+=c.toFileString();

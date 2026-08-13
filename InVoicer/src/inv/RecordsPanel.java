@@ -652,7 +652,12 @@ class AnalysisFrame extends JFrame {
 			
 			scanButton = new JButton("Scan");
 			scanButton.addActionListener(e->{
-				scanCheck(imageFileConverted);
+				ArrayList<Response> list = scanCheck(imageFileConverted);
+				for(Record r: unpaidList) {
+					//idea: let you put in check aliases under client
+					//tha will fix everything
+				}
+				//todo this
 			});
 			
 			if(Invoicer.onMac) {
@@ -688,11 +693,12 @@ class AnalysisFrame extends JFrame {
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
 	}
-	void scanCheck(File image) {
+	ArrayList<Response> scanCheck(File image) {
 		//this is where the magic happens
 		//return number of how many checks couldn't be identified?
 		//MISSION HILLS,10/15/2025,11/10/2025,1000.00,3718123
 		String response=null;
+		ArrayList<Response> list = new ArrayList<Response>();
 		try {
 			 response = parseMessage(callAI(prompt, image));
 			//System.out.println(response);
@@ -700,7 +706,7 @@ class AnalysisFrame extends JFrame {
 			for(String line: lines) {
 				//unpaidList exists
 				String[] splitLine = line.split(",");
-				String name = splitLine[0];
+				String name = splitLine[0]; //the name on the check may be differet from the client name
 					String[] splitInvDate = splitLine[1].split("/");
 					String[] splitChkDate = splitLine[2].split("/");
 				LocalDate invoiceDate = LocalDate.of(Integer.parseInt(splitInvDate[2]), Integer.parseInt(splitInvDate[0]), Integer.parseInt(splitInvDate[1]));
@@ -712,15 +718,21 @@ class AnalysisFrame extends JFrame {
 				System.out.println("chkd: "+checkDate);
 				System.out.println("amt: "+amount);
 				System.out.println("num: "+checkNum);
+				//maybe create a Response record object to store the data
+				Response r = new Response(name, invoiceDate, checkDate, amount, checkNum);
+				list.add(r);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} catch(Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Error parsing AI response.");
+			JOptionPane.showMessageDialog(null, "Error parsing AI response. Check console.");
 			System.out.println(response);
+			return null;
 		}
+		return list;
 		
 	}
 	String callAI(String prompt, File img) throws IOException{
@@ -850,5 +862,8 @@ class AnalysisFrame extends JFrame {
 		dialog.setVisible(true);
 		return output;
 	}
+}
+record Response(String name, LocalDate invoiceDate, LocalDate checkDate, double amount, String checkNumber) {
+
 }
 
