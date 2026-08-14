@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
@@ -271,6 +272,7 @@ class ClientBox extends JPanel{
 	JButton contactsButton;
 	JCheckBox activeBox;
 	Color darkWhite = new Color(220,220,220);
+	static ArrayList<Client> currentWindows = new ArrayList<Client>();
 	public ClientBox(Client client) {
 		super();
 
@@ -281,6 +283,80 @@ class ClientBox extends JPanel{
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
 		this.setFocusable(true);
+		this.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				//make a popup to take in check alias here
+				if(e.isShiftDown()) {
+					if(currentWindows.contains(client)) return; 
+					currentWindows.add(client);
+					JDialog dialog = new JDialog(Invoicer.frame, "Check Alias for "+client.name, false);
+					dialog.setSize(400,200);
+					dialog.getContentPane().setBackground(new Color(62,62,62));
+					dialog.setLocationRelativeTo(RecordsPanel.aFrame);
+					
+					//todo this
+					
+					
+					
+					//use jtable like in contactsframe
+					String[][] data = new String[1][1];
+					data[0][0]=client.checkAlias==null?"":client.checkAlias;
+					String[] columnName = {"Check Alias"};
+					JTable table = new JTable(new DefaultTableModel(data,columnName));
+
+					table.setRowHeight(Invoicer.clp.getSize().height/8);
+					table.getTableHeader().setReorderingAllowed(false);
+					table.getModel().addTableModelListener((ev)->{
+						client.checkAlias=(String) table.getValueAt(0, 0);
+					});
+					table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*2)));
+					table.setBackground(new Color(31,31,31));
+					table.setForeground(Color.white);
+					table.setGridColor(Color.white);
+					table.setSelectionBackground(new Color(20,85,122));
+					table.setSelectionForeground(Color.white);	
+					
+					dialog.add(table);
+					
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+						     if (table.isEditing()) {
+						            table.getCellEditor().stopCellEditing();
+						        }
+						     currentWindows.remove(client);
+							client.checkAlias=(String) table.getValueAt(0, 0);
+							if(client.checkAlias.isBlank()) client.checkAlias=null;
+						}
+					});
+					
+					dialog.setVisible(true);
+					//todo add a jtextfield like client name field
+				}
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}});
 		nameTemp=client.name;
 		GridBagConstraints gbc = new GridBagConstraints();
 		//what is displayed?
@@ -305,6 +381,7 @@ class ClientBox extends JPanel{
 			ClientPanel.updateClientData();
 
 		});
+		nameField.setToolTipText("Client Name. Used in PDF generation and records.");
 		
 		namePanel=new JPanel();
 		namePanel.add(nameLabel);
@@ -354,6 +431,7 @@ class ClientBox extends JPanel{
 			this.requestFocusInWindow();
 			ClientPanel.updateClientData();
 		});
+		doctorField.setToolTipText("The one responsible for the client");
 
 		
 		contactsButton = new JButton("Contacts");
