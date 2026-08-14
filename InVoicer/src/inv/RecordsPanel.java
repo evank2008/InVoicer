@@ -74,6 +74,7 @@ public class RecordsPanel extends MenuPanel {
 		viewButton = new JButton("View Check");
 		deleteButton = new JButton("Delete");
 		analyzeButton = new JButton("Scan Checks");
+		analyzeButton.setToolTipText("Shift-click on a ClientBox to add a check alias");
 		if(Invoicer.onMac) {
 			inputButton.setForeground(Color.black);
 			viewButton.setForeground(Color.black);
