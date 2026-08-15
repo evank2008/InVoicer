@@ -48,6 +48,7 @@ import openize.io.IOMode;
 //payment status, date sent, all the info about the invoice
 //TODO: line 624 how do i make ai do the work
 //TODO: line 133 uncomment the safeguards when finished
+//TODO: take the data you finally got and actually do something with it please just actually populate the records
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
