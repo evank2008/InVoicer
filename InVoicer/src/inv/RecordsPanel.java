@@ -1,6 +1,9 @@
 package inv;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -653,7 +656,42 @@ class AnalysisFrame extends JFrame {
 			
 			scanButton = new JButton("Scan");
 			scanButton.addActionListener(e->{
-				ArrayList<Response> list = scanCheck(imageFileConverted);
+				JDialog dialog = new JDialog(this, "Scanning", true);
+				dialog.setSize(400,200);
+				String[] strs = {"Scanning","Scanning.","Scanning..","Scanning..."};
+				JLabel label = new JLabel(strs[0]);
+				label.setForeground(Color.black);
+
+				Timer animator = new Timer(500,new ActionListener() {
+			        int i = -1;
+			        @Override
+			        public void actionPerformed(ActionEvent e) {
+			            i = (i + 1) % 4;
+			            label.setText(strs[i]);
+			        }
+			    });
+				Thread dialogThread = new Thread(()->dialog.setVisible(true));
+				
+				dialog.add(label);
+				dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				
+				dialogThread.start();
+				animator.start();
+				 ArrayList<Response>[] result = new ArrayList[1];
+				
+				Thread scanThread = new Thread(()-> {
+				result[0] = scanCheck(imageFileConverted);
+				//this takes a while because it pings an api
+				
+				animator.stop();
+				dialog.dispose();
+				System.out.println("done");
+				System.out.println(result[0].get(0).amount());
+				});
+				scanThread.start();
+				
+				
+				
 				for(Record r: unpaidList) {
 					//idea: let you put in check aliases under client
 					//tha will fix everything
@@ -714,11 +752,11 @@ class AnalysisFrame extends JFrame {
 				LocalDate checkDate = LocalDate.of(Integer.parseInt(splitChkDate[2]), Integer.parseInt(splitChkDate[0]), Integer.parseInt(splitChkDate[1]));
 				double amount = Double.parseDouble(splitLine[3]);
 				String checkNum = splitLine[4];
-				System.out.println("name: "+name);
+			/*System.out.println("name: "+name);
 				System.out.println("invd "+invoiceDate);
 				System.out.println("chkd: "+checkDate);
 				System.out.println("amt: "+amount);
-				System.out.println("num: "+checkNum);
+				System.out.println("num: "+checkNum);*/
 				//maybe create a Response record object to store the data
 				Response r = new Response(name, invoiceDate, checkDate, amount, checkNum);
 				list.add(r);
