@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -346,6 +347,9 @@ class Record {
 				+"<record>"; 
 		return s;
 	}
+	public String toString() {
+		return toFileString();
+	}
 }
 class Check {
 	LocalDate checkDate;
@@ -604,7 +608,7 @@ class AnalysisFrame extends JFrame {
 	 * 6. popup saying how many checks filled successfully, how many not, errors etc
 	 * 7. dispose
 	 */
-	public AnalysisFrame(ArrayList<Record> unpaidList) {
+	public AnalysisFrame(ArrayList<Record> upList) {
 		super("Check Analysis");
 		setSize(400,400);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -613,7 +617,7 @@ class AnalysisFrame extends JFrame {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setOpaque(false);
 		
-		this.unpaidList=unpaidList;
+		this.unpaidList=upList;
 	     
 			JLabel imageLabel = new JLabel("imagefilename");
 			imageLabel.setForeground(new Color(36,36,36));
@@ -676,9 +680,7 @@ class AnalysisFrame extends JFrame {
 				dialog.add(label);
 				dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				
-				dialogThread.start();
-				animator.start();
-				 ArrayList<Response>[] result = new ArrayList[1];
+				ArrayList<Response>[] result = new ArrayList[1];
 				
 				Thread scanThread = new Thread(()-> {
 				result[0] = scanCheck(imageFileConverted);
@@ -689,15 +691,63 @@ class AnalysisFrame extends JFrame {
 				System.out.println("done");
 				System.out.println(result[0].get(0).amount());
 				});
+				
+				
+				animator.start();
 				scanThread.start();
+				dialogThread.run();
 				
+				System.out.println("done scanning");
 				
+				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>(),imperfectMatches = new HashMap<Record, Response>();
+				ArrayList<Record> toDel = new ArrayList<Record>();
+				for(Record rec: unpaidList) {
+					for(Response res: result[0]) {
+						String cn = getClientName(res.name());
+						if(cn==null) continue;
+						if(cn.equals(rec.clientName)) {
+							//now we might populate the record
+							if(rec.billDate.equals(res.invoiceDate())&&rec.amount==res.amount()) {
+							//rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
+								perfectMatches.put(rec,res);
+								toDel.add(rec);
+							result[0].remove(res); //this is fine bc we break right after
+							break;
+							}
+						}
+					}
+				}//now all the perfect matches have been made
+				//might be some with imperfect matches?
 				
-				for(Record r: unpaidList) {
-					//idea: let you put in check aliases under client
-					//tha will fix everything
+				for(Record rec: toDel) {
+					unpaidList.remove(rec);
 				}
-				//todo this
+				toDel.clear();
+				for(Record rec: unpaidList) {
+					for(Response res: result[0]) {
+						String cn = getClientName(res.name());
+						if(cn==null) continue;
+						if(cn.equals(rec.clientName)) {
+						imperfectMatches.put(rec, res);
+						toDel.add(rec);
+						result[0].remove(res);
+						break;
+						}
+					}}
+				
+				for(Record rec: toDel) {
+					unpaidList.remove(rec);
+				}
+				
+				//now have unpaidList of records with no matches
+				//and result[0] with responses which found no matches
+				//and perfectMatches and imperfectMatches, maps which store matches
+				System.out.println("perfect:");
+				System.out.println(perfectMatches);
+				System.out.println(imperfectMatches);
+				System.out.println(unpaidList);
+				//issues removing from unpaidlist??
+				
 			});
 			
 			if(Invoicer.onMac) {
@@ -732,6 +782,13 @@ class AnalysisFrame extends JFrame {
 		//check.fill(amount, chkDate, chkId);
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
+	}
+	String getClientName(String alias) {
+		for(ClientBox cb: Invoicer.clp.clientList) {
+			Client c = cb.client;
+			if(c.checkAlias.equalsIgnoreCase(alias)) return c.name;
+		}
+		return null;
 	}
 	ArrayList<Response> scanCheck(File image) {
 		//this is where the magic happens

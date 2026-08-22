@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
 //TODO: option to delete clients?
 
 public class ClientPanel extends MenuPanel {
-	static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
+	public static ArrayList<ClientBox> clientList = new ArrayList<ClientBox>();
 	static JPanel boxPanel = new JPanel();
 	static boolean resized = false;
 	static int nColumns=-1;
