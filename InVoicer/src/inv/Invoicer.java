@@ -77,7 +77,7 @@ public class Invoicer {
 		});
 		loadFile();
 	}
-	static void saveAllData() {
+	static void saveAllData() {//boolean b = true; if(b) return;
 		if(!saveable) return;
 		ClientPanel.updateClientData(false);
 		errorMsg = "";

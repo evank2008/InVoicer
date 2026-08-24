@@ -109,6 +109,8 @@ public void deleteClient(ClientBox c) {
 		JOptionPane.showMessageDialog(null, "Cannot delete a client with recorded invoices!");
 		return;
 	}
+	String s = JOptionPane.showInputDialog("Are you sure you want to delete client: "+c.client.name+"? Type 'delete' to confirm.");
+	if(!s.equalsIgnoreCase("delete")) return;
 	
 	clientList.remove(c);
 	boxPanel.remove(c);
