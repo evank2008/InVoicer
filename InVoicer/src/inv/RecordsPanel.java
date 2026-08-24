@@ -705,7 +705,7 @@ class AnalysisFrame extends JFrame {
 				dialogThread.run();
 				
 				System.out.println("done scanning");
-				
+				//these below have to be two separate loops to prioritize perfection
 				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>(),imperfectMatches = new HashMap<Record, Response>();
 				ArrayList<Record> toDel = new ArrayList<Record>();
 				ArrayList<Response> toDelRes = new ArrayList<Response>();
@@ -765,7 +765,7 @@ class AnalysisFrame extends JFrame {
 				System.out.println(result[0]);
 				//issues removing from unpaidlist??
 				if(perfectMatches.size()==0&&imperfectMatches.size()==0) {
-					System.out.println("no matches. maybe add check aliases to clients?");
+					JOptionPane.showMessageDialog(null,"no matches. maybe add check aliases to clients?");
 				}
 				
 			});
