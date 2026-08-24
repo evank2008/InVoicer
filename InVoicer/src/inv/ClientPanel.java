@@ -94,6 +94,28 @@ void addClient(Client c) {
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
 }
+public void deleteClient(ClientBox c) {
+	if(!clientList.contains(c)) {
+		System.out.println("no such cbox in clientlist");
+		return;
+	}
+	int count = 0;
+	for(Record r: Invoicer.rp.recordsList) {
+		if(r.clientName.equals(c.client.name)) {
+			count++;
+		}
+	}
+	if(count>0) {
+		JOptionPane.showMessageDialog(null, "Cannot delete a client with recorded invoices!");
+		return;
+	}
+	
+	clientList.remove(c);
+	boxPanel.remove(c);
+	boxPanel.revalidate();
+	boxPanel.repaint();
+	this.paintAll(getGraphics());
+}
 static void updateClientData(boolean save) {
 	if(save) updateClientData();
 	else {
@@ -335,6 +357,7 @@ class ClientBox extends JPanel{
 					dialog.setVisible(true);
 					//todo add a jtextfield like client name field
 				}
+				if(e.isAltDown()) Invoicer.clp.deleteClient(ClientBox.this);
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {

@@ -138,7 +138,11 @@ public class RecordsPanel extends MenuPanel {
 			if(rows.length==0) {
 				JOptionPane.showMessageDialog(null, "Select an invoice");
 			} else if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete th"+(rows.length==1?"is":"ese")+" record"+(rows.length==1?"":"s")+"?")==0) {
-				for(int i=rows.length-1;i>=0;i--) recordsList.remove(rows[i]);
+				ArrayList<Record> deleteList = new ArrayList<Record>();
+				for(int i=rows.length-1;i>=0;i--) {
+					deleteList.add(recordsList.get(table.convertRowIndexToModel(rows[i])));
+				}
+				for(Record r: deleteList) recordsList.remove(r);
 				updateTable();
 				Invoicer.saveAllData();
 			}
