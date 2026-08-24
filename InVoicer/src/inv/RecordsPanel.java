@@ -219,6 +219,7 @@ public class RecordsPanel extends MenuPanel {
 		updateTable();
 	}
 	void updateTable() {
+
 		//fills table with all data from recordslist
 		String[][] array = new String[recordsList.size()][8];
 		for(int i = 0; i<recordsList.size();i++) {
@@ -240,7 +241,7 @@ public class RecordsPanel extends MenuPanel {
 		recordsList.get(e.getFirstRow()).notes=(String)table.getValueAt(e.getFirstRow(), 7);
 		});
 		
-		this.paintAll(getGraphics());
+		//this.paintAll(getGraphics());
 	}
 public String toFileString() {
 	String s = "";
@@ -271,6 +272,8 @@ public void loadData(String fileData) {
 }
 
 public void nameChange(String currentName, String newName) {
+	if(currentName.equals(newName)) return;
+
 	//when client name is changed, change name of all records to reflect new name
 	for (Record r: recordsList) {
 		if(r.clientName.equals(currentName)) r.clientName=newName;
@@ -705,17 +708,19 @@ class AnalysisFrame extends JFrame {
 				
 				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>(),imperfectMatches = new HashMap<Record, Response>();
 				ArrayList<Record> toDel = new ArrayList<Record>();
-				for(Record rec: unpaidList) {
-					for(Response res: result[0]) {
+				ArrayList<Response> toDelRes = new ArrayList<Response>();
+				for(Response res: result[0]) {
+					for(Record rec: unpaidList) {
 						String cn = getClientName(res.name());
 						if(cn==null) continue;
-						if(cn.equals(rec.clientName)) {
+						if(cn.equalsIgnoreCase(rec.clientName)) {
 							//now we might populate the record
 							if(rec.billDate.equals(res.invoiceDate())&&rec.amount==res.amount()) {
 							//rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
+								System.out.println("perfect match");
 								perfectMatches.put(rec,res);
 								toDel.add(rec);
-							result[0].remove(res); //this is fine bc we break right after
+								toDelRes.add(res);
 							break;
 							}
 						}
@@ -726,15 +731,19 @@ class AnalysisFrame extends JFrame {
 				for(Record rec: toDel) {
 					unpaidList.remove(rec);
 				}
+				for(Response res: toDelRes) {
+					result[0].remove(res);
+				}
 				toDel.clear();
-				for(Record rec: unpaidList) {
-					for(Response res: result[0]) {
+				toDelRes.clear();
+				for(Response res: result[0]) {
+					for(Record rec: unpaidList) {
 						String cn = getClientName(res.name());
 						if(cn==null) continue;
-						if(cn.equals(rec.clientName)) {
+						if(cn.equalsIgnoreCase(rec.clientName)) {
 						imperfectMatches.put(rec, res);
 						toDel.add(rec);
-						result[0].remove(res);
+						toDelRes.add(res);
 						break;
 						}
 					}}
@@ -742,6 +751,10 @@ class AnalysisFrame extends JFrame {
 				for(Record rec: toDel) {
 					unpaidList.remove(rec);
 				}
+				for(Response res: toDelRes) {
+					result[0].remove(res);
+				}
+				//todo work here
 				
 				//now have unpaidList of records with no matches
 				//and result[0] with responses which found no matches
@@ -749,7 +762,7 @@ class AnalysisFrame extends JFrame {
 				System.out.println("perfect:");
 				System.out.println(perfectMatches);
 				System.out.println(imperfectMatches);
-				System.out.println(unpaidList);
+				System.out.println(result[0]);
 				//issues removing from unpaidlist??
 				if(perfectMatches.size()==0&&imperfectMatches.size()==0) {
 					System.out.println("no matches. maybe add check aliases to clients?");
@@ -791,9 +804,10 @@ class AnalysisFrame extends JFrame {
 		//Invoicer.saveAllData();
 	}
 	String getClientName(String alias) {
+		System.out.println(alias);
 		for(ClientBox cb: Invoicer.clp.clientList) {
 			Client c = cb.client;
-			if(c.checkAlias==null) return null;
+			if(c.checkAlias==null) continue;
 			if(c.checkAlias.equalsIgnoreCase(alias)) return c.name;
 		}
 		return null;

@@ -90,7 +90,7 @@ void addClient(Client c) {
 	boxPanel.revalidate();
 	boxPanel.repaint();
 	
-	this.paintAll(getGraphics());
+	//this.paintAll(getGraphics());
 	//i think adding every clientbox should be one function and adding a single one should happen here
 	
 }
@@ -148,6 +148,7 @@ static void updateClientData() {
 		String newName = cb.nameField.getText();
 		cb.client.name=cb.nameField.getText();
 		Invoicer.rp.nameChange(currentName, newName);
+		
 		try {
 		cb.client.expectedAmt=Double.parseDouble((cb.amountField.getText()));
 		} catch(Exception e) {
