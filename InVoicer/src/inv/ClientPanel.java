@@ -307,6 +307,7 @@ class ClientBox extends JPanel{
 		this.setBackground(new Color(36,36,36));
 		this.setLayout(new GridBagLayout());
 		this.setFocusable(true);
+		this.setToolTipText("<html>Shift-click: Edit check alias<br>Alt-click: Delete</html>");
 		this.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
