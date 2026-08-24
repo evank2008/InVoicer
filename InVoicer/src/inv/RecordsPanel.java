@@ -747,6 +747,9 @@ class AnalysisFrame extends JFrame {
 				System.out.println(imperfectMatches);
 				System.out.println(unpaidList);
 				//issues removing from unpaidlist??
+				if(perfectMatches.size()==0&&imperfectMatches.size()==0) {
+					System.out.println("no matches. maybe add check aliases to clients?");
+				}
 				
 			});
 			
@@ -786,6 +789,7 @@ class AnalysisFrame extends JFrame {
 	String getClientName(String alias) {
 		for(ClientBox cb: Invoicer.clp.clientList) {
 			Client c = cb.client;
+			if(c.checkAlias==null) return null;
 			if(c.checkAlias.equalsIgnoreCase(alias)) return c.name;
 		}
 		return null;
