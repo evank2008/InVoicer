@@ -668,6 +668,10 @@ class AnalysisFrame extends JFrame {
 			
 			scanButton = new JButton("Scan");
 			scanButton.addActionListener(e->{
+				if(imageFileConverted==null) {
+					JOptionPane.showMessageDialog(null, "No image selected");
+					return;
+					}
 				JDialog dialog = new JDialog(this, "Scanning", true);
 				dialog.setSize(400,200);
 				String[] strs = {"Scanning","Scanning.","Scanning..","Scanning..."};
@@ -767,6 +771,10 @@ class AnalysisFrame extends JFrame {
 				if(perfectMatches.size()==0&&imperfectMatches.size()==0) {
 					JOptionPane.showMessageDialog(null,"no matches. maybe add check aliases to clients?");
 				}
+				for(Record rec: perfectMatches.keySet()) {
+					//fillMatch(rec, perfectMatches.get(rec);
+					//give confirmation message?
+				}
 				
 			});
 			
@@ -803,8 +811,12 @@ class AnalysisFrame extends JFrame {
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
 	}
+	void fillMatch(Record rec, Response res) {
+		if(rec.check.paymentStatus) throw new RuntimeException("Check already filled: "+rec.check);
+		rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
+		
+	}
 	String getClientName(String alias) {
-		System.out.println(alias);
 		for(ClientBox cb: Invoicer.clp.clientList) {
 			Client c = cb.client;
 			if(c.checkAlias==null) continue;
