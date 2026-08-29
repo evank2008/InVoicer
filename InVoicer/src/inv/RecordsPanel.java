@@ -671,7 +671,7 @@ class AnalysisFrame extends JFrame {
 				animator.stop();
 				dialog.dispose();
 				System.out.println("done");
-				System.out.println(result[0].get(0).amount());
+				//System.out.println(result[0].get(0).amount());
 				});
 				
 				
@@ -689,7 +689,7 @@ class AnalysisFrame extends JFrame {
 					for(Record rec: unpaidList) {
 						String cn = getClientName(res.name());
 						if(cn==null) continue;
-						System.out.println("no continue");
+						//System.out.println("no continue");
 						if(cn.equalsIgnoreCase(rec.clientName)) {
 							//now we might populate the record
 							if(rec.billDate.equals(res.invoiceDate())&&rec.amount==res.amount()) {
