@@ -47,9 +47,6 @@ import openize.io.IOMode;
 
 //this class should show a table of the past invoices
 //payment status, date sent, all the info about the invoice
-//TODO: line 624 how do i make ai do the work
-//TODO: line 133 uncomment the safeguards when finished
-//TODO: take the data you finally got and actually do something with it please just actually populate the records
 public class RecordsPanel extends MenuPanel {
 	JPanel buttonPanel;
 	JButton inputButton, viewButton;
@@ -285,7 +282,6 @@ class Record {
 	//a record is one entry in the table
 	//per the specs, should store "sent invoice, payment status, check data"
 	//will store invoice data
-	//TODO uhhh take in check data?
 	//check will store payment data ahahhaa
 	String clientName;
 	String docName;
@@ -589,32 +585,7 @@ class AnalysisFrame extends JFrame {
 			+ " Your response should contain nothing but the information that would be in a"
 			+ " CSV file, with no commentary before or after.";
 	ArrayList<Record> unpaidList;
-	/*
-	 * 1. (DONE) take in picture
-	 * 2. send to ai and get back data???
-	 * give ai the list of unpaid records, list of client names, check image, 
-	 * get back some sort of list with client name, invoice date, check amount, check id??
-	 * when filling in manually, you have to know:
-	 * -which invoice
-	 * -check amount
-	 * -check date
-	 * -check number
-	 * following info taken from check in order of the csv:
-	 * -client name
-	 * -invoice date
-	 * -check date
-	 * -amount
-	 * -check number
-	 * therefore to select the proper invoice you use:
-	 * -client name
-	 * -invoice date
-	 * 3. parse data and try to match with checks
-	 * 4. if any errors or mismatches try to have the uncertain ones just not be filled but the other ones be filled
-	 * 5. fill the good checks
-	 * -update records or something?
-	 * 6. popup saying how many checks filled successfully, how many not, errors etc
-	 * 7. dispose
-	 */
+
 	public AnalysisFrame(ArrayList<Record> upList) {
 		super("Check Analysis");
 		setSize(400,400);
@@ -710,13 +681,15 @@ class AnalysisFrame extends JFrame {
 				
 				System.out.println("done scanning");
 				//these below have to be two separate loops to prioritize perfection
-				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>(),imperfectMatches = new HashMap<Record, Response>();
+				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>();
+				//HashMap<Record,Response> imperfectMatches = new HashMap<Record, Response>();
 				ArrayList<Record> toDel = new ArrayList<Record>();
 				ArrayList<Response> toDelRes = new ArrayList<Response>();
 				for(Response res: result[0]) {
 					for(Record rec: unpaidList) {
 						String cn = getClientName(res.name());
 						if(cn==null) continue;
+						System.out.println("no continue");
 						if(cn.equalsIgnoreCase(rec.clientName)) {
 							//now we might populate the record
 							if(rec.billDate.equals(res.invoiceDate())&&rec.amount==res.amount()) {
@@ -737,7 +710,7 @@ class AnalysisFrame extends JFrame {
 				}
 				for(Response res: toDelRes) {
 					result[0].remove(res);
-				}
+				}/*
 				toDel.clear();
 				toDelRes.clear();
 				for(Response res: result[0]) {
@@ -757,7 +730,7 @@ class AnalysisFrame extends JFrame {
 				}
 				for(Response res: toDelRes) {
 					result[0].remove(res);
-				}
+				}*/
 				//todo work here
 				
 				//now have unpaidList of records with no matches
@@ -765,17 +738,26 @@ class AnalysisFrame extends JFrame {
 				//and perfectMatches and imperfectMatches, maps which store matches
 				System.out.println("perfect:");
 				System.out.println(perfectMatches);
-				System.out.println(imperfectMatches);
+				//System.out.println(imperfectMatches);
 				System.out.println(result[0]);
 				//issues removing from unpaidlist??
-				if(perfectMatches.size()==0&&imperfectMatches.size()==0) {
-					JOptionPane.showMessageDialog(null,"no matches. maybe add check aliases to clients?");
+				if(perfectMatches.size()==0) {
+					JOptionPane.showMessageDialog(null,"No perfect matches found. Maybe try adding check aliases to clients?");
+				} else {
+					confirmScan(perfectMatches);
 				}
-				for(Record rec: perfectMatches.keySet()) {
-					//fillMatch(rec, perfectMatches.get(rec);
-					//give confirmation message?
+				int choice = JOptionPane.showConfirmDialog(null, result[0].size()+" failed matches. View all?", null, JOptionPane.YES_NO_OPTION);
+				if(choice==JOptionPane.YES_OPTION) {
+					int i = 0;
+					for(Response r: result[0]) {
+						JOptionPane optionPane = new JOptionPane(r, JOptionPane.INFORMATION_MESSAGE);
+				        JDialog d = optionPane.createDialog(null);
+				        d.setLocation(d.getLocation().x+20*i,d.getLocation().y+20*i);
+				        d.setModal(false); 
+				        d.setVisible(true);
+				        i++;
+					}
 				}
-				
 			});
 			
 			if(Invoicer.onMac) {
@@ -801,6 +783,9 @@ class AnalysisFrame extends JFrame {
 		centerPanel.add(chooserButton);
 		centerPanel.add(imageDisplay);
 		centerPanel.add(imageLabel);
+		JLabel tip = new JLabel("<html>Shift-click on a client to input a check alias.<br>This is how their name is written on the check.</html>");
+		tip.setForeground(Color.white);
+		panel.add(tip);
 		panel.add(scanButton);
 		
 		
@@ -811,6 +796,32 @@ class AnalysisFrame extends JFrame {
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
 	}
+	void confirmScan(HashMap<Record,Response> pm) {
+		int matches = pm.size();
+		String[] options = {"View All","Yes","No"};
+		int choice = JOptionPane.showOptionDialog(null, matches+" perfect matches found. Apply them?", "", 0, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+		switch(choice) {
+		case 0:
+			//view all
+			for(Record r: pm.keySet()) {
+				Response res = pm.get(r);
+				JOptionPane.showMessageDialog(null, res);
+			}
+			confirmScan(pm);
+			break;
+		case 1:
+			//yes
+			for(Record rec: pm.keySet()) {
+				fillMatch(rec, pm.get(rec));
+			}
+			Invoicer.rp.updateTable();
+			JOptionPane.showMessageDialog(null, "Successfully filled "+matches+" records");
+			break;
+		case 2:
+			//no
+			break;
+		}
+	}
 	void fillMatch(Record rec, Response res) {
 		if(rec.check.paymentStatus) throw new RuntimeException("Check already filled: "+rec.check);
 		rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
@@ -820,7 +831,7 @@ class AnalysisFrame extends JFrame {
 		for(ClientBox cb: Invoicer.clp.clientList) {
 			Client c = cb.client;
 			if(c.checkAlias==null) continue;
-			if(c.checkAlias.equalsIgnoreCase(alias)) return c.name;
+			if(c.checkAlias.equalsIgnoreCase(alias)) {return c.name;}
 		}
 		return null;
 	}

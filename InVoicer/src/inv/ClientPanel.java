@@ -321,11 +321,7 @@ class ClientBox extends JPanel{
 					dialog.setSize(400,200);
 					dialog.getContentPane().setBackground(new Color(62,62,62));
 					dialog.setLocationRelativeTo(RecordsPanel.aFrame);
-					
-					//todo this
-					
-					
-					
+
 					//use jtable like in contactsframe
 					String[][] data = new String[1][1];
 					data[0][0]=client.checkAlias==null?"":client.checkAlias;
@@ -335,7 +331,15 @@ class ClientBox extends JPanel{
 					table.setRowHeight(Invoicer.clp.getSize().height/8);
 					table.getTableHeader().setReorderingAllowed(false);
 					table.getModel().addTableModelListener((ev)->{
-						client.checkAlias=(String) table.getValueAt(0, 0);
+						String alias = (String) table.getValueAt(0, 0);
+						
+						for(ClientBox c: Invoicer.clp.clientList) {
+							if(c!=ClientBox.this&&c.client.checkAlias.equalsIgnoreCase(alias)) {
+								JOptionPane.showMessageDialog(null, "Client cannot have the same alias as another client!");
+								table.setValueAt(ClientBox.this.client.checkAlias, 0, 0);
+							}
+						}
+						//client.checkAlias=(String) table.getValueAt(0, 0);
 					});
 					table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*2)));
 					table.setBackground(new Color(31,31,31));
