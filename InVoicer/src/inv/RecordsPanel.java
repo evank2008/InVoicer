@@ -554,7 +554,7 @@ class CheckViewFrame extends JFrame {
 	}
 }
 
-class AnalysisFrame extends JFrame {
+class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	static AnthropicClient client;
 	static String apiKey;
 	JPanel panel, leftPanel, rightPanel, topLeftPanel, bottomLeftPanel;
@@ -567,15 +567,21 @@ class AnalysisFrame extends JFrame {
 	String prompt = "Attached is an image of multiple check stubs. "
 			+ "Return a list in CSV format, where each line represents one check stub."
 			+ "Each entry in a line should follow the following format: "
-			+ "name,invoice date,check date,amount,id. don't include a period at the end."
-			+ "for name, enter the client name displayed in the top left "
-			+ "of each stub in bold. For invoice date, enter the date listed under"
+			+ "name,invoice date,check date,service date,amount,id. don't include a period at the end."
+			+ "for name, enter the client name, which is the name of the sender of the check."
+			+ " This may displayed in the top left of a stub, "
+			+ "or under 'location', or 'please post payment for'. "
+			+ "For invoice date, enter the date listed under"
 			+ "the text that reads Invoice Date, second from the left on the stubs."
 			+ "This date should be exactly as it is written on the stub, for example,"
 			+ " 10/15/2025. For check date, enter the date listed under the text that reads Check Date"
-			+ " on the right side. The check date might be written on the check in a format "
+			+ ". If there is no such text, the check date is likely the date least associated with the invoice date."
+			+ " The check date might be written on the check in a format "
 			+ "that spells out the month name. In your response, write it in the month/day/year format "
-			+ "identically to the format for invoice date. For amount, this should be a simple number with no commas,"
+			+ "identically to the format for invoice date. This is the date when the check was sent. For service date, look at the invoice number"
+			+ " on the check, which may be in the format of '2026-8' or '08/26' or something similar, composed of a month and a year."
+			+ " Using this invoice number, write a date corresponding to the given month and year, with the day being 1."
+			+ " For example, an invoice number of 2026-8 would lead to an entry of 8/1/2026. For amount, this should be a simple number with no commas,"
 			+ " though it is okay to have a decimal point and the number of cents at the end. "
 			+ "The amount can be found under Net Paid Amt on the check stub."
 			+ " The id is the seven-digit number at the top right of the stub."
@@ -692,7 +698,8 @@ class AnalysisFrame extends JFrame {
 						//System.out.println("no continue");
 						if(cn.equalsIgnoreCase(rec.clientName)) {
 							//now we might populate the record
-							if(rec.billDate.equals(res.invoiceDate())&&rec.amount==res.amount()) {
+							
+							if(rec.serviceDate.getYear()==res.serviceDate().getYear()&&rec.serviceDate.getMonth()==res.serviceDate().getMonth()&&rec.amount==res.amount()) {
 							//rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
 								System.out.println("perfect match");
 								perfectMatches.put(rec,res);
@@ -731,7 +738,9 @@ class AnalysisFrame extends JFrame {
 				for(Response res: toDelRes) {
 					result[0].remove(res);
 				}*/
-				//todo work here
+				//TODO let you edit the failed check responses and send them back into records search
+				//show all the perfect matches at once
+				//add optional permanent edits to the prompt(in settings?)
 				
 				//now have unpaidList of records with no matches
 				//and result[0] with responses which found no matches
@@ -851,17 +860,19 @@ class AnalysisFrame extends JFrame {
 				String name = splitLine[0]; //the name on the check may be differet from the client name
 					String[] splitInvDate = splitLine[1].split("/");
 					String[] splitChkDate = splitLine[2].split("/");
+					String[] splitServDate = splitLine[3].split("/");
 				LocalDate invoiceDate = LocalDate.of(Integer.parseInt(splitInvDate[2]), Integer.parseInt(splitInvDate[0]), Integer.parseInt(splitInvDate[1]));
 				LocalDate checkDate = LocalDate.of(Integer.parseInt(splitChkDate[2]), Integer.parseInt(splitChkDate[0]), Integer.parseInt(splitChkDate[1]));
-				double amount = Double.parseDouble(splitLine[3]);
-				String checkNum = splitLine[4];
+				LocalDate serviceDate = LocalDate.of(Integer.parseInt(splitServDate[2]), Integer.parseInt(splitServDate[0]), Integer.parseInt(splitServDate[1]));
+				double amount = Double.parseDouble(splitLine[4]);
+				String checkNum = splitLine[5];
 			/*System.out.println("name: "+name);
 				System.out.println("invd "+invoiceDate);
 				System.out.println("chkd: "+checkDate);
 				System.out.println("amt: "+amount);
 				System.out.println("num: "+checkNum);*/
 				//maybe create a Response record object to store the data
-				Response r = new Response(name, invoiceDate, checkDate, amount, checkNum);
+				Response r = new Response(name, invoiceDate, checkDate, serviceDate, amount, checkNum);
 				list.add(r);
 			}
 		} catch (IOException e) {
@@ -1005,7 +1016,7 @@ class AnalysisFrame extends JFrame {
 		return output;
 	}
 }
-record Response(String name, LocalDate invoiceDate, LocalDate checkDate, double amount, String checkNumber) {
+record Response(String name, LocalDate invoiceDate, LocalDate checkDate, LocalDate serviceDate, double amount, String checkNumber) {
 
 }
 
