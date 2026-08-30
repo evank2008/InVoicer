@@ -570,7 +570,8 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ "name,invoice date,check date,service date,amount,id. don't include a period at the end."
 			+ "for name, enter the client name, which is the name of the sender of the check."
 			+ " This may displayed in the top left of a stub, "
-			+ "or under 'location', or 'please post payment for'. "
+			+ "or under 'location', or 'please post payment for'. The name should not be Jason Keri or any extenstion of it."
+			+ " If that is the name you see on the check, find a different name on the check."
 			+ "For invoice date, enter the date listed under"
 			+ "the text that reads Invoice Date, second from the left on the stubs."
 			+ "This date should be exactly as it is written on the stub, for example,"
@@ -581,7 +582,9 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ "identically to the format for invoice date. This is the date when the check was sent. For service date, look at the invoice number"
 			+ " on the check, which may be in the format of '2026-8' or '08/26' or something similar, composed of a month and a year."
 			+ " Using this invoice number, write a date corresponding to the given month and year, with the day being 1."
-			+ " For example, an invoice number of 2026-8 would lead to an entry of 8/1/2026. For amount, this should be a simple number with no commas,"
+			+ " For example, an invoice number of 2026-8 would lead to an entry of 8/1/2026. This date "
+			+ "is very important, so make sre not to return the wrong month. If the given invoice number has a 6 for the month, you should return"
+			+ " a 6 for the month in the srvice date, and so on. For amount, this should be a simple number with no commas,"
 			+ " though it is okay to have a decimal point and the number of cents at the end. "
 			+ "The amount can be found under Net Paid Amt on the check stub."
 			+ " The id is the seven-digit number at the top right of the stub."
@@ -756,6 +759,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				} else {
 					confirmScan(perfectMatches);
 				}
+				if(result[0].size()!=0) {
 				int choice = JOptionPane.showConfirmDialog(null, result[0].size()+" failed matches. View all?", null, JOptionPane.YES_NO_OPTION);
 				if(choice==JOptionPane.YES_OPTION) {
 					int i = 0;
@@ -767,7 +771,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				        d.setVisible(true);
 				        i++;
 					}
-				}
+				}}
 			});
 			
 			if(Invoicer.onMac) {
