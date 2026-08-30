@@ -334,7 +334,7 @@ class ClientBox extends JPanel{
 						String alias = (String) table.getValueAt(0, 0);
 						
 						for(ClientBox c: Invoicer.clp.clientList) {
-							if(c!=ClientBox.this&&c.client.checkAlias.equalsIgnoreCase(alias)) {
+							if(c!=ClientBox.this&&c.client.checkAlias!=null&&c.client.checkAlias.equalsIgnoreCase(alias)) {
 								JOptionPane.showMessageDialog(null, "Client cannot have the same alias as another client!");
 								table.setValueAt(ClientBox.this.client.checkAlias, 0, 0);
 							}
