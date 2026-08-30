@@ -690,57 +690,8 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				
 				System.out.println("done scanning");
 				//these below have to be two separate loops to prioritize perfection
-				HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>();
-				//HashMap<Record,Response> imperfectMatches = new HashMap<Record, Response>();
-				ArrayList<Record> toDel = new ArrayList<Record>();
-				ArrayList<Response> toDelRes = new ArrayList<Response>();
-				for(Response res: result[0]) {
-					for(Record rec: unpaidList) {
-						String cn = getClientName(res.name());
-						if(cn==null) continue;
-						//System.out.println("no continue");
-						if(cn.equalsIgnoreCase(rec.clientName)) {
-							//now we might populate the record
-							
-							if(rec.serviceDate.getYear()==res.serviceDate().getYear()&&rec.serviceDate.getMonth()==res.serviceDate().getMonth()&&rec.amount==res.amount()) {
-							//rec.check.fill(res.amount(), res.checkDate(), res.checkNumber());
-								System.out.println("perfect match");
-								perfectMatches.put(rec,res);
-								toDel.add(rec);
-								toDelRes.add(res);
-							break;
-							}
-						}
-					}
-				}//now all the perfect matches have been made
-				//might be some with imperfect matches?
-				
-				for(Record rec: toDel) {
-					unpaidList.remove(rec);
-				}
-				for(Response res: toDelRes) {
-					result[0].remove(res);
-				}/*
-				toDel.clear();
-				toDelRes.clear();
-				for(Response res: result[0]) {
-					for(Record rec: unpaidList) {
-						String cn = getClientName(res.name());
-						if(cn==null) continue;
-						if(cn.equalsIgnoreCase(rec.clientName)) {
-						imperfectMatches.put(rec, res);
-						toDel.add(rec);
-						toDelRes.add(res);
-						break;
-						}
-					}}
-				
-				for(Record rec: toDel) {
-					unpaidList.remove(rec);
-				}
-				for(Response res: toDelRes) {
-					result[0].remove(res);
-				}*/
+				HashMap<Record, Response> perfectMatches = parseResponses(result[0], unpaidList);
+						
 				//TODO let you edit the failed check responses and send them back into records search
 				//show all the perfect matches at once
 				//add optional permanent edits to the prompt(in settings?)
@@ -763,13 +714,19 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				int choice = JOptionPane.showConfirmDialog(null, result[0].size()+" failed matches. View all?", null, JOptionPane.YES_NO_OPTION);
 				if(choice==JOptionPane.YES_OPTION) {
 					int i = 0;
+					ArrayList<Response> retries = new ArrayList<Response>();
 					for(Response r: result[0]) {
-						JOptionPane optionPane = new JOptionPane(r, JOptionPane.INFORMATION_MESSAGE);
-				        JDialog d = optionPane.createDialog(null);
-				        d.setLocation(d.getLocation().x+20*i,d.getLocation().y+20*i);
-				        d.setModal(false); 
-				        d.setVisible(true);
+						showFailedMatch(r, i, retries);
 				        i++;
+					}
+					perfectMatches = parseResponses(retries, unpaidList);
+					System.out.println("perfect retries:");
+					System.out.println(perfectMatches);
+					System.out.println(retries);
+					if(perfectMatches.size()==0) {
+						JOptionPane.showMessageDialog(null,"No perfect matches found despite edits.");
+					} else {
+						confirmScan(perfectMatches);
 					}
 				}}
 			});
@@ -810,6 +767,119 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		//Invoicer.rp.updateTable();
 		//Invoicer.saveAllData();
 	}
+	 void showFailedMatch(Response r, int i, ArrayList<Response> retries) {
+		 //show the failed response with two buttons: ok and edit
+		// int choice = JOptionPane.showConfirmDialog(null, "Edit the following response?\n"+r, "Failed Response", JOptionPane.YES_NO_OPTION);
+		 /*JOptionPane optionPane = new JOptionPane(r, JOptionPane.INFORMATION_MESSAGE);
+	        JDialog d = optionPane.createDialog(null);
+	        d.setLocation(d.getLocation().x+20*i,d.getLocation().y+20*i);
+	        d.setModal(false); 
+	        d.setVisible(true);*/
+		 JOptionPane pane = new JOptionPane(r, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, new String[] {"OK","Edit"});
+		 JDialog d = pane.createDialog("Failed Response");
+		 d.setLocation(d.getLocation().x+20*i,d.getLocation().y+20*i);
+	     d.setModal(true); 
+	     d.setVisible(true);
+	     if(pane.getValue()!=null&&pane.getValue().equals("Edit")) {
+	    	// JOptionPane.showMessageDialog(null, "Edit me");
+
+				JDialog dialog = new JDialog((Frame)null,"Editing Response", true);
+				dialog.setSize(500,200);
+				dialog.getContentPane().setBackground(new Color(62,62,62));
+				dialog.setLocationRelativeTo(RecordsPanel.aFrame);
+
+				//use jtable like in contactsframe
+				String[][] data = new String[1][6];
+				data[0][0]=r.name();
+				data[0][1]=r.checkDate().toString();
+				data[0][2]=r.serviceDate().toString();
+				data[0][3]=r.invoiceDate().toString();
+				data[0][4]=""+r.amount();
+				data[0][5]=r.checkNumber();
+				String[] columnNames = {"Alias","Check Date","Service Date","Invoice Date","Amount","Check ID"};
+				JTable table = new JTable(new DefaultTableModel(data,columnNames));
+				
+				table.setRowHeight(Invoicer.clp.getSize().height/8);
+				table.getTableHeader().setReorderingAllowed(false);
+				//table.setFont(table.getFont().deriveFont((float)(table.getFont().getSize()*2)));
+				table.setBackground(new Color(31,31,31));
+				table.setForeground(Color.white);
+				table.setGridColor(Color.white);
+				table.setSelectionBackground(new Color(20,85,122));
+				table.setSelectionForeground(Color.white);	
+				
+				JScrollPane scroll = new JScrollPane(table);
+				scroll.setBackground(new Color(62,62,62));
+				
+				dialog.add(scroll);
+				
+				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					@Override
+					public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					     if (table.isEditing()) {
+					            table.getCellEditor().stopCellEditing();
+					        }
+							try {
+							String alias = (String) table.getValueAt(0, 0);
+								String[] checkDateSplit = ((String) table.getValueAt(0, 1)).split("-");
+							LocalDate checkDate = LocalDate.of(Integer.parseInt(checkDateSplit[0]), Integer.parseInt(checkDateSplit[1]), Integer.parseInt(checkDateSplit[2]));
+								String[] servSplit = ((String) table.getValueAt(0, 2)).split("-");
+							LocalDate servDate = LocalDate.of(Integer.parseInt(servSplit[0]), Integer.parseInt(servSplit[1]), Integer.parseInt(servSplit[2]));
+								String[] invDateSplit = ((String) table.getValueAt(0, 3)).split("-");
+							LocalDate invDate = LocalDate.of(Integer.parseInt(invDateSplit[0]), Integer.parseInt(invDateSplit[1]), Integer.parseInt(invDateSplit[2]));
+							
+							double amount = Double.parseDouble((String) table.getValueAt(0, 4));
+							String id = (String) table.getValueAt(0, 5);
+							Response newResponse = new Response(alias, invDate, checkDate, servDate, amount, id);
+							retries.add(newResponse);
+							return;
+							} catch(Exception e) {
+								e.printStackTrace();
+								JOptionPane.showMessageDialog(null, "Error parsing edited input. See console for details");
+								return;
+							}
+					}
+				});
+				
+				dialog.setVisible(true);
+				//todo add a jtextfield like client name field
+			
+	     }
+		 //offset window location by 20i
+		 //if ok, dispose
+		 //if edit, let them edit, then add to retries list
+	}
+	 HashMap<Record, Response> parseResponses(ArrayList<Response> responses, ArrayList<Record> unpaidList) {
+		 
+		 HashMap<Record, Response> perfectMatches = new HashMap<Record, Response>();
+			//HashMap<Record,Response> imperfectMatches = new HashMap<Record, Response>();
+			ArrayList<Record> toDel = new ArrayList<Record>();
+			ArrayList<Response> toDelRes = new ArrayList<Response>();
+			for(Response res: responses) {
+				for(Record rec: unpaidList) {
+					String cn = getClientName(res.name());
+					if(cn==null) continue;
+					if(cn.equalsIgnoreCase(rec.clientName)) {
+						//now we might populate the record
+						
+						if(rec.serviceDate.getYear()==res.serviceDate().getYear()&&rec.serviceDate.getMonth()==res.serviceDate().getMonth()&&rec.amount==res.amount()) {
+							System.out.println("perfect match");
+							perfectMatches.put(rec,res);
+							toDel.add(rec);
+							toDelRes.add(res);
+						break;
+						}
+					}
+				}
+			}
+			for(Record rec: toDel) {
+				unpaidList.remove(rec);
+			}
+			for(Response res: toDelRes) {
+				responses.remove(res);
+			}
+		 return perfectMatches;
+	 }
 	void confirmScan(HashMap<Record,Response> pm) {
 		int matches = pm.size();
 		String[] options = {"View All","Yes","No"};
