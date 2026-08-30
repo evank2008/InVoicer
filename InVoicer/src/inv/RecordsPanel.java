@@ -575,9 +575,9 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ "the text that reads Invoice Date, second from the left on the stubs."
 			+ "This date should be exactly as it is written on the stub, for example,"
 			+ " 10/15/2025. For check date, enter the date listed under the text that reads Check Date"
-			+ ". If there is no such text, the check date is likely the date least associated with the invoice date."
+			+ " in mm/dd/yyyy format. If there is no such text, the check date is likely the date least associated with the invoice date."
 			+ " The check date might be written on the check in a format "
-			+ "that spells out the month name. In your response, write it in the month/day/year format "
+			+ "that spells out the month name. In your response, write it in the mm/dd/yyyy format "
 			+ "identically to the format for invoice date. This is the date when the check was sent. For service date, look at the invoice number"
 			+ " on the check, which may be in the format of '2026-8' or '08/26' or something similar, composed of a month and a year."
 			+ " Using this invoice number, write a date corresponding to the given month and year, with the day being 1."
@@ -589,7 +589,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ "Date and Net Paid Amt, the returned list should contain a separate"
 			+ " line for each listed date/amount pairing, with the name and id being identical."
 			+ " Your response should contain nothing but the information that would be in a"
-			+ " CSV file, with no commentary before or after.";
+			+ " CSV file, with no commentary before or after. Make sure all dates are in mm/dd/yyyy format.";
 	ArrayList<Record> unpaidList;
 
 	public AnalysisFrame(ArrayList<Record> upList) {
@@ -810,13 +810,16 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		int matches = pm.size();
 		String[] options = {"View All","Yes","No"};
 		int choice = JOptionPane.showOptionDialog(null, matches+" perfect matches found. Apply them?", "", 0, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+		
 		switch(choice) {
 		case 0:
-			//view all
+			//view all	
+			String s = "";
 			for(Record r: pm.keySet()) {
 				Response res = pm.get(r);
-				JOptionPane.showMessageDialog(null, res);
+				s+=res+"\n";
 			}
+			JOptionPane.showMessageDialog(null,s);
 			confirmScan(pm);
 			break;
 		case 1:
