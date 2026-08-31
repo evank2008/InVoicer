@@ -592,7 +592,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ "Date and Net Paid Amt, the returned list should contain a separate"
 			+ " line for each listed date/amount pairing, with the name and id being identical."
 			+ " Your response should contain nothing but the information that would be in a"
-			+ " CSV file, with no commentary before or after. Make sure all dates are in mm/dd/yyyy format.";
+			+ " CSV file, with no commentary before or after. Make sure all dates are in mm/dd/yyyy format. ";
 	ArrayList<Record> unpaidList;
 
 	public AnalysisFrame(ArrayList<Record> upList) {
@@ -692,8 +692,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				//these below have to be two separate loops to prioritize perfection
 				HashMap<Record, Response> perfectMatches = parseResponses(result[0], unpaidList);
 						
-				//TODO let you edit the failed check responses and send them back into records search
-				//show all the perfect matches at once
+				//TODO 
 				//add optional permanent edits to the prompt(in settings?)
 				
 				
@@ -748,6 +747,10 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			chooserButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/27));
 			chooserButton.setPreferredSize(new Dimension(250,50));
 			
+			JLabel addendumLabel = new JLabel("Prompt addendum will be used");
+			addendumLabel.setForeground(Color.white);
+			addendumLabel.setVisible(Invoicer.sp.promptAddendum!=null);
+			
 		add(panel);
 		centerPanel.setPreferredSize(new Dimension(400,200));
 		panel.add(centerPanel);
@@ -758,6 +761,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		tip.setForeground(Color.white);
 		panel.add(tip);
 		panel.add(scanButton);
+		panel.add(addendumLabel);
 		
 		
 		
@@ -929,7 +933,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		String response=null;
 		ArrayList<Response> list = new ArrayList<Response>();
 		try {
-			 response = parseMessage(callAI(prompt, image));
+			 response = parseMessage(callAI(prompt+Invoicer.sp.promptAddendum, image));
 			//System.out.println(response);
 			String[] lines = response.split("\n");
 			for(String line: lines) {

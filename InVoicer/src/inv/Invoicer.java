@@ -98,6 +98,8 @@ public class Invoicer {
 				if(s.equals("Empty")) {bw.close();return;};
 				bw.newLine();
 				bw.append(rp.toFileString());
+				bw.newLine();
+				bw.append(sp.toFileString());
 				bw.close();
 				//System.out.println("saved successfully");
 		} catch (IOException e) {
@@ -123,6 +125,7 @@ public class Invoicer {
 		if(s.equals("Empty")) return;
 		clp.loadData(s);
 		rp.loadData(br.readLine());
+		sp.loadData(br.readLine());
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "Error occurred while loading: "+e.toString());
 			e.printStackTrace();
