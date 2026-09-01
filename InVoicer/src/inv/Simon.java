@@ -144,7 +144,7 @@ public class Simon extends JPanel implements MouseListener{
 			g.drawString(""+highScore, WIDTH/40+HEIGHT*2/18, HEIGHT/40+20+HEIGHT/18+HEIGHT/40);
 			
 			g.drawString("Previous Score", WIDTH*33/40, HEIGHT/40+20);
-			g.drawString(""+lastScore, WIDTH*33/40+HEIGHT*2/18, HEIGHT/40+20+HEIGHT/18+HEIGHT/40);
+			g.drawString(""+lastScore, WIDTH*32/40+HEIGHT*2/18, HEIGHT/40+20+HEIGHT/18+HEIGHT/40);
 			
 		}
 	}
@@ -191,9 +191,9 @@ public class Simon extends JPanel implements MouseListener{
 			topLeft=0;topRight=0;bottomLeft=0;bottomRight=0;
 			started=false;
 			clickEnabled=false;
-			if(clickProgress>highScore) highScore=clickProgress;
-			if(currentLevel-1>highScore) highScore=currentLevel-1;
-			lastScore=clickProgress;
+			if(clickProgress>highScore) {highScore=clickProgress; }
+			if(currentLevel-1>highScore) {highScore=currentLevel-1;};
+			lastScore=currentLevel-1;
 			repaint();
 		} else {
 			clickProgress++;
@@ -226,6 +226,8 @@ public class Simon extends JPanel implements MouseListener{
 		showSequence(currentLevel);
 	}
 	void showSequence(int count) {
+		//have some startup lag
+		
 		clickEnabled=false;
 		slider.setEnabled(false);
 		int[] i = {0};
@@ -245,6 +247,7 @@ public class Simon extends JPanel implements MouseListener{
 			}
 			
 		});
+		timer.setInitialDelay(700);
 		timer.start();
 	}
 	void flash(int loc) {
