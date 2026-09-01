@@ -34,6 +34,7 @@ public class Simon extends JPanel implements MouseListener{
 	int currentLevel;
 	int clickProgress;
 	int highScore=-1;
+	int lastScore=-1;
 	JSlider slider;
 	Clip redTone, blueTone, greenTone, yellowTone;
 	Clip[] sounds;
@@ -69,7 +70,7 @@ public class Simon extends JPanel implements MouseListener{
 	    blueButton.subtract(sub);
 	    
 		addMouseListener(this);
-		slider = new JSlider(0,850,500);
+		slider = new JSlider(0,950,500);
 		slider.setBackground(new Color(36,36,36));
 		JPanel bufferPanel = new JPanel();
 		bufferPanel.setOpaque(false);
@@ -141,6 +142,10 @@ public class Simon extends JPanel implements MouseListener{
 			//g.drawString("High Score: "+highScore, WIDTH/2-HEIGHT*5/36, HEIGHT*9/10);
 			g.drawString("High Score", WIDTH/40, HEIGHT/40+20);
 			g.drawString(""+highScore, WIDTH/40+HEIGHT*2/18, HEIGHT/40+20+HEIGHT/18+HEIGHT/40);
+			
+			g.drawString("Previous Score", WIDTH*33/40, HEIGHT/40+20);
+			g.drawString(""+lastScore, WIDTH*33/40+HEIGHT*2/18, HEIGHT/40+20+HEIGHT/18+HEIGHT/40);
+			
 		}
 	}
 	@Override
@@ -152,24 +157,33 @@ public class Simon extends JPanel implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		if(!clickEnabled) return;
 		// TODO Auto-generated method stub
-		
+		Clip c = null;
 		//check which of the 4 colors it is, 
 		//if it is one of them set their respective variable to 0 for pressed 
 		//and set currentClick to their value
 		if(greenButton.contains(getMousePosition())) {
 			topLeft=0;
 			currentClick=tl;
+			c=greenTone;
+			
 		} else if(redButton.contains(getMousePosition())) {
 			topRight=0;
 			currentClick=tr;
+			c=redTone;
 		} else if(yellowButton.contains(getMousePosition())) {
 			bottomLeft=0;
 			currentClick=bl;
+			c=yellowTone;
 		} else if(blueButton.contains(getMousePosition())) {
 			bottomRight=0;
 			currentClick=br;
+			c=blueTone;
 		}
 		repaint();
+		if(c==null) return;
+		c.stop();
+		c.setFramePosition(0);
+		c.start();
 	}
 	void click(int loc) {
 		if(sequence[clickProgress]!=loc) {
@@ -179,6 +193,7 @@ public class Simon extends JPanel implements MouseListener{
 			clickEnabled=false;
 			if(clickProgress>highScore) highScore=clickProgress;
 			if(currentLevel-1>highScore) highScore=currentLevel-1;
+			lastScore=clickProgress;
 			repaint();
 		} else {
 			clickProgress++;
