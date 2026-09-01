@@ -36,7 +36,7 @@ public class Simon extends JPanel implements MouseListener{
 	int highScore=-1;
 	int lastScore=-1;
 	JSlider slider;
-	Clip redTone, blueTone, greenTone, yellowTone;
+	Clip redTone, blueTone, greenTone, yellowTone, failTone;
 	Clip[] sounds;
 	
 	public Simon() {
@@ -94,6 +94,7 @@ public class Simon extends JPanel implements MouseListener{
 		blueTone=loadClip("blue.wav");
 		yellowTone=loadClip("yellow.wav");
 		greenTone=loadClip("green.wav");
+		failTone=loadClip("fail.wav");
 		
 		sounds = new Clip[]{greenTone,redTone,yellowTone,blueTone};
 			for(Clip c: sounds) {
@@ -195,6 +196,13 @@ public class Simon extends JPanel implements MouseListener{
 			if(currentLevel-1>highScore) {highScore=currentLevel-1;};
 			lastScore=currentLevel-1;
 			repaint();
+			
+			for(Clip c: sounds) {
+				c.stop();
+			}
+			failTone.stop();
+			failTone.setFramePosition(0);
+			failTone.start();
 		} else {
 			clickProgress++;
 			if(clickProgress==31) {
