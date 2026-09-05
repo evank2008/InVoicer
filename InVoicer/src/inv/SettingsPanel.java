@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class SettingsPanel extends MenuPanel{
 
-	JButton nameFieldsButton, promptButton;
+	JButton nameFieldsButton, promptButton, viewPromptButton;
 	String promptAddendum;
 	boolean promptOpen;
 	public SettingsPanel() {
@@ -98,6 +98,24 @@ public class SettingsPanel extends MenuPanel{
 		promptButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(promptButton);
 		
+		add(CreatorPanel.bufferPanel());
+		
+		viewPromptButton = new JButton("View Default Prompt");
+		if(Invoicer.onMac) {
+			viewPromptButton.setForeground(Color.black);
+		} else {
+			viewPromptButton.setForeground(Color.white);
+		}
+		
+		viewPromptButton.setBackground(new Color(40,160,230));
+		viewPromptButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
+		viewPromptButton.addActionListener(e->{
+			String wrappedString = AnalysisFrame.prompt.replaceAll("(.{1," + 120 + "})\\s+", "$1\n");
+			JOptionPane.showMessageDialog(null, wrappedString, "Default Prompt", JOptionPane.PLAIN_MESSAGE);
+		});
+		viewPromptButton.setPreferredSize(new Dimension(Invoicer.WIDTH/5,Invoicer.HEIGHT/30));
+		viewPromptButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(viewPromptButton);
 		add(CreatorPanel.bufferPanel());
 		
 		String path;

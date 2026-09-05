@@ -564,7 +564,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	ImageIcon scaledIcon;
 	JButton scanButton;
 	File output;
-	String prompt = "Attached is an image of multiple check stubs. "
+	public static final String prompt = "Attached is an image of multiple check stubs. "
 			+ "Return a list in CSV format, where each line represents one check stub."
 			+ "Each entry in a line should follow the following format: "
 			+ "name,invoice date,check date,service date,amount,id. don't include a period at the end."
@@ -1100,5 +1100,9 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 }
 record Response(String name, LocalDate invoiceDate, LocalDate checkDate, LocalDate serviceDate, double amount, String checkNumber) {
 
+	public String toString() {
+		return "Name="+name+", serviceDate="+serviceDate+", checkDate="+checkDate+", invoiceDate="+invoiceDate+", amount="+amount+", checkNumber="+checkNumber;
+		
+	}
 }
 
