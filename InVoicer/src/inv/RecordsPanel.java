@@ -652,7 +652,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 					JOptionPane.showMessageDialog(null, "No image selected");
 					return;
 					}
-				JDialog dialog = new JDialog(this, "Scanning", true);
+				/*JDialog dialog = new JDialog(this, "Scanning", true);
 				dialog.setSize(400,200);
 				String[] strs = {"Scanning","Scanning.","Scanning..","Scanning..."};
 				JLabel label = new JLabel(strs[0]);
@@ -688,7 +688,65 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				scanThread.start();
 				dialogThread.run();
 				
-				System.out.println("done scanning");
+				System.out.println("done scanning");*/
+				JDialog dialog = new JDialog(this, "Scanning", Dialog.ModalityType.DOCUMENT_MODAL);
+				
+				dialog.setSize(400, 200);
+				dialog.setLocationRelativeTo(this);
+				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+				String[] strs = {"Scanning", "Scanning.", "Scanning..", "Scanning..."};
+
+				JLabel label = new JLabel(strs[0]);
+				label.setForeground(Color.BLACK);
+				dialog.add(label);
+				ArrayList<Response>[] result = new ArrayList[1];
+
+				Timer animator = new Timer(500, new ActionListener() {
+				    int i = -1;
+
+				    @Override
+				    public void actionPerformed(ActionEvent e) {
+				        i = (i + 1) % strs.length;
+				        label.setText(strs[i]);
+				    }
+				});
+
+				SwingWorker<ArrayList<Response>, Void> worker =
+				    new SwingWorker<>() {
+
+				        @Override
+				        protected ArrayList<Response> doInBackground() {
+				            return scanCheck(imageFileConverted);
+				        }
+
+				        @Override
+				        protected void done() {
+				            animator.stop();
+				            dialog.dispose();
+
+				            try {
+				                result[0] = get();
+				                System.out.println("done scanning");
+
+				                // Use result here
+				                // System.out.println(result.get(0).amount());
+
+				            } catch (Exception e) {
+				                e.printStackTrace();
+				            }
+				        }
+				    };
+
+				animator.start();
+				worker.execute();
+
+				// This blocks ONLY because the dialog is modal.
+				// The scan itself is running in the SwingWorker background thread.
+				dialog.setVisible(true);
+
+				System.out.println("dialog closed");
+
 				//these below have to be two separate loops to prioritize perfection
 				HashMap<Record, Response> perfectMatches = parseResponses(result[0], unpaidList);
 						
@@ -930,10 +988,11 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		//this is where the magic happens
 		//return number of how many checks couldn't be identified?
 		//MISSION HILLS,10/15/2025,11/10/2025,1000.00,3718123
-		String response=null;
+		String response=null, rawResponse = null;
 		ArrayList<Response> list = new ArrayList<Response>();
 		try {
-			 response = parseMessage(callAI(prompt+Invoicer.sp.promptAddendum, image));
+			rawResponse = callAI(prompt+Invoicer.sp.promptAddendum, image);
+			 response = parseMessage(rawResponse);
 			//System.out.println(response);
 			String[] lines = response.split("\n");
 			for(String line: lines) {
@@ -965,7 +1024,8 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Error parsing AI response. Check console.");
 			System.out.println("Prompt: "+prompt+Invoicer.sp.promptAddendum);
-			System.out.println(response);
+			System.out.println("Raw Response: "+rawResponse);
+			System.out.println("Refined Response: "+response);
 			return null;
 		}
 		return list;
