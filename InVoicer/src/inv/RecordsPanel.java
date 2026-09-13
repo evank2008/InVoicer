@@ -1115,7 +1115,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	}
 	File heicToJpg(File heicFile) {
 		
-		JDialog dialog = new JDialog(RecordsPanel.aFrame, "HEIC Convertion", true);
+		JDialog dialog = new JDialog(RecordsPanel.aFrame, "HEIC Convertion", Dialog.ModalityType.DOCUMENT_MODAL);
 		dialog.setSize(300,150);
 		dialog.setLocationRelativeTo(RecordsPanel.aFrame);
 		JLabel message = new JLabel("            Converting image... (0%)");
