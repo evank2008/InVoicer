@@ -964,6 +964,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		} catch(Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Error parsing AI response. Check console.");
+			System.out.println("Prompt: "+prompt+Invoicer.sp.promptAddendum);
 			System.out.println(response);
 			return null;
 		}
@@ -973,7 +974,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
 		if(isHeicFile(img)) return callAI(prompt, heicToJpg(img));
-		long maxTokens=512;
+		long maxTokens=5000;
 		boolean isJpeg = isJpeg(img.getPath());
 		String b64;
 			
@@ -984,7 +985,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			
 		MessageCreateParams params = MessageCreateParams.builder()
 				.system("Respond only in plain text.")
-				.model(Model.CLAUDE_HAIKU_4_5)
+				.model(Model.CLAUDE_OPUS_5)
 				//.addUserMessage(prompt)
 				.addMessage(MessageParam.builder()
 						.role(MessageParam.Role.USER)
