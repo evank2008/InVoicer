@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
 import com.anthropic.models.messages.Base64ImageSource;
+import com.anthropic.models.messages.ContentBlock;
 import com.anthropic.models.messages.ContentBlockParam;
 import com.anthropic.models.messages.ImageBlockParam;
 import com.anthropic.models.messages.Message;
@@ -924,7 +925,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 					if(cn.equalsIgnoreCase(rec.clientName)) {
 						//now we might populate the record
 						
-						if(rec.serviceDate.getYear()==res.serviceDate().getYear()&&rec.serviceDate.getMonth()==res.serviceDate().getMonth()&&rec.amount==res.amount()) {
+						if(rec.serviceDate.getYear()==res.serviceDate().getYear()&&rec.serviceDate.getMonth()==res.serviceDate().getMonth()&&(int)rec.amount==(int)res.amount()) {
 							System.out.println("perfect match");
 							perfectMatches.put(rec,res);
 							toDel.add(rec);
@@ -1034,7 +1035,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	String callAI(String prompt, File img) throws IOException{
 		if(img==null) return null;
 		if(isHeicFile(img)) return callAI(prompt, heicToJpg(img));
-		long maxTokens=5000;
+		long maxTokens=10000;
 		boolean isJpeg = isJpeg(img.getPath());
 		String b64;
 			
@@ -1045,7 +1046,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			
 		MessageCreateParams params = MessageCreateParams.builder()
 				.system("Respond only in plain text.")
-				.model(Model.CLAUDE_OPUS_5)
+				.model(Invoicer.sp.getSelectedModel())
 				//.addUserMessage(prompt)
 				.addMessage(MessageParam.builder()
 						.role(MessageParam.Role.USER)
@@ -1061,7 +1062,15 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 				.build();
 		
 		Message msg = client.messages().create(params);
-		return msg.toString();
+		StringBuilder plainTextResponse = new StringBuilder();
+		for (ContentBlock block : msg.content()) {
+		    if (block.isText()) {
+		        plainTextResponse.append(block.asText().text());
+		    }
+		}
+		System.out.println("plain response:");
+		System.out.println(plainTextResponse);
+		return plainTextResponse.toString();
 			}
 	boolean isJpeg(String filePath) {
 		byte[] header = new byte[8];
@@ -1111,7 +1120,12 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 	        return HEIC_BRANDS.contains(majorBrand);
 	    }
 	String parseMessage(String rawMessage) {
-		return rawMessage.split("text=")[2].split(", type=text")[0];
+			/*String s = rawMessage.split("ContentBlock{text=TextBlock{citations=, text=")[2];//.split(", type=text")[0];
+			System.out.println("parsed:");
+			System.out.println(s);*/
+			return rawMessage;//this function used to be necessary but when updated to the 2.60.0 version
+			//of the anthropic sdk they changed how responses are fomratted to allow more
+			//direct access to the response
 	}
 	File heicToJpg(File heicFile) {
 		

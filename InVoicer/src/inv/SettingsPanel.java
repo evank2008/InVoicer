@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,11 +18,16 @@ import javax.swing.JTable;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 
-public class SettingsPanel extends MenuPanel{
+import com.anthropic.models.messages.Model;
 
+public class SettingsPanel extends MenuPanel{
+//todo allow choice on model
 	JButton nameFieldsButton, promptButton, viewPromptButton;
 	String promptAddendum;
 	boolean promptOpen;
+	JComboBox<Model> modelPicker;
+	Model defaultModel = Model.CLAUDE_OPUS_5;
+	
 	public SettingsPanel() {
 		super();
 		promptOpen=false;
@@ -118,6 +127,36 @@ public class SettingsPanel extends MenuPanel{
 		add(viewPromptButton);
 		add(CreatorPanel.bufferPanel());
 		
+		modelPicker = new JComboBox<Model>(new DefaultComboBoxModel<Model>());
+		modelPicker.setBackground(new Color(200,200,200));
+		modelPicker.setForeground(Color.black);
+		modelPicker.setMaximumSize(new Dimension(Invoicer.WIDTH*4/10,Invoicer.HEIGHT/12));
+		if(Invoicer.onMac) {
+			modelPicker.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+
+		} else {
+			modelPicker.setFont(new Font(Font.SANS_SERIF, Font.BOLD, Invoicer.HEIGHT/30));
+		}
+		JLabel labele = new JLabel("Model: ");
+		labele.setFont(modelPicker.getFont());
+		labele.setForeground(Color.white);
+		add(labele);
+		add(modelPicker);
+		modelPicker.setSelectedItem(defaultModel);
+		((DefaultComboBoxModel<Model>) modelPicker.getModel()).removeAllElements();
+		for (Field field : Model.class.getDeclaredFields()) {
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers()) && field.getType() == Model.class) {
+                try {
+                    Model modelInstance = (Model) field.get(null);
+        			((DefaultComboBoxModel<Model>) modelPicker.getModel()).addElement(modelInstance);
+
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+		add(CreatorPanel.bufferPanel());
+		
 		String path;
 		if(Invoicer.onMac)path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoicerData.txt";
 		else path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "\\InVoicer\\invoicerData.txt";
@@ -130,9 +169,23 @@ public class SettingsPanel extends MenuPanel{
 		
 	}
 	void loadData(String data) {
-		if(data!=null&&!data.equals("null")) promptAddendum=data;
+		String[] dataSplit = data.split("<break>");
+		if(dataSplit[0]!=null&&!dataSplit[0].equals("null")) promptAddendum=dataSplit[0];
+		if(dataSplit.length>1&&!dataSplit[1].equals("null")) modelPicker.setSelectedItem(Model.of(dataSplit[1]));
+		else modelPicker.setSelectedItem(defaultModel);
 	}
 	public String toFileString() {
-		return promptAddendum==null?"null":promptAddendum;
+		String data="";
+		data+= promptAddendum==null?"null":promptAddendum;
+		data+="<break>";
+		data+=modelPicker.getSelectedItem().toString();
+		
+		
+		return data;
+	}
+	public Model getSelectedModel() {
+		
+        
+        return (Model) modelPicker.getSelectedItem();
 	}
 }
