@@ -20,9 +20,11 @@ import javax.swing.table.DefaultTableModel;
 
 import com.anthropic.models.messages.Model;
 
+import update.Updater;
+
 public class SettingsPanel extends MenuPanel{
 //todo allow choice on model
-	JButton nameFieldsButton, promptButton, viewPromptButton;
+	JButton nameFieldsButton, promptButton, viewPromptButton, updateButton;
 	String promptAddendum;
 	boolean promptOpen;
 	JComboBox<Model> modelPicker;
@@ -127,6 +129,26 @@ public class SettingsPanel extends MenuPanel{
 		add(viewPromptButton);
 		add(CreatorPanel.bufferPanel());
 		
+		updateButton = new JButton("Check for Updates");
+		if(Invoicer.onMac) {
+			updateButton.setForeground(Color.black);
+		} else {
+			updateButton.setForeground(Color.white);
+		}
+		
+		updateButton.setBackground(new Color(40,160,230));
+		updateButton.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,Invoicer.HEIGHT/20));
+		updateButton.addActionListener(e->{
+			
+			Updater.checkForUpdate();
+			
+		});
+		updateButton.setPreferredSize(new Dimension(Invoicer.WIDTH/5,Invoicer.HEIGHT/30));
+		updateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(updateButton);
+		add(CreatorPanel.bufferPanel());
+		
+		
 		modelPicker = new JComboBox<Model>(new DefaultComboBoxModel<Model>());
 		modelPicker.setBackground(new Color(200,200,200));
 		modelPicker.setForeground(Color.black);
@@ -156,6 +178,7 @@ public class SettingsPanel extends MenuPanel{
             }
         }
 		add(CreatorPanel.bufferPanel());
+		
 		
 		String path;
 		if(Invoicer.onMac)path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+ "/InVoicer/invoicerData.txt";
