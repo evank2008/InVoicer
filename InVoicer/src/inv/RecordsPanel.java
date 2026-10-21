@@ -147,16 +147,17 @@ public class RecordsPanel extends MenuPanel {
 		});
 		analyzeButton.addActionListener(e->{
 			ArrayList<Record> unpaidList = new ArrayList<Record>();
+			ArrayList<Record> paidList = new ArrayList<Record>();
 			for(Record r: recordsList) {
 				if(!r.check.paymentStatus) {
 					unpaidList.add(r);
-				}
+				} else paidList.add(r);
 			}
 		/*	if(unpaidList.size()==0) {
 				JOptionPane.showMessageDialog(null,"No unpaid checks remaining");
 			} else {*/
 				if(aFrame!=null) aFrame.dispose();
-				aFrame = new AnalysisFrame(unpaidList);
+				aFrame = new AnalysisFrame(unpaidList, paidList);
 			//}
 			
 		});
@@ -555,7 +556,7 @@ class CheckViewFrame extends JFrame {
 	}
 }
 
-class AnalysisFrame extends JFrame {//TODO use servicedate to match
+class AnalysisFrame extends JFrame {//TODO detect if a scanned check is present in paid checks
 	static AnthropicClient client;
 	static String apiKey;
 	JPanel panel, leftPanel, rightPanel, topLeftPanel, bottomLeftPanel;
@@ -594,9 +595,9 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			+ " line for each listed date/amount pairing, with the name and id being identical."
 			+ " Your response should contain nothing but the information that would be in a"
 			+ " CSV file, with no commentary before or after. Make sure all dates are in mm/dd/yyyy format. ";
-	ArrayList<Record> unpaidList;
+	ArrayList<Record> unpaidList, paidList;
 
-	public AnalysisFrame(ArrayList<Record> upList) {
+	public AnalysisFrame(ArrayList<Record> upList, ArrayList<Record> pList) {
 		super("Check Analysis");
 		setSize(400,400);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -606,6 +607,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 		centerPanel.setOpaque(false);
 		
 		this.unpaidList=upList;
+		this.paidList=pList;
 	     
 			JLabel imageLabel = new JLabel("imagefilename");
 			imageLabel.setForeground(new Color(36,36,36));
@@ -767,6 +769,30 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 					JOptionPane.showMessageDialog(null,"No perfect matches found. Maybe try adding check aliases to clients?");
 				} else {
 					confirmScan(perfectMatches);
+				}
+				if(result[0].size()!=0) {
+					//now let's take result[0] which holds all the failed responses and
+					//see if any of them happen to be already filled in the paid list
+					//so we dont say that the error is due to an erroneous scan
+					ArrayList<Response> priors = new ArrayList<Response>();
+				
+					for(Response res: result[0]) {
+						for(Record rec: paidList) {
+							if(rec.check.paymentStatus&&res.serviceDate().getYear()==rec.serviceDate.getYear()&&res.serviceDate().getMonth()==rec.serviceDate.getMonth()) {
+								priors.add(res);
+							}
+						}
+					}
+					for(Response r: priors) {
+						result[0].remove(r);
+					}
+					
+					int choice0 = JOptionPane.showConfirmDialog(null, priors.size()+" matches with previously filled invoices. View all?", null, JOptionPane.YES_NO_OPTION);
+					if(choice0==JOptionPane.YES_OPTION) {
+						for(Response r: priors) {
+							JOptionPane.showMessageDialog(null, r);
+						}
+					}
 				}
 				if(result[0].size()!=0) {
 				int choice = JOptionPane.showConfirmDialog(null, result[0].size()+" failed matches. View all?", null, JOptionPane.YES_NO_OPTION);
@@ -940,7 +966,7 @@ class AnalysisFrame extends JFrame {//TODO use servicedate to match
 			}
 			for(Response res: toDelRes) {
 				responses.remove(res);
-			}
+			}//responses now contains all the responses that didn't match
 		 return perfectMatches;
 	 }
 	void confirmScan(HashMap<Record,Response> pm) {
